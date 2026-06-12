@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Alau — Кабинет жильца</title>
+<style>
+  :root {
+    --teal: #1a8a7a; --teal-bg: #0f5f52; --teal-light: #e8f5f3; --teal-mid: #2aaa96;
+    --orange: #e05a1e; --green: #27ae60; --gray-bg: #f0f2f5; --gray-card: #fff;
+    --text: #1a1a2e; --text-muted: #666; --radius: 18px; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-bg); display: flex; justify-content: center; min-height: 100vh; }
+  .phone { width: 100%; max-width: 430px; background: var(--gray-bg); min-height: 100vh; position: relative; overflow: hidden; }
+
+  /* SCREENS */
+  .screen { display: none; width: 100%; min-height: 100vh; flex-direction: column; animation: fadeIn 0.22s ease; }
+  .screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+
+  /* TOPBAR */
+  .topbar { background: var(--teal); padding: 14px 16px 12px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .topbar-logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--teal); line-height: 1.1; text-align: center; }
+  .topbar h1 { color: #fff; font-size: 20px; font-weight: 700; }
+  .apt-badge { background: rgba(255,255,255,0.2); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+  .back-topbar-btn { background: rgba(255,255,255,0.2); border: none; color: #fff; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 14px; }
+
+  /* HOME */
+  .home-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 0; }
+
+  /* BANNER */
+  .banner-card { background: linear-gradient(135deg, var(--teal), var(--teal-mid)); border-radius: var(--radius); padding: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: #fff; margin-bottom: 16px; }
+  .banner-label { font-size: 11px; opacity: 0.85; margin-bottom: 4px; }
+  .banner-title { font-size: 18px; font-weight: 700; }
+  .banner-sub { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+
+  /* ===== ANN+DISCUSSION BLOCK (styled like banner) ===== */
+  .ann-block {
+    background: #fff;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .ann-block-header {
+    background: linear-gradient(135deg, #1c3a6b, #2a5298);
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ann-block-title { color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+  .ann-block-count { background: rgba(255,255,255,0.25); color: #fff; border-radius: 20px; padding: 3px 9px; font-size: 12px; font-weight: 700; }
+  .ann-block-all { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  .ann-row { display: flex; gap: 11px; align-items: flex-start; padding: 13px 14px; border-bottom: 1px solid #f2f2f2; cursor: pointer; transition: background 0.13s; }
+  .ann-row:last-child { border-bottom: none; }
+  .ann-row:active { background: #f8fffe; }
+  .ann-row-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .ann-row-body { flex: 1; min-width: 0; }
+  .ann-row-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+  .ann-row-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+  .ann-row-text { font-size: 12px; color: #555; line-height: 1.4; }
+  .ann-pill { display: inline-block; margin-top: 5px; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+  .pill-urgent { background: #fce4e4; color: #c62828; }
+  .pill-new { background: #e8f5e9; color: #2e7d32; }
+  .pill-action { background: #e8eaf6; color: #3949ab; }
+  .pill-promo { background: #fff3e0; color: #e65100; }
+  .ann-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 4px; }
+
+  /* QUICK ACTIONS */
+  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 2px; margin-bottom: 10px; }
+  .section-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .quick-btn { background: var(--gray-card); border-radius: var(--radius); padding: 15px 10px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; box-shadow: var(--shadow); transition: transform 0.15s; border: none; }
+  .quick-btn:active { transform: scale(0.96); }
+  .quick-icon { font-size: 21px; }
+  .quick-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-align: center; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { background: #fff; border-top: 1px solid #e8e8e8; display: flex; padding: 8px 0 12px; position: sticky; bottom: 0; z-index: 100; }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px; background: none; border: none; }
+  .nav-icon { font-size: 20px; }
+  .nav-label { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+  .nav-btn.active .nav-label { color: var(--teal); }
+
+  /* MARKETPLACE */
+  .market-screen-inner { flex: 1; overflow-y: auto; }
+  .cards-viewport { position: relative; overflow: hidden; border-radius: var(--radius); margin: 0 14px; box-shadow: var(--shadow); touch-action: pan-y; }
+  .cards-track { display: flex; transition: transform 0.38s cubic-bezier(0.4,0,0.2,1); }
+  .market-card { min-width: 100%; background: linear-gradient(160deg, #0d6b5c 0%, #1a8a7a 50%, #22a896 100%); color: #fff; padding: 22px 22px 20px; position: relative; overflow: hidden; }
+  .market-card::before { content: ''; position: absolute; right: -30px; top: -30px; width: 180px; height: 180px; background: rgba(255,255,255,0.07); border-radius: 50%; }
+  .moderation-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 5px 12px; margin-bottom: 16px; font-size: 12px; font-weight: 500; }
+  .card-emoji { font-size: 40px; margin-bottom: 14px; display: block; position: relative; z-index: 1; }
+  .card-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .card-type { font-size: 13px; opacity: 0.8; margin-bottom: 14px; }
+  .card-desc { font-size: 14px; line-height: 1.55; opacity: 0.9; margin-bottom: 20px; }
+  .card-price-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .price-block .price-new { font-size: 24px; font-weight: 800; }
+  .price-block .price-old { font-size: 13px; opacity: 0.6; text-decoration: line-through; }
+  .discount-pill { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); border-radius: 12px; padding: 8px 14px; text-align: center; }
+  .discount-pill .disc-pct { font-size: 22px; font-weight: 900; }
+  .discount-pill .disc-sub { font-size: 11px; opacity: 0.85; }
+  .card-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .card-tag { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 500; }
+  .swipe-hint { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 0 6px; color: rgba(255,255,255,0.7); font-size: 13px; animation: bounce-up 1.8s ease-in-out infinite; position: relative; z-index: 1; }
+  .swipe-arrow { width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; animation: pulse-arrow 1.8s ease-in-out infinite; }
+  @keyframes bounce-up { 0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(-4px);opacity:1} }
+  @keyframes pulse-arrow { 0%,100%{border-color:rgba(255,255,255,.4)}50%{border-color:rgba(255,255,255,.9);box-shadow:0 0 8px rgba(255,255,255,.3)} }
+  .order-btn { background: #fff; color: var(--teal); border: none; border-radius: 14px; width: 100%; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin: 0 0 6px; transition: transform 0.15s; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .order-btn:active { transform: scale(0.98); }
+  .carousel-controls { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; }
+  .carousel-dots { display: flex; gap: 5px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.2); transition: all 0.25s; }
+  .dot.active { width: 20px; border-radius: 4px; background: var(--teal); }
+  .carousel-arrows { display: flex; gap: 8px; }
+  .arr-btn { width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 2px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.15s; color: var(--teal); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .arr-btn:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .arr-btn:active { transform: scale(0.92); }
+  .arr-btn:disabled { opacity: 0.3; pointer-events: none; }
+  .carousel-counter { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+  /* ORDER MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet { background: #fff; border-radius: 24px 24px 0 0; width: 100%; max-width: 430px; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1); }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:none} }
+  .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .modal-field { margin-bottom: 14px; }
+  .modal-field label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .modal-apt { background: var(--teal-light); border-radius: 10px; padding: 12px 14px; font-size: 15px; font-weight: 600; color: var(--teal); }
+  .modal-input { width: 100%; border: 2px solid #e8e8e8; border-radius: 10px; padding: 12px 14px; font-size: 15px; outline: none; transition: border-color 0.15s; }
+  .modal-input:focus { border-color: var(--teal); }
+  .modal-price-row { display: flex; justify-content: space-between; align-items: center; background: var(--teal-light); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
+  .modal-price-label { font-size: 13px; color: var(--text-muted); }
+  .modal-price-value { font-size: 16px; font-weight: 700; color: var(--teal); }
+  .modal-submit { width: 100%; background: var(--teal); color: #fff; border: none; border-radius: 14px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .modal-cancel { width: 100%; background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; margin-top: 10px; padding: 6px; }
+
+  /* ANN CAROUSEL CARDS */
+  .ann-card-module {
+    min-width: 155px; max-width: 155px;
+    background: #fff; border-radius: 16px; padding: 14px 12px 12px;
+    box-shadow: var(--shadow); cursor: pointer; scroll-snap-align: start;
+    display: flex; flex-direction: column; gap: 4px;
+    transition: transform 0.15s; user-select: none; flex-shrink: 0;
+  }
+  .ann-card-module:active { transform: scale(0.97); }
+  .amc-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 4px; }
+  .amc-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .amc-sub { font-size: 10px; color: var(--text-muted); }
+  .amc-text { font-size: 11px; color: #555; line-height: 1.35; margin-top: 2px; flex: 1; }
+  .amc-pill { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; margin-top: 4px; }
+  .amc-mic { margin-top: 8px; background: var(--teal-light); border-radius: 8px; padding: 6px 8px; font-size: 11px; font-weight: 700; color: var(--teal); text-align: center; }
+  .ann-dot-ind { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.15); transition: all 0.25s; cursor: pointer; }
+  .ann-dot-ind.active { width: 18px; border-radius: 4px; background: var(--teal); }
+  #ann-carousel::-webkit-scrollbar { display: none; }
+  .ann-screen-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .ann-full-card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); cursor: pointer; }
+  .ann-full-card:active { opacity: 0.95; }
+  .ann-full-header { padding: 16px 16px 12px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 12px; align-items: flex-start; }
+  .ann-full-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .ann-full-body { flex: 1; }
+  .ann-full-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .ann-full-meta { font-size: 12px; color: var(--text-muted); }
+  .ann-full-text { padding: 12px 16px 16px; font-size: 14px; color: #444; line-height: 1.6; }
+  .ann-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .tag-new { background: #e8f5e9; color: #2e7d32; }
+  .tag-urgent { background: #fce4e4; color: #c62828; }
+  .tag-promo { background: #fff3e0; color: #e65100; }
+  .tag-action { background: #e8eaf6; color: #3949ab; }
+
+  /* ===== ОБЩЕДОМОВОЙ ЧАТ ===== */
+  .chat-screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .chat-hero {
+    background: linear-gradient(135deg, #1c3a6b, #2a5298);
+    padding: 16px 16px 14px;
+  }
+  .chat-hero-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .chat-hero-icon { width: 42px; height: 42px; border-radius: 13px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .chat-hero-info { flex: 1; }
+  .chat-hero-title { color: #fff; font-size: 16px; font-weight: 700; }
+  .chat-hero-sub { color: rgba(255,255,255,0.75); font-size: 12px; margin-top: 2px; }
+  .chat-invite-banner {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 12px; padding: 11px 13px;
+    color: rgba(255,255,255,0.92); font-size: 13px; line-height: 1.45;
+  }
+  .chat-invite-banner strong { color: #fff; }
+
+  /* Tabs */
+  .chat-tabs { display: flex; background: #fff; border-bottom: 2px solid #f0f0f0; }
+  .chat-tab { flex: 1; padding: 11px 4px; font-size: 13px; font-weight: 600; color: var(--text-muted); text-align: center; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+  .chat-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* Chat messages area */
+  .chat-body { flex: 1; overflow-y: auto; padding: 12px 12px 0; display: flex; flex-direction: column; gap: 8px; background: #f5f7fa; }
+  .chat-date-sep { text-align: center; font-size: 11px; color: #aaa; font-weight: 600; padding: 4px 0 2px; }
+
+  .chat-msg { display: flex; gap: 8px; align-items: flex-end; max-width: 88%; }
+  .chat-msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+  .chat-msg.other { align-self: flex-start; }
+
+  .chat-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--teal-light); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+  .chat-avatar.chair { background: #fff3e0; color: #e65100; }
+  .chat-bubble { border-radius: 16px; padding: 9px 12px; font-size: 13px; line-height: 1.45; position: relative; }
+  .chat-msg.other .chat-bubble { background: #fff; color: var(--text); border-bottom-left-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .chat-msg.mine .chat-bubble { background: var(--teal); color: #fff; border-bottom-right-radius: 4px; }
+  .chat-sender { font-size: 10px; font-weight: 700; margin-bottom: 3px; opacity: 0.7; }
+  .chat-msg.mine .chat-sender { text-align: right; }
+  .chat-time { font-size: 10px; opacity: 0.55; margin-top: 3px; }
+  .chat-msg.mine .chat-time { text-align: right; }
+
+  /* System message */
+  .chat-sys { text-align: center; background: rgba(26,138,122,0.1); border-radius: 20px; padding: 5px 14px; font-size: 11px; color: var(--teal); font-weight: 600; align-self: center; }
+
+  /* Agenda item in chat */
+  .agenda-card {
+    background: #fff; border-radius: 14px; padding: 12px 14px;
+    border-left: 3px solid var(--teal); box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    align-self: stretch; margin: 2px 0;
+  }
+  .agenda-label { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .agenda-text { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+  .agenda-actions { display: flex; gap: 8px; }
+  .agenda-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .agenda-btn.yes { background: var(--teal-light); color: var(--teal); }
+  .agenda-btn.no { background: #fce4e4; color: #c62828; }
+  .agenda-btn:active { transform: scale(0.97); }
+
+  /* Poll result card */
+  .poll-result {
+    background: #fff; border-radius: 14px; padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); align-self: stretch; margin: 2px 0;
+  }
+  .poll-result-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .poll-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .poll-bar-label { font-size: 12px; font-weight: 600; width: 80px; flex-shrink: 0; }
+  .poll-bar-bg { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; }
+  .poll-bar-fill { height: 100%; border-radius: 5px; }
+  .poll-bar-pct { font-size: 12px; font-weight: 700; color: var(--text); width: 32px; text-align: right; }
+  /* Donut chart */
+  .donut-wrap { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 6px; }
+  .donut-leg-row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .donut-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Chat input bar */
+  .chat-input-bar { background: #fff; border-top: 1px solid #eee; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end; }
+  .chat-input-wrap { flex: 1; background: #f5f5f5; border-radius: 20px; padding: 9px 14px; display: flex; align-items: center; }
+  .chat-input { flex: 1; border: none; background: none; font-size: 14px; outline: none; resize: none; font-family: inherit; }
+  .chat-send-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--teal); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: transform 0.15s; }
+  .chat-send-btn:active { transform: scale(0.92); }
+  .chat-topic-btn { padding: 9px 12px; background: rgba(26,138,122,0.1); border: none; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--teal); cursor: pointer; white-space: nowrap; }
+
+  /* VOTING */
+  .vote-screen { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+  .vote-card { background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+  .vote-q { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
+  .vote-status { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+  .vote-bar-wrap { margin-bottom: 8px; }
+  .vote-opt-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+  .vote-bar-bg { background: #f0f0f0; border-radius: 6px; height: 10px; overflow: hidden; }
+  .vote-bar-fill { height: 100%; border-radius: 6px; }
+  .bar-yes { background: linear-gradient(90deg, var(--teal), var(--teal-mid)); }
+  .bar-no { background: #ffb3b3; }
+  .vote-total { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+  .vote-comment-section { margin-top: 14px; border-top: 1px solid #f0f0f0; padding-top: 14px; }
+  .vote-comment { display: flex; gap: 10px; margin-bottom: 12px; }
+  .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--teal-light); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .comment-body { flex: 1; }
+  .comment-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .comment-text { font-size: 13px; color: #444; line-height: 1.4; background: #f7f7f7; border-radius: 10px; padding: 8px 10px; }
+  .chair-comment { background: var(--teal-light); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.4; margin-bottom: 10px; }
+  .chair-label { font-size: 11px; font-weight: 700; color: var(--teal); margin-bottom: 4px; }
+
+  /* CONTACTS */
+  .contacts-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+  .contact-card { background: #fff; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; cursor: pointer; }
+  .contact-avatar { width: 48px; height: 48px; border-radius: 16px; background: var(--teal-light); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .contact-info { flex: 1; }
+  .contact-name { font-size: 15px; font-weight: 700; color: var(--text); }
+  .contact-role { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .contact-online { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--green); margin-top: 3px; font-weight: 500; }
+  .online-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .emergency-btn { background: #fff; border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow); text-decoration: none; transition: transform 0.15s; }
+  .emergency-btn:active { transform: scale(0.97); }
+  .emr-icon { font-size: 22px; }
+  .emr-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .emr-phone { font-size: 12px; color: var(--teal); font-weight: 600; }
+
+  /* REQUESTS */
+  .request-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cat-btn { background: #fff; border-radius: var(--radius); padding: 18px 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; box-shadow: var(--shadow); cursor: pointer; border: none; transition: transform 0.15s; }
+  .cat-btn:active { transform: scale(0.97); }
+  .cat-icon { font-size: 28px; }
+  .cat-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .success-box { background: linear-gradient(135deg, #edfaf3, #e0f5ea); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .back-btn { background: var(--teal); color: #fff; border: none; border-radius: 12px; padding: 14px 24px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; }
+
+  /* VOICE */
+  .voice-screen { flex: 1; display: flex; flex-direction: column; padding: 16px; gap: 14px; }
+  .orb-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 0 16px; gap: 12px; }
+  .orb { width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--teal-mid), var(--teal-bg)); box-shadow: 0 0 0 14px rgba(26,138,122,0.12), 0 0 0 28px rgba(26,138,122,0.06); cursor: pointer; transition: transform 0.15s, box-shadow 0.3s; display: flex; align-items: center; justify-content: center; }
+  .orb:active { transform: scale(0.95); }
+  .orb-label { font-size: 15px; font-weight: 700; color: var(--teal); }
+  .ai-reply { background: var(--teal-light); border-left: 3px solid var(--teal); border-radius: 10px; padding: 14px; font-size: 14px; line-height: 1.6; color: var(--text); }
+  .quick-phrases { display: flex; flex-wrap: wrap; gap: 8px; }
+  .phrase-btn { background: #fff; border: 2px solid #e0e0e0; border-radius: 20px; padding: 8px 14px; font-size: 13px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+  .phrase-btn:active { background: var(--teal); color: #fff; border-color: var(--teal); }
+  /* waveform bars */
+  .wbar { width: 4px; border-radius: 3px; background: var(--teal); animation: wave-bar 0.6s ease-in-out infinite; }
+  .wbar:nth-child(1){height:10px;animation-delay:0s} .wbar:nth-child(2){height:20px;animation-delay:.08s} .wbar:nth-child(3){height:30px;animation-delay:.16s} .wbar:nth-child(4){height:38px;animation-delay:.24s} .wbar:nth-child(5){height:30px;animation-delay:.32s} .wbar:nth-child(6){height:20px;animation-delay:.40s} .wbar:nth-child(7){height:28px;animation-delay:.48s} .wbar:nth-child(8){height:16px;animation-delay:.56s} .wbar:nth-child(9){height:10px;animation-delay:.64s}
+  @keyframes wave-bar { 0%,100%{transform:scaleY(0.4);opacity:.5} 50%{transform:scaleY(1);opacity:1} }
+  @keyframes pulse-rec { 0%,100%{box-shadow:0 0 0 14px rgba(224,90,30,.15),0 0 0 28px rgba(224,90,30,.06)} 50%{box-shadow:0 0 0 20px rgba(224,90,30,.2),0 0 0 40px rgba(224,90,30,.08)} }
+  @keyframes spin-glow { 0%{box-shadow:0 0 0 14px rgba(245,200,66,.2)} 50%{box-shadow:0 0 0 28px rgba(245,200,66,.1)} 100%{box-shadow:0 0 0 14px rgba(245,200,66,.2)} }
+  /* priority buttons */
+  .prio-btn { flex:1; padding:10px; border:2px solid #e0e0e0; border-radius:10px; background:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .prio-btn.active { border-color:var(--teal); background:var(--teal-light); color:var(--teal); }
+  /* ticket cards */
+  .tkt-card { background:#fff; border-radius:16px; padding:14px 16px; box-shadow:var(--shadow); border-left:4px solid #e0e0e0; }
+  .tkt-card.done { border-left-color: var(--green); }
+  .tkt-card.processing { border-left-color: var(--orange); }
+  .tkt-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .tkt-num { font-size:15px; font-weight:800; color:var(--text); }
+  .tkt-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:8px; }
+  .status-done { background:#edfaf3; color:var(--green); }
+  .status-proc { background:#fff3e0; color:#e65100; }
+  .tkt-meta { font-size:11px; color:var(--text-muted); margin-bottom:8px; }
+  .tkt-text { font-size:13px; color:#444; line-height:1.5; margin-bottom:12px; }
+  .tkt-actions { display:flex; gap:8px; }
+  .tkt-btn { flex:1; padding:9px; border:2px solid #e0e0e0; border-radius:9px; background:#fff; font-size:12px; font-weight:600; cursor:pointer; }
+  .tkt-btn.wa { border-color:#25d366; background:#f0fff4; color:#128c7e; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- =================== HOME =================== -->
+<div class="screen active" id="screen-home">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">Alau<br>AI</div>
+      <h1>Алау</h1>
+    </div>
+    <div class="apt-badge">Кв. №23</div>
+  </div>
+  <div class="home-content">
+
+    <!-- Banner -->
+    <div class="banner-card" onclick="showScreen('screen-market')">
+      <div>
+        <div class="banner-label">🏠 Главная ОСИ №14 · Семей</div>
+        <div class="banner-title">−20% на клининг</div>
+        <div class="banner-sub">CleanCity Semey · только для жильцов ОСИ №14</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600;">Узнать →</div>
+    </div>
+
+    <!-- ОБЪЯВЛЕНИЯ И ОБСУЖДЕНИЯ — горизонтальная карусель 6 модулей -->
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px;margin-bottom:10px;">
+        <div style="font-size:15px;font-weight:700;color:var(--text);">📣 Объявления и обсуждения</div>
+        <span style="font-size:13px;color:var(--teal);font-weight:600;cursor:pointer;" onclick="showScreen('screen-announcements')">Все →</span>
+      </div>
+      <!-- Horizontal scroll carousel -->
+      <div id="ann-carousel" style="display:flex;gap:10px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;cursor:grab;" onmousedown="annDragStart(event)" onmousemove="annDragMove(event)" onmouseup="annDragEnd(event)" onmouseleave="annDragEnd(event)">
+
+        <!-- Module 1: Срочное объявление -->
+        <div class="ann-card-module" onclick="openModuleVoice('urgent','🚨 Отключение воды','Уважаемый житель квартиры номер 23. Вы можете сообщить о проблемах с водоснабжением или оставить своё мнение по данному вопросу. Ваше сообщение будет зафиксировано и передано председателю ОСИ.','Сегодня · Председатель ОСИ','С 09:00 до 17:00 плановые работы. Запаситесь водой заранее.','pill-urgent','🚨 Срочно')">
+          <div class="amc-icon" style="background:#fef0ef;">🚨</div>
+          <div class="amc-title">Отключение воды 28 мая</div>
+          <div class="amc-sub">Сегодня · Председатель ОСИ</div>
+          <div class="amc-text">С 09:00 до 17:00 плановые работы</div>
+          <span class="amc-pill" style="background:#fce4e4;color:#c62828;">Срочно</span>
+          <div class="amc-mic">🎙️ Сообщить</div>
+        </div>
+
+        <!-- Module 2: Голосование -->
+        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер 23. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — ваша позиция будет зафиксирована и учтена на голосовании.','21 мая · Осталось 3 дня','Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
+          <div class="amc-icon" style="background:#f0f0ff;">🗳️</div>
+          <div class="amc-title">Голосование: домофон</div>
+          <div class="amc-sub">21 мая · Осталось 3 дня</div>
+          <div class="amc-text">Ваш голос ещё не учтён</div>
+          <span class="amc-pill" style="background:#e8eaf6;color:#3949ab;">Требует ответа</span>
+          <div class="amc-mic">🎙️ Высказаться</div>
+        </div>
+
+        <!-- Module 3: Чат -->
+        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер 23. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. Ваше сообщение поступит всем активным жильцам дома.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
+          <div class="amc-icon" style="background:#e8eaf6;">💬</div>
+          <div class="amc-title">Общедомовой чат</div>
+          <div class="amc-sub">23 жильца онлайн</div>
+          <div class="amc-text">8 новых сообщений</div>
+          <span class="amc-pill" style="background:#e8eaf6;color:#3949ab;">Войти в чат</span>
+          <div class="amc-mic">🎙️ Написать голосом</div>
+        </div>
+
+        <!-- Module 4: Собрание -->
+        <div class="ann-card-module" onclick="openModuleVoice('meeting','📅 Собрание 1 июня','Уважаемый житель квартиры номер 23. Вы можете заранее озвучить свои вопросы и предложения к собранию жильцов 1 июня. Запись будет включена в повестку дня.','25 мая · Председатель ОСИ','Ремонт кровли и бюджет Q2. 18:00, холл 1-го этажа.','pill-new','Новое')">
+          <div class="amc-icon" style="background:#eef6ff;">📅</div>
+          <div class="amc-title">Собрание 1 июня</div>
+          <div class="amc-sub">25 мая · Председатель</div>
+          <div class="amc-text">Кровля и бюджет Q2</div>
+          <span class="amc-pill" style="background:#e8f5e9;color:#2e7d32;">Новое</span>
+          <div class="amc-mic">🎙️ На повестку</div>
+        </div>
+
+        <!-- Module 5: Акция -->
+        <div class="ann-card-module" onclick="openModuleVoice('promo','🎁 Скидка КазГарант','Уважаемый житель квартиры номер 23. Вы можете задать вопрос о страховании жилья или оставить заявку на консультацию. Ваш запрос будет передан представителю КазГарант.','23 мая · КазГарант','−15% на страхование от затопления и пожара для жильцов ОСИ №14.','','')">
+          <div class="amc-icon" style="background:#fff8e6;">🎁</div>
+          <div class="amc-title">Скидка на страховку</div>
+          <div class="amc-sub">23 мая · КазГарант</div>
+          <div class="amc-text">−15% для жильцов ОСИ</div>
+          <span class="amc-pill" style="background:#fff3e0;color:#e65100;">🔥 Акция</span>
+          <div class="amc-mic">🎙️ Задать вопрос</div>
+        </div>
+
+        <!-- Module 6: Заявка мастеру -->
+        <div class="ann-card-module" onclick="openModuleVoice('repair','🔧 Заявка мастеру','Уважаемый житель квартиры номер 23. Пожалуйста, опишите вашу проблему. Укажите где именно и что сломалось. Ваша заявка будет оформлена письменно, зарегистрирована и передана техническому специалисту.','Тех. отдел · ОСИ №14','Подайте голосовую заявку — мастер приедет в течение 24 часов.','','')">
+          <div class="amc-icon" style="background:#edfaf3;">🔧</div>
+          <div class="amc-title">Заявка мастеру</div>
+          <div class="amc-sub">Тех. отдел · ОСИ №14</div>
+          <div class="amc-text">Голосовая заявка за 30 сек</div>
+          <span class="amc-pill" style="background:#edfaf3;color:#2e7d32;">Подать заявку</span>
+          <div class="amc-mic">🎙️ Описать проблему</div>
+        </div>
+
+      </div>
+      <!-- scroll dots -->
+      <div style="display:flex;gap:5px;justify-content:center;padding-top:4px;" id="ann-dots">
+        <div class="ann-dot-ind active"></div>
+        <div class="ann-dot-ind"></div>
+        <div class="ann-dot-ind"></div>
+        <div class="ann-dot-ind"></div>
+        <div class="ann-dot-ind"></div>
+        <div class="ann-dot-ind"></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-header">
+      <div class="section-title">Быстрые действия</div>
+    </div>
+    <div class="quick-grid">
+      <button class="quick-btn" onclick="showScreen('screen-requests')"><span class="quick-icon">🔧</span><span class="quick-label">Заявка мастеру</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-voting')"><span class="quick-icon">🗳️</span><span class="quick-label">Голосование</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-chat')"><span class="quick-icon">💬</span><span class="quick-label">Чат жильцов</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-market')"><span class="quick-icon">🛒</span><span class="quick-label">Маркетплейс</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-voice')"><span class="quick-icon">🎙️</span><span class="quick-label">Голос. помощник</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-contacts')"><span class="quick-icon">📞</span><span class="quick-label">Контакты</span></button>
+    </div>
+
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== ANNOUNCEMENTS SCREEN =================== -->
+<div class="screen" id="screen-announcements">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Объявления и обсуждения</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="ann-screen-content">
+    <div class="ann-full-card">
+      <div class="ann-full-header">
+        <div class="ann-full-icon" style="background:#fef0ef;">🚨</div>
+        <div class="ann-full-body"><div class="ann-full-title">Отключение воды 28 мая</div><div class="ann-full-meta">Сегодня · Председатель ОСИ</div></div>
+        <span class="ann-tag tag-urgent">Срочно</span>
+      </div>
+      <div class="ann-full-text">С 09:00 до 17:00 — плановые работы по замене труб на ул. Найманбаева. Рекомендуем запастись водой. Горячее водоснабжение не затронуто.</div>
+    </div>
+    <div class="ann-full-card" onclick="showScreen('screen-voting')">
+      <div class="ann-full-header">
+        <div class="ann-full-icon" style="background:#f0f0ff;">🗳️</div>
+        <div class="ann-full-body"><div class="ann-full-title">Голосование: новый домофон</div><div class="ann-full-meta">21 мая · Осталось 3 дня</div></div>
+        <span class="ann-tag tag-action">Голосовать →</span>
+      </div>
+      <div class="ann-full-text">Предлагается установить новый домофон в подъезде №2. Стоимость: 85 000 ₸ = ~977 ₸ с квартиры. Нажмите для голосования.</div>
+    </div>
+    <div class="ann-full-card" onclick="showScreen('screen-chat')">
+      <div class="ann-full-header">
+        <div class="ann-full-icon" style="background:#e8eaf6;">💬</div>
+        <div class="ann-full-body"><div class="ann-full-title">Общедомовой чат МКД</div><div class="ann-full-meta">Обсуждения · 23 участника</div></div>
+        <span class="ann-tag" style="background:#e8eaf6;color:#3949ab;">Открыть →</span>
+      </div>
+      <div class="ann-full-text">Живое обсуждение вопросов дома. Вносите вопросы на повестку, голосуйте, смотрите итоги обсуждений. Каждый участник идентифицирован по номеру квартиры.</div>
+    </div>
+    <div class="ann-full-card">
+      <div class="ann-full-header">
+        <div class="ann-full-icon" style="background:#eef6ff;">📅</div>
+        <div class="ann-full-body"><div class="ann-full-title">Собрание жильцов 1 июня</div><div class="ann-full-meta">25 мая · Председатель ОСИ</div></div>
+        <span class="ann-tag tag-new">Новое</span>
+      </div>
+      <div class="ann-full-text">Обсуждение ремонта кровли и бюджета Q2. 18:00, холл 1-го этажа. Ваш голос важен! Явка обязательна — будем принимать решение большинством.</div>
+    </div>
+    <div class="ann-full-card">
+      <div class="ann-full-header">
+        <div class="ann-full-icon" style="background:#fff8e6;">🎁</div>
+        <div class="ann-full-body"><div class="ann-full-title">Скидка на страховку жилья</div><div class="ann-full-meta">23 мая · КазГарант</div></div>
+        <span class="ann-tag tag-promo">🔥 Акция</span>
+      </div>
+      <div class="ann-full-text">Жильцы ОСИ №14 получают −15% на страхование от затопления, пожара и кражи. Оформление за 5 минут онлайн.</div>
+    </div>
+    <div class="ann-full-card">
+      <div class="ann-full-header">
+        <div class="ann-full-icon" style="background:#edfaf3;">🔧</div>
+        <div class="ann-full-body"><div class="ann-full-title">Заявка #113 выполнена</div><div class="ann-full-meta">20 мая · Технический отдел</div></div>
+        <span class="ann-tag tag-new" style="background:#edfaf3;color:#2e7d32;">Выполнено</span>
+      </div>
+      <div class="ann-full-text">Лифт №2 отремонтирован. Если проблема осталась — подайте повторную заявку через раздел «Заявки».</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn active" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== ОБЩЕДОМОВОЙ ЧАТ =================== -->
+<div class="screen" id="screen-chat">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:17px;font-weight:700;">Чат жильцов</h1>
+    <div style="font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;">87 кв. · ОСИ №14</div>
+  </div>
+
+  <div class="chat-screen">
+    <!-- Invitation hero -->
+    <div class="chat-hero">
+      <div class="chat-hero-top">
+        <div class="chat-hero-icon">🏢</div>
+        <div class="chat-hero-info">
+          <div class="chat-hero-title">Общедомовой чат МКД №14</div>
+          <div class="chat-hero-sub">23 активных жильца из 87 квартир</div>
+        </div>
+      </div>
+      <div class="chat-invite-banner">
+        <strong>Приглашаем всех жильцов!</strong> Вносите вопросы на повестку, участвуйте в обсуждениях, голосуйте. Каждый участник виден по номеру квартиры — анонимность исключена, ответственность общая.
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="chat-tabs">
+      <div class="chat-tab active" id="tab-chat" onclick="switchChatTab('chat')">💬 Чат</div>
+      <div class="chat-tab" id="tab-agenda" onclick="switchChatTab('agenda')">📋 Повестка</div>
+      <div class="chat-tab" id="tab-results" onclick="switchChatTab('results')">📊 Итоги</div>
+    </div>
+
+    <!-- TAB: CHAT -->
+    <div id="chatpane-chat" class="chat-body" id="chat-messages">
+      <div class="chat-date-sep">27 мая</div>
+
+      <div class="chat-sys">Ахметова Г. (кв.12) присоединилась к чату</div>
+
+      <div class="chat-msg other">
+        <div class="chat-avatar">Н</div>
+        <div>
+          <div class="chat-sender">Нурмагамбетов А. · кв.3</div>
+          <div class="chat-bubble">Добрый день! Когда наконец починят освещение на 3-м этаже подъезда №1? Уже 2 недели темно.</div>
+          <div class="chat-time">09:14</div>
+        </div>
+      </div>
+
+      <div class="chat-msg other">
+        <div class="chat-avatar chair">П</div>
+        <div>
+          <div class="chat-sender">Председатель ОСИ</div>
+          <div class="chat-bubble" style="background:#fff3e0;color:#333;">Добрый день! Заявка подана, электрик приедет в пятницу. Приносим извинения за неудобства.</div>
+          <div class="chat-time">09:31</div>
+        </div>
+      </div>
+
+      <div class="chat-msg other">
+        <div class="chat-avatar">А</div>
+        <div>
+          <div class="chat-sender">Ахметова Г. · кв.12</div>
+          <div class="chat-bubble">Предлагаю вынести на повестку вопрос о видеонаблюдении у входа. Ключи от домофона теряются, чужие ходят.</div>
+          <div class="chat-time">10:05</div>
+        </div>
+      </div>
+
+      <!-- Agenda card in chat -->
+      <div class="agenda-card">
+        <div class="agenda-label">📋 Вопрос на повестку от кв.12</div>
+        <div class="agenda-text">Установить камеры видеонаблюдения у входных дверей подъездов №1 и №2</div>
+        <div class="agenda-actions">
+          <button class="agenda-btn yes" onclick="voteAgenda(this, 'yes')">👍 Поддержать</button>
+          <button class="agenda-btn no" onclick="voteAgenda(this, 'no')">👎 Против</button>
+        </div>
+        <div id="agenda-result-1" style="display:none;margin-top:8px;font-size:12px;color:var(--teal);font-weight:600;"></div>
+      </div>
+
+      <div class="chat-msg other">
+        <div class="chat-avatar">С</div>
+        <div>
+          <div class="chat-sender">Сейткали М. · кв.45</div>
+          <div class="chat-bubble">Поддерживаю идею! Месяц назад велосипед украли из подъезда.</div>
+          <div class="chat-time">10:22</div>
+        </div>
+      </div>
+
+      <div class="chat-msg mine">
+        <div class="chat-avatar" style="background:var(--teal);color:#fff;">23</div>
+        <div>
+          <div class="chat-sender" style="text-align:right;">Вы · кв.23</div>
+          <div class="chat-bubble">Тоже за! И ещё хотелось бы обсудить уборку лестниц — грязновато.</div>
+          <div class="chat-time" style="text-align:right;">10:35</div>
+        </div>
+      </div>
+
+      <div class="chat-date-sep">Сегодня · 28 мая</div>
+
+      <!-- Poll result card -->
+      <div class="poll-result">
+        <div class="poll-result-title">📊 Итог голосования: домофон подъезда №2</div>
+        <div class="poll-bar-row">
+          <span class="poll-bar-label">👍 За</span>
+          <div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:63%"></div></div>
+          <span class="poll-bar-pct">63%</span>
+        </div>
+        <div class="poll-bar-row">
+          <span class="poll-bar-label">👎 Против</span>
+          <div class="poll-bar-bg"><div class="poll-bar-fill" style="width:37%;background:#ffb3b3;"></div></div>
+          <span class="poll-bar-pct">37%</span>
+        </div>
+        <div class="donut-wrap">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12"
+              stroke-dasharray="110.9 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12"
+              stroke-dasharray="65 175.9" stroke-dashoffset="-66.9" stroke-linecap="round"/>
+            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a">54</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span>За — 34 кв. (63%)</span></div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span>Против — 20 кв. (37%)</span></div>
+            <div class="donut-leg-row" style="color:#aaa;font-size:11px;">Не голосовали — 33 кв.</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;">✅ Решение принято: домофон будет установлен</div>
+      </div>
+
+      <div class="chat-msg other">
+        <div class="chat-avatar chair">П</div>
+        <div>
+          <div class="chat-sender">Председатель ОСИ</div>
+          <div class="chat-bubble" style="background:#fff3e0;color:#333;">Уважаемые жильцы, домофон закуплен. Монтаж — 5 июня. Спасибо всем, кто проголосовал!</div>
+          <div class="chat-time">08:44</div>
+        </div>
+      </div>
+
+      <div id="chat-new-messages"></div>
+    </div>
+
+    <!-- TAB: AGENDA -->
+    <div id="chatpane-agenda" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;display:none;flex-direction:column;gap:10px;">
+      <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Повестка · Собрание 1 июня</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="min-width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">1</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);">Ремонт кровли — смета 2 300 000 ₸</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Предложено: Председатель ОСИ · 14 поддержали</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="min-width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">2</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);">Бюджет Q2 — распределение средств</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Предложено: Председатель ОСИ · 11 поддержали</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="min-width:22px;height:22px;border-radius:50%;background:#e8eaf6;color:#3949ab;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">3</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);">Камеры видеонаблюдения у подъездов</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Предложено: кв.12 (Ахметова) · 8 поддержали</div>
+            </div>
+          </div>
+        </div>
+        <button onclick="showAgendaModal()" style="width:100%;margin-top:14px;padding:11px;background:var(--teal-light);border:none;border-radius:10px;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;">+ Внести вопрос на повестку</button>
+      </div>
+    </div>
+
+    <!-- TAB: RESULTS -->
+    <div id="chatpane-results" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;flex-direction:column;gap:12px;">
+      <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Установка домофона — подъезд №2</div>
+        <div class="poll-bar-row"><span class="poll-bar-label">👍 За</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:63%"></div></div><span class="poll-bar-pct">63%</span></div>
+        <div class="poll-bar-row"><span class="poll-bar-label">👎 Против</span><div class="poll-bar-bg"><div class="poll-bar-fill" style="width:37%;background:#ffb3b3;"></div></div><span class="poll-bar-pct">37%</span></div>
+        <div class="donut-wrap">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" stroke-dasharray="110.9 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" stroke-dasharray="65 175.9" stroke-dashoffset="-66.9" stroke-linecap="round"/>
+            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a">54</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span>За — 34 кв. (63%)</span></div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span>Против — 20 кв. (37%)</span></div>
+            <div class="donut-leg-row" style="color:#aaa;font-size:11px;">Не голосовали — 33 кв.</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;">✅ Решение принято. Монтаж — 5 июня.</div>
+      </div>
+
+      <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Уборка двора — 7 июня</div>
+        <div class="poll-bar-row"><span class="poll-bar-label">✅ Участвую</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:82%"></div></div><span class="poll-bar-pct">82%</span></div>
+        <div class="poll-bar-row"><span class="poll-bar-label">❌ Не смогу</span><div class="poll-bar-bg"><div class="poll-bar-fill" style="width:18%;background:#ffb3b3;"></div></div><span class="poll-bar-pct">18%</span></div>
+        <div class="donut-wrap">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" stroke-dasharray="144.2 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" stroke-dasharray="31.7 175.9" stroke-dashoffset="-100.2" stroke-linecap="round"/>
+            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a">28</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span>Участвую — 23 кв.</span></div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span>Не смогу — 5 кв.</span></div>
+            <div class="donut-leg-row" style="color:#aaa;font-size:11px;">Ещё не ответили — 59 кв.</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#e65100;font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;">⏳ Голосование открыто — осталось 6 дней</div>
+      </div>
+    </div>
+
+    <!-- Input bar -->
+    <div class="chat-input-bar" id="chat-input-bar">
+      <button class="chat-topic-btn" onclick="showAgendaModal()">+ На повестку</button>
+      <div class="chat-input-wrap">
+        <input class="chat-input" id="chat-text" placeholder="Сообщение жильцам..." type="text" onkeydown="if(event.key==='Enter')sendChatMsg()">
+      </div>
+      <button class="chat-send-btn" onclick="sendChatMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== MARKETPLACE =================== -->
+<div class="screen" id="screen-market">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Маркетплейс</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="market-screen-inner" style="padding:14px 0 14px;">
+    <div class="carousel-controls">
+      <div class="carousel-dots" id="carousel-dots"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="carousel-counter" id="carousel-counter">1 / 5</span>
+        <div class="carousel-arrows">
+          <button class="arr-btn" id="arr-prev" onclick="carouselMove(-1)">‹</button>
+          <button class="arr-btn" id="arr-next" onclick="carouselMove(1)">›</button>
+        </div>
+      </div>
+    </div>
+    <div class="cards-viewport" id="cards-viewport">
+      <div class="cards-track" id="cards-track">
+        <div class="market-card">
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <span class="card-emoji">🧹</span>
+          <div class="card-name">CleanCity Semey</div>
+          <div class="card-type">Уборка и клининг</div>
+          <div class="card-desc">Профессиональная уборка подъездов, квартир и офисов. Работают в Семее с 2018 года, 4.9★ от 230 отзывов жильцов ОСИ. Используют сертифицированную химию, безопасную для детей и животных.</div>
+          <div class="card-price-row"><div class="price-block"><div class="price-new">от 8 000 ₸</div><div class="price-old">от 10 000 ₸</div></div><div class="discount-pill"><div class="disc-pct">−20%</div><div class="disc-sub">для ОСИ №14</div></div></div>
+          <div class="card-tags"><span class="card-tag">🏠 Квартиры</span><span class="card-tag">🏢 Подъезды</span><span class="card-tag">🧴 Дезинфекция</span></div>
+          <button class="order-btn" onclick="openModal('CleanCity Semey','от 8 000 ₸','−20% для ОСИ')">Заказать услугу</button>
+          <div class="swipe-hint"><div class="swipe-arrow">↑</div><span>Проведи пальцем вверх</span></div>
+        </div>
+        <div class="market-card">
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <span class="card-emoji">🔨</span>
+          <div class="card-name">МастерБригада</div>
+          <div class="card-type">Ремонт квартир и МКД</div>
+          <div class="card-desc">Комплексный ремонт квартир под ключ и отдельные виды работ: штукатурка, плитка, электрика, сантехника. Лицензия МЮ РК, официальный договор, гарантия 2 года.</div>
+          <div class="card-price-row"><div class="price-block"><div class="price-new">от 1 500 ₸/м²</div><div class="price-old">Смета бесплатно</div></div><div class="discount-pill"><div class="disc-pct">−10%</div><div class="disc-sub">+ приоритет</div></div></div>
+          <div class="card-tags"><span class="card-tag">🧱 Под ключ</span><span class="card-tag">⚡ Электрика</span><span class="card-tag">🚿 Сантехника</span></div>
+          <button class="order-btn" onclick="openModal('МастерБригада','от 1 500 ₸/м²','−10% + приоритет')">Заказать услугу</button>
+        </div>
+        <div class="market-card">
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <span class="card-emoji">🛡️</span>
+          <div class="card-name">КазГарант</div>
+          <div class="card-type">Страхование жилья</div>
+          <div class="card-desc">Страховой полис от затопления, пожара, кражи и стихийных бедствий. Оформление за 5 минут онлайн, без визита в офис. Выплаты — в течение 5 рабочих дней.</div>
+          <div class="card-price-row"><div class="price-block"><div class="price-new">от 2 500 ₸/мес</div><div class="price-old">от 2 950 ₸/мес</div></div><div class="discount-pill"><div class="disc-pct">−15%</div><div class="disc-sub">скидка</div></div></div>
+          <div class="card-tags"><span class="card-tag">🔥 Пожар</span><span class="card-tag">💧 Затопление</span><span class="card-tag">🔐 Кража</span></div>
+          <button class="order-btn" onclick="openModal('КазГарант','от 2 500 ₸/мес','−15% скидка')">Заказать услугу</button>
+        </div>
+        <div class="market-card">
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <span class="card-emoji">🏗️</span>
+          <div class="card-name">Хаузмастер</div>
+          <div class="card-type">AI-управление домом</div>
+          <div class="card-desc">Умный сервис управления МКД: диагностика здания, предсказание поломок, автоматизация заявок. Официальный технологический партнёр ОСИ №14 и ТОО «Абай-Гермес».</div>
+          <div class="card-price-row"><div class="price-block"><div class="price-new">от 3 000 ₸/мес</div><div class="price-old">Осмотр бесплатно</div></div><div class="discount-pill"><div class="disc-pct">🤝</div><div class="disc-sub">Партнёр ОСИ</div></div></div>
+          <div class="card-tags"><span class="card-tag">🤖 AI-диагностика</span><span class="card-tag">📊 Аналитика</span><span class="card-tag">🔔 Уведомления</span></div>
+          <button class="order-btn" onclick="openModal('Хаузмастер','от 3 000 ₸/мес','Партнёр ОСИ')">Заказать услугу</button>
+        </div>
+        <div class="market-card">
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <span class="card-emoji">🏠</span>
+          <div class="card-name">Абай Недвижимость</div>
+          <div class="card-type">Купля · Продажа · Аренда</div>
+          <div class="card-desc">Крупнейшее агентство Семея — 500+ сделок в год. Полное юридическое сопровождение, проверка документов, помощь с ипотекой. Для жильцов ОСИ №14 — сниженная комиссия.</div>
+          <div class="card-price-row"><div class="price-block"><div class="price-new">Консультация бесплатно</div><div class="price-old">комиссия 3% → 1%</div></div><div class="discount-pill"><div class="disc-pct">−2%</div><div class="disc-sub">комиссия</div></div></div>
+          <div class="card-tags"><span class="card-tag">🔑 Продажа</span><span class="card-tag">🏘️ Аренда</span><span class="card-tag">📋 Ипотека</span></div>
+          <button class="order-btn" onclick="openModal('Абай Недвижимость','Консультация бесплатно','−2% комиссия')">Заказать услугу</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn active" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== VOTING =================== -->
+<div class="screen" id="screen-voting">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Голосование</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="vote-screen">
+    <div class="vote-card">
+      <div class="vote-q">Установить новый домофон в подъезде №2?</div>
+      <div class="vote-status">Открыто · Осталось 3 дня · Проголосовали 54 из 87</div>
+      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👍 Да</span><span>63%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" style="width:63%"></div></div></div>
+      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👎 Нет</span><span>37%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" style="width:37%"></div></div></div>
+      <div class="vote-total">54 из 87 жильцов проголосовали</div>
+      <div class="vote-comment-section">
+        <div class="chair-label">💬 Председатель ОСИ</div>
+        <div class="chair-comment">Стоимость: 85 000 ₸, делим на 87 квартир = ~977 ₸ с квартиры</div>
+        <div class="vote-comment"><div class="comment-avatar">Н</div><div class="comment-body"><div class="comment-name">Нурмагамбетов А. · кв.3</div><div class="comment-text">Домофон давно пора менять, старый постоянно ломается</div></div></div>
+        <div class="vote-comment"><div class="comment-avatar">А</div><div class="comment-body"><div class="comment-name">Ахметова Г. · кв.12</div><div class="comment-text">Согласна! И коды у всех одинаковые уже 3 года</div></div></div>
+      </div>
+    </div>
+    <div class="vote-card">
+      <div class="vote-q">Провести общую уборку двора 7 июня?</div>
+      <div class="vote-status">Открыто · Осталось 6 дней · Проголосовали 28 из 87</div>
+      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>✅ Участвую!</span><span>82%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" style="width:82%"></div></div></div>
+      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>❌ Не смогу</span><span>18%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" style="width:18%"></div></div></div>
+      <div class="vote-total">28 из 87 жильцов проголосовали</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== CONTACTS =================== -->
+<div class="screen" id="screen-contacts">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Контакты</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="contacts-content">
+    <div class="section-title">Управление домом</div>
+    <div class="contact-card"><div class="contact-avatar">🧑‍💼</div><div class="contact-info"><div class="contact-name">Кудайберген Болтабеков</div><div class="contact-role">Председатель ОСИ №14</div></div><span style="color:#bbb;font-size:18px;">›</span></div>
+    <div class="contact-card"><div class="contact-avatar">🔧</div><div class="contact-info"><div class="contact-name">Хаусмастер</div><div class="contact-role">Технический специалист</div><div class="contact-online"><span class="online-dot"></span>онлайн</div></div><span style="color:#bbb;font-size:18px;">›</span></div>
+    <div class="contact-card"><div class="contact-avatar">🏢</div><div class="contact-info"><div class="contact-name">ТОО «АбайГрупп Сервис»</div><div class="contact-role">Управляющая компания</div></div><span style="color:#bbb;font-size:18px;">›</span></div>
+    <div class="section-title">Аварийные службы</div>
+    <div class="emergency-grid">
+      <a class="emergency-btn" href="tel:+77224111111"><span class="emr-icon">💧</span><span class="emr-name">Водоканал</span><span class="emr-phone">+7 722 411-11-11</span></a>
+      <a class="emergency-btn" href="tel:+77224222222"><span class="emr-icon">🔥</span><span class="emr-name">Теплоком.</span><span class="emr-phone">+7 722 422-22-22</span></a>
+      <a class="emergency-btn" href="tel:115"><span class="emr-icon">⚡</span><span class="emr-name">Электросбыт</span><span class="emr-phone">115</span></a>
+      <a class="emergency-btn" href="tel:04"><span class="emr-icon">🔵</span><span class="emr-name">ГорГаз</span><span class="emr-phone">04</span></a>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== REQUESTS =================== -->
+<div class="screen" id="screen-requests">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Заявка мастеру</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="request-content">
+    <div style="font-size:13px;color:var(--text-muted);padding:0 2px 2px;">Выберите категорию — откроется голосовой помощник</div>
+    <div class="cat-grid">
+
+      <button class="cat-btn" onclick="openModuleVoice(
+        'water','💧 Вода / трубы',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с водоснабжением или трубами. Укажите этаж, подъезд и характер неисправности. Ваша заявка будет передана сантехнику.',
+        'Тех. отдел · ОСИ №14','Протечка, нет воды, гидравлический удар — опишите голосом.',
+        'pill-new','💧 Вода')">
+        <span class="cat-icon">💧</span><span class="cat-name">Вода / трубы</span>
+      </button>
+
+      <button class="cat-btn" onclick="openModuleVoice(
+        'electric','⚡ Электрика',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с электроснабжением. Укажите где именно — квартира, подъезд или двор. Ваша заявка поступит электрику.',
+        'Тех. отдел · ОСИ №14','Нет света, искрение, короткое замыкание — опишите голосом.',
+        'pill-new','⚡ Электрика')">
+        <span class="cat-icon">⚡</span><span class="cat-name">Электрика</span>
+      </button>
+
+      <button class="cat-btn" onclick="openModuleVoice(
+        'lift','🛗 Лифт',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите неисправность лифта. Укажите номер подъезда и характер поломки. Заявка будет передана в лифтовую службу.',
+        'Тех. отдел · ОСИ №14','Застрял, не закрывается дверь, странный звук — опишите голосом.',
+        'pill-new','🛗 Лифт')">
+        <span class="cat-icon">🛗</span><span class="cat-name">Лифт</span>
+      </button>
+
+      <button class="cat-btn" onclick="openModuleVoice(
+        'heat','🔥 Отопление',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с отоплением. Холодные батареи, течь из радиатора или посторонний шум — всё это важно зафиксировать.',
+        'Тех. отдел · ОСИ №14','Холодные батареи, протечка, шум — опишите голосом.',
+        'pill-new','🔥 Отопление')">
+        <span class="cat-icon">🔥</span><span class="cat-name">Отопление</span>
+      </button>
+
+      <button class="cat-btn" onclick="openModuleVoice(
+        'mkd','🏗️ Ремонт МКД',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с общедомовым имуществом. Крыша, фасад, подъезд, подвал — любая неисправность важна. Заявка поступит управляющей компании.',
+        'Тех. отдел · УК АбайГрупп','Кровля, фасад, подъезд, окна МКД — опишите голосом.',
+        'pill-new','🏗️ МКД')">
+        <span class="cat-icon">🏗️</span><span class="cat-name">Ремонт МКД</span>
+      </button>
+
+      <button class="cat-btn" onclick="openModuleVoice(
+        'other','📦 Другое',
+        'Уважаемый житель квартиры номер 23. Вы можете описать любую другую проблему или пожелание. Ваше обращение будет зарегистрировано и рассмотрено председателем ОСИ.',
+        'Тех. отдел · ОСИ №14','Любая проблема или пожелание — опишите голосом.',
+        'pill-new','📦 Другое')">
+        <span class="cat-icon">📦</span><span class="cat-name">Другое</span>
+      </button>
+
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== VOICE =================== -->
+<div class="screen" id="screen-voice">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">🎙️ Алау</h1>
+    <button class="back-topbar-btn" onclick="showScreen('screen-tickets')" style="font-size:12px;">📋 Мои заявки</button>
+  </div>
+  <div class="voice-screen" style="overflow-y:auto;">
+
+    <!-- STATE 0: Idle -->
+    <div id="vstate-idle">
+      <div class="orb-wrap">
+        <div class="orb" id="mic-orb" onclick="startRecording()" style="cursor:pointer;position:relative;">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+            <rect x="14" y="4" width="16" height="26" rx="8" fill="white"/>
+            <path d="M6 22c0 8.837 7.163 16 16 16s16-7.163 16-16" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <line x1="22" y1="38" x2="22" y2="44" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <line x1="15" y1="44" x2="29" y2="44" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="orb-label">Нажмите на микрофон</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6;text-align:center;max-width:280px;">
+          Голосовой помощник запишет вашу проблему,<br>создаст заявку и отправит председателю ОСИ
+        </div>
+      </div>
+      <div style="background:var(--teal-light);border-radius:14px;padding:14px 16px;margin:0 0 16px;border-left:3px solid var(--teal);">
+        <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;">ℹ️ Как это работает</div>
+        <div style="font-size:13px;color:#444;line-height:1.6;">
+          1. Нажмите на микрофон<br>
+          2. Произнесите описание проблемы<br>
+          3. Алау транскрибирует запись в текст<br>
+          4. Заявка регистрируется и поступает председателю<br>
+          5. Вы получаете номер заявки и можете её отслеживать
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE 1: Recording -->
+    <div id="vstate-recording" style="display:none;">
+      <div class="orb-wrap">
+        <div class="orb" id="mic-orb-rec" onclick="stopRecording()" style="background:radial-gradient(circle at 35% 35%,#e05a1e,#c0390e);cursor:pointer;animation:pulse-rec 1s ease-in-out infinite;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="white">
+            <rect x="6" y="6" width="16" height="16" rx="3"/>
+          </svg>
+        </div>
+        <div class="orb-label" style="color:#e05a1e;">● Идёт запись... нажмите для остановки</div>
+        <div id="rec-timer" style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:2px;">0:00</div>
+        <div style="display:flex;gap:4px;align-items:center;height:32px;" id="waveform">
+          <!-- waveform bars -->
+          <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+          <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+          <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        </div>
+        <div id="live-transcript" style="font-size:13px;color:var(--text-muted);text-align:center;min-height:20px;max-width:300px;font-style:italic;"></div>
+      </div>
+    </div>
+
+    <!-- STATE 2: Transcribing -->
+    <div id="vstate-processing" style="display:none;">
+      <div class="orb-wrap">
+        <div class="orb" style="animation:spin-glow 1.2s linear infinite;background:radial-gradient(circle at 35% 35%,#f5c842,#e05a1e);">⏳</div>
+        <div class="orb-label">Алау распознаёт речь...</div>
+        <div style="font-size:13px;color:var(--text-muted);">Обработка аудиозаписи</div>
+      </div>
+    </div>
+
+    <!-- STATE 3: Review transcript -->
+    <div id="vstate-review" style="display:none;flex-direction:column;gap:12px;">
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎤 Распознанный текст</div>
+        <div id="transcript-text" style="font-size:15px;color:var(--text);line-height:1.6;border:2px solid #e8e8e8;border-radius:10px;padding:12px;min-height:80px;" contenteditable="true"></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Вы можете отредактировать текст перед отправкой</div>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">📋 Детали заявки</div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">ЗАЯВИТЕЛЬ</div>
+          <div style="background:var(--teal-light);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:var(--teal);">Жилец кв. №23 · ОСИ №14</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">КАТЕГОРИЯ</div>
+          <select id="ticket-category" style="width:100%;border:2px solid #e8e8e8;border-radius:8px;padding:10px 12px;font-size:14px;outline:none;background:#fff;">
+            <option>🔧 Ремонт и обслуживание</option>
+            <option>💧 Вода и трубы</option>
+            <option>⚡ Электрика</option>
+            <option>🛗 Лифт</option>
+            <option>🔥 Отопление</option>
+            <option>🏗️ Общедомовое имущество</option>
+            <option>🛡️ Безопасность</option>
+            <option>📋 Прочее</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">ПРИОРИТЕТ</div>
+          <div style="display:flex;gap:8px;">
+            <button class="prio-btn active" data-prio="normal" onclick="setPrio(this)">🟡 Обычный</button>
+            <button class="prio-btn" data-prio="urgent" onclick="setPrio(this)">🔴 Срочный</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="resetVoice()" style="flex:1;padding:14px;border:2px solid #e0e0e0;border-radius:12px;background:#fff;font-size:14px;font-weight:600;color:var(--text-muted);cursor:pointer;">🔄 Перезаписать</button>
+        <button onclick="submitTicket()" style="flex:2;padding:14px;background:var(--teal);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">📤 Отправить заявку</button>
+      </div>
+    </div>
+
+    <!-- STATE 4: Ticket registered -->
+    <div id="vstate-done" style="display:none;flex-direction:column;gap:14px;">
+      <div style="background:linear-gradient(135deg,#edfaf3,#e0f5ea);border-radius:16px;padding:24px;text-align:center;">
+        <div style="font-size:52px;margin-bottom:10px;">✅</div>
+        <div style="font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;">Заявка зарегистрирована!</div>
+        <div id="ticket-number" style="font-size:28px;font-weight:900;color:var(--teal);margin-bottom:8px;">#147</div>
+        <div style="font-size:13px;color:#555;line-height:1.5;">Заявка передана председателю ОСИ и сохранена в истории. Ожидайте обратной связи в течение 2 часов.</div>
+      </div>
+      <!-- Ticket card preview -->
+      <div id="ticket-card-preview" style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);" id="tc-number">Заявка #147</div>
+          <span style="background:#fff3e0;color:#e65100;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700;">⏳ В обработке</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;" id="tc-meta">28 мая 2026 · 08:35 · кв.23 · ОСИ №14</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.55;margin-bottom:14px;" id="tc-text"></div>
+        <!-- Action buttons -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <button onclick="downloadTicket()" style="padding:10px 6px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <span style="font-size:18px;">📥</span>Скачать
+          </button>
+          <button onclick="shareWhatsApp()" style="padding:10px 6px;border:2px solid #25d366;border-radius:10px;background:#f0fff4;font-size:12px;font-weight:600;color:#128c7e;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <span style="font-size:18px;">💚</span>WhatsApp
+          </button>
+          <button onclick="showScreen('screen-tickets')" style="padding:10px 6px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <span style="font-size:18px;">📋</span>История
+          </button>
+        </div>
+      </div>
+      <button onclick="resetVoice()" style="width:100%;padding:14px;background:none;border:2px solid var(--teal);border-radius:12px;color:var(--teal);font-size:14px;font-weight:700;cursor:pointer;">🎙️ Создать новую заявку</button>
+    </div>
+
+  </div><!-- /voice-screen -->
+</div>
+
+<!-- =================== TICKET HISTORY =================== -->
+<div class="screen" id="screen-tickets">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-voice')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">📋 Мои заявки</h1>
+    <div style="font-size:11px;color:rgba(255,255,255,0.8);">кв.23</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;" id="tickets-list">
+    <!-- seeded tickets -->
+    <div class="tkt-card done">
+      <div class="tkt-header"><div class="tkt-num">#113</div><span class="tkt-status status-done">✅ Выполнена</span></div>
+      <div class="tkt-meta">20 мая · кв.23 · Лифт</div>
+      <div class="tkt-text">Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.</div>
+      <div class="tkt-actions">
+        <button onclick="downloadTicketById('#113','Лифт №2 периодически останавливается между этажами.')" class="tkt-btn">📥 Скачать</button>
+        <button onclick="shareWAById('#113','Лифт №2 периодически останавливается между этажами.')" class="tkt-btn wa">💚 WhatsApp</button>
+      </div>
+    </div>
+    <div class="tkt-card processing">
+      <div class="tkt-header"><div class="tkt-num">#128</div><span class="tkt-status status-proc">⏳ В обработке</span></div>
+      <div class="tkt-meta">25 мая · кв.23 · Электрика</div>
+      <div class="tkt-text">В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.</div>
+      <div class="tkt-actions">
+        <button onclick="downloadTicketById('#128','В подъезде №1 на 3-м этаже не работает освещение.')" class="tkt-btn">📥 Скачать</button>
+        <button onclick="shareWAById('#128','В подъезде №1 на 3-м этаже не работает освещение.')" class="tkt-btn wa">💚 WhatsApp</button>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn active" onclick="showScreen('screen-tickets')"><span class="nav-icon">📋</span><span class="nav-label">Заявки</span></button>
+  </nav>
+</div>
+
+<!-- =================== MODULE VOICE SCREEN =================== -->
+<div class="screen" id="screen-module-voice">
+  <div class="topbar" id="mv-topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 id="mv-topbar-title" style="color:#fff;font-size:17px;font-weight:700;">🎙️ Алау</h1>
+    <button class="back-topbar-btn" onclick="showScreen('screen-tickets')" style="font-size:11px;">📋 Заявки</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+
+    <!-- Context card -->
+    <div id="mv-context-card" style="background:linear-gradient(135deg,#1c3a6b,#2a5298);padding:16px;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:4px;" id="mv-meta"></div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;" id="mv-title-text"></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.5;" id="mv-desc-text"></div>
+    </div>
+
+    <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:14px;">
+
+      <!-- Idle -->
+      <div id="mv-idle">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:20px 0 14px;gap:12px;">
+          <div class="orb" id="mv-orb" onclick="mvStartRecording()" style="cursor:pointer;">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <rect x="14" y="4" width="16" height="26" rx="8" fill="white"/>
+              <path d="M6 22c0 8.837 7.163 16 16 16s16-7.163 16-16" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              <line x1="22" y1="38" x2="22" y2="44" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              <line x1="15" y1="44" x2="29" y2="44" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div style="font-size:15px;font-weight:700;color:var(--teal);">Нажмите на микрофон</div>
+          <div style="font-size:13px;color:var(--text-muted);text-align:center;max-width:260px;line-height:1.5;" id="mv-invite-text">Голосовой помощник запишет вашу проблему и оформит заявку</div>
+        </div>
+        <div style="background:var(--teal-light);border-radius:12px;padding:12px 14px;border-left:3px solid var(--teal);font-size:13px;color:#444;line-height:1.6;">
+          Запись будет автоматически транскрибирована.<br>
+          Заявка поступит председателю ОСИ и сохранится в истории.
+        </div>
+      </div>
+
+      <!-- Recording -->
+      <div id="mv-recording" style="display:none;">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:12px;">
+          <div class="orb" onclick="mvStopRecording()" style="background:radial-gradient(circle at 35% 35%,#e05a1e,#c0390e);cursor:pointer;animation:pulse-rec 1s ease-in-out infinite;">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="white"><rect x="6" y="6" width="16" height="16" rx="3"/></svg>
+          </div>
+          <div style="color:#e05a1e;font-size:14px;font-weight:700;">● Запись... нажмите стоп</div>
+          <div id="mv-timer" style="font-size:32px;font-weight:900;color:var(--text);letter-spacing:2px;">0:00</div>
+          <div style="display:flex;gap:4px;align-items:center;height:32px;">
+            <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+            <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+            <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+          </div>
+          <div id="mv-live" style="font-size:12px;color:var(--text-muted);font-style:italic;text-align:center;"></div>
+        </div>
+      </div>
+
+      <!-- Processing -->
+      <div id="mv-processing" style="display:none;">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:14px;">
+          <div class="orb" style="animation:spin-glow 1.2s linear infinite;background:radial-gradient(circle at 35% 35%,#f5c842,#e05a1e);">⏳</div>
+          <div style="font-size:14px;font-weight:700;color:var(--teal);">Распознаю речь...</div>
+        </div>
+      </div>
+
+      <!-- Review -->
+      <div id="mv-review" style="display:none;flex-direction:column;gap:12px;">
+        <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
+          <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:7px;">🎤 Распознанный текст</div>
+          <div id="mv-transcript" style="font-size:14px;color:var(--text);line-height:1.6;border:2px solid #e8e8e8;border-radius:9px;padding:11px;min-height:70px;" contenteditable="true"></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">Отредактируйте при необходимости</div>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
+          <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:8px;">📋 Детали</div>
+          <div style="background:var(--teal-light);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--teal);margin-bottom:10px;">Кв. №23 · ОСИ №14</div>
+          <select id="mv-category" style="width:100%;border:2px solid #e8e8e8;border-radius:8px;padding:10px;font-size:13px;outline:none;background:#fff;">
+            <option>🔧 Ремонт и обслуживание</option>
+            <option>💧 Вода и трубы</option>
+            <option>⚡ Электрика</option>
+            <option>🛗 Лифт</option>
+            <option>🔥 Отопление</option>
+            <option>🏗️ Общедомовое имущество</option>
+            <option>🗳️ Голосование / мнение</option>
+            <option>💬 Предложение жильца</option>
+            <option>📅 Вопрос к собранию</option>
+            <option>🛡️ Безопасность</option>
+            <option>📋 Прочее</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="mvReset()" style="flex:1;padding:13px;border:2px solid #e0e0e0;border-radius:11px;background:#fff;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;">🔄 Перезаписать</button>
+          <button onclick="mvSubmit()" style="flex:2;padding:13px;background:var(--teal);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">📤 Отправить заявку</button>
+        </div>
+      </div>
+
+      <!-- Done -->
+      <div id="mv-done" style="display:none;flex-direction:column;gap:12px;">
+        <div style="background:linear-gradient(135deg,#edfaf3,#e0f5ea);border-radius:16px;padding:22px;text-align:center;">
+          <div style="font-size:48px;margin-bottom:8px;">✅</div>
+          <div style="font-size:17px;font-weight:800;color:var(--green);margin-bottom:4px;">Заявка зарегистрирована!</div>
+          <div id="mv-ticket-num" style="font-size:26px;font-weight:900;color:var(--teal);margin-bottom:6px;">#148</div>
+          <div style="font-size:13px;color:#555;line-height:1.5;">Передана председателю ОСИ. Ожидайте ответа в течение 2 часов.</div>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;" id="mv-done-num">Заявка #148</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" id="mv-done-meta"></div>
+          <div style="font-size:13px;color:#444;line-height:1.5;margin-bottom:12px;" id="mv-done-text"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <button onclick="mvDownload()" style="padding:10px 4px;border:2px solid #e0e0e0;border-radius:9px;background:#fff;font-size:11px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:18px;">📥</span>Скачать</button>
+            <button onclick="mvWhatsApp()" style="padding:10px 4px;border:2px solid #25d366;border-radius:9px;background:#f0fff4;font-size:11px;font-weight:600;color:#128c7e;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:18px;">💚</span>WhatsApp</button>
+            <button onclick="showScreen('screen-tickets')" style="padding:10px 4px;border:2px solid #e0e0e0;border-radius:9px;background:#fff;font-size:11px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:18px;">📋</span>История</button>
+          </div>
+        </div>
+        <button onclick="mvReset()" style="width:100%;padding:13px;background:none;border:2px solid var(--teal);border-radius:11px;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;">🎙️ Новая заявка</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =================== ORDER MODAL =================== -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-company-name">CleanCity Semey</div>
+    <div class="modal-sub">✅ Модерация пройдена · Alau Маркетплейс</div>
+    <div class="modal-field"><label>Ваша квартира</label><div class="modal-apt">Кв. №23 · ОСИ №14</div></div>
+    <div class="modal-field"><label>Телефон для связи</label><input class="modal-input" type="tel" placeholder="+7 (___) ___-__-__"></div>
+    <div class="modal-field"><label>Комментарий (необязательно)</label><input class="modal-input" type="text" placeholder="Уточните детали..."></div>
+    <div class="modal-price-row">
+      <span class="modal-price-label" id="modal-price-label">от 8 000 ₸</span>
+      <span class="modal-price-value" id="modal-discount-value">−20% для ОСИ</span>
+    </div>
+    <button class="modal-submit" onclick="closeModal(true)">📤 Отправить заявку поставщику</button>
+    <button class="modal-cancel" onclick="closeModal(false)">Отмена</button>
+  </div>
+</div>
+
+<!-- =================== AGENDA MODAL =================== -->
+<div class="modal-overlay" id="agenda-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 Внести вопрос на повестку</div>
+    <div class="modal-sub">Кв. №23 · ОСИ №14 — ваше имя будет указано как автор</div>
+    <div class="modal-field"><label>Опишите вопрос</label><textarea class="modal-input" rows="3" placeholder="Например: установить лавочки у подъезда №3..." id="agenda-input" style="resize:none;"></textarea></div>
+    <div class="modal-field"><label>Категория</label>
+      <select class="modal-input" style="appearance:none;">
+        <option>🏗️ Благоустройство</option>
+        <option>🔧 Ремонт и обслуживание</option>
+        <option>🛡️ Безопасность</option>
+        <option>💰 Финансы и бюджет</option>
+        <option>📋 Прочее</option>
+      </select>
+    </div>
+    <button class="modal-submit" onclick="submitAgenda()">📋 Отправить на повестку</button>
+    <button class="modal-cancel" onclick="document.getElementById('agenda-modal').classList.remove('open')">Отмена</button>
+  </div>
+</div>
+
+</div><!-- /phone -->
+
+<script>
+// ===== SCREENS =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ===== REQUESTS =====
+function submitRequest(catName) {
+  const el = document.getElementById('request-success');
+  if (el) { el.style.display = 'block'; setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),50); }
+}
+
+// ===== VOICE / MIC / TICKETS =====
+const APT = '23';
+const OSI = 'ОСИ №14';
+let mediaRecorder = null;
+let audioChunks = [];
+let recTimerInterval = null;
+let recSeconds = 0;
+let lastTranscript = '';
+let ticketCounter = 148;
+const tickets = [
+  {id:'#113', date:'20 мая 2026', time:'14:22', cat:'Лифт', text:'Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.', status:'done'},
+  {id:'#128', date:'25 мая 2026', time:'09:10', cat:'Электрика', text:'В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.', status:'proc'},
+];
+
+function voiceState(state) {
+  ['idle','recording','processing','review','done'].forEach(s => {
+    const el = document.getElementById('vstate-'+s);
+    if (el) el.style.display = s===state ? (s==='idle'||s==='recording'||s==='processing'?'block':'flex') : 'none';
+  });
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size>0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => { stream.getTracks().forEach(t=>t.stop()); processRecording(); };
+    mediaRecorder.start(200);
+    voiceState('recording');
+    recSeconds = 0;
+    document.getElementById('rec-timer').textContent = '0:00';
+    recTimerInterval = setInterval(() => {
+      recSeconds++;
+      const m = Math.floor(recSeconds/60), s = recSeconds%60;
+      document.getElementById('rec-timer').textContent = m+':'+(s<10?'0':'')+s;
+      // Simulate live transcript hints
+      const hints = ['Слышу вас...','Записываю...','Продолжайте говорить...'];
+      document.getElementById('live-transcript').textContent = hints[Math.floor(recSeconds/3)%hints.length];
+    }, 1000);
+    // Announce to user
+    setTimeout(() => {
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(
+          `Уважаемый житель квартиры номер ${APT}. Пожалуйста, сообщите о вашей проблеме. Ваша заявка будет оформлена письменно и принята в работу администрацией ${OSI}.`
+        );
+        u.lang = 'ru-RU'; u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      }
+    }, 300);
+  } catch(err) {
+    // Fallback: simulate recording for demo
+    simulateRecording();
+  }
+}
+
+function simulateRecording() {
+  voiceState('recording');
+  recSeconds = 0;
+  document.getElementById('rec-timer').textContent = '0:00';
+  const hints = ['Слышу вас...','Записываю...','Продолжайте говорить...'];
+  recTimerInterval = setInterval(() => {
+    recSeconds++;
+    const m = Math.floor(recSeconds/60), s = recSeconds%60;
+    document.getElementById('rec-timer').textContent = m+':'+(s<10?'0':'')+s;
+    document.getElementById('live-transcript').textContent = hints[Math.floor(recSeconds/3)%hints.length];
+    if (recSeconds >= 8) { clearInterval(recTimerInterval); simulateTranscription(); }
+  }, 1000);
+}
+
+function stopRecording() {
+  clearInterval(recTimerInterval);
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  } else {
+    simulateTranscription();
+  }
+}
+
+function processRecording() {
+  voiceState('processing');
+  // Try Web Speech API live transcription (already captured in live-transcript)
+  // Here we simulate server-side transcription result after 2s
+  setTimeout(() => {
+    const sampleTexts = [
+      'В нашем подъезде №1 не работает освещение на третьем этаже уже больше двух недель. Темно и небезопасно, особенно для пожилых жильцов.',
+      'Прошу проверить протечку в крыше над пятым этажом. При дожде вода капает в коридоре.',
+      'В лифте подъезда №2 странный шум при работе и двери закрываются с задержкой. Боюсь, что скоро сломается.',
+    ];
+    lastTranscript = sampleTexts[Math.floor(Math.random()*sampleTexts.length)];
+    document.getElementById('transcript-text').textContent = lastTranscript;
+    voiceState('review');
+  }, 2200);
+}
+
+function simulateTranscription() {
+  voiceState('processing');
+  setTimeout(() => {
+    lastTranscript = 'В нашем подъезде №1 не работает освещение на третьем этаже уже больше двух недель. Темно и небезопасно, особенно для пожилых жильцов.';
+    document.getElementById('transcript-text').textContent = lastTranscript;
+    voiceState('review');
+  }, 2000);
+}
+
+function setPrio(btn) {
+  document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function submitTicket() {
+  const text = document.getElementById('transcript-text').textContent.trim();
+  const cat = document.getElementById('ticket-category').value;
+  const prio = document.querySelector('.prio-btn.active')?.dataset.prio || 'normal';
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  const timeStr = now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  const id = '#'+ticketCounter++;
+
+  // Add to tickets array
+  tickets.unshift({id, date:dateStr, time:timeStr, cat:cat.replace(/^[^\w]+/,'').split(' ')[0], text, status:'proc'});
+
+  // Populate done card
+  document.getElementById('ticket-number').textContent = id;
+  document.getElementById('tc-number').textContent = 'Заявка '+id;
+  document.getElementById('tc-meta').textContent = dateStr+' · '+timeStr+' · кв.'+APT+' · '+OSI;
+  document.getElementById('tc-text').textContent = text;
+  document.getElementById('ticket-card-preview').dataset.ticketId = id;
+  document.getElementById('ticket-card-preview').dataset.ticketText = text;
+
+  // Refresh ticket list
+  renderTickets();
+  voiceState('done');
+}
+
+function resetVoice() {
+  clearInterval(recTimerInterval);
+  if (mediaRecorder && mediaRecorder.state!=='inactive') try{mediaRecorder.stop();}catch(e){}
+  mediaRecorder = null; audioChunks = [];
+  document.getElementById('live-transcript').textContent = '';
+  document.getElementById('rec-timer').textContent = '0:00';
+  voiceState('idle');
+}
+
+function renderTickets() {
+  const list = document.getElementById('tickets-list');
+  list.innerHTML = tickets.map(t => `
+    <div class="tkt-card ${t.status==='done'?'done':'processing'}">
+      <div class="tkt-header"><div class="tkt-num">${t.id}</div><span class="tkt-status ${t.status==='done'?'status-done':'status-proc'}">${t.status==='done'?'✅ Выполнена':'⏳ В обработке'}</span></div>
+      <div class="tkt-meta">${t.date} · ${t.time} · кв.${APT} · ${t.cat}</div>
+      <div class="tkt-text">${t.text}</div>
+      <div class="tkt-actions">
+        <button onclick="downloadTicketById('${t.id}','${t.text.replace(/'/g,"\\'")}','${t.date} ${t.time}')" class="tkt-btn">📥 Скачать</button>
+        <button onclick="shareWAById('${t.id}','${t.text.replace(/'/g,"\\'")}','${t.date} ${t.time}')" class="tkt-btn wa">💚 WhatsApp</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildTicketText(id, text, dateStr) {
+  return `ЗАЯВКА ${id}
+ОСИ №14 · Семей
+Заявитель: Жилец кв. №${APT}
+Дата: ${dateStr || new Date().toLocaleString('ru-RU')}
+Статус: Принята в обработку
+
+ОПИСАНИЕ ПРОБЛЕМЫ:
+${text}
+
+---
+Алау — Кабинет жильца ОСИ №14
+Заявка зарегистрирована автоматически через голосовой помощник.`;
+}
+
+function downloadTicket() {
+  const card = document.getElementById('ticket-card-preview');
+  const id = card.dataset.ticketId || '#147';
+  const text = card.dataset.ticketText || document.getElementById('tc-text').textContent;
+  const meta = document.getElementById('tc-meta').textContent;
+  downloadTicketById(id, text, meta);
+}
+
+function downloadTicketById(id, text, dateStr) {
+  const content = buildTicketText(id, text, dateStr);
+  const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `Заявка_${id}_кв${APT}.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function shareWhatsApp() {
+  const card = document.getElementById('ticket-card-preview');
+  const id = card.dataset.ticketId || '#147';
+  const text = card.dataset.ticketText || document.getElementById('tc-text').textContent;
+  const meta = document.getElementById('tc-meta').textContent;
+  shareWAById(id, text, meta);
+}
+
+function shareWAById(id, text, dateStr) {
+  const msg = encodeURIComponent(`📋 *Заявка ${id} · ОСИ №14*\n🏠 Кв. №${APT} · Семей\n📅 ${dateStr}\n\n${text}\n\n_Отправлено через Алау — Кабинет жильца_`);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+// Init tickets on load
+renderTickets();
+
+// ===== ANN CAROUSEL DRAG (desktop+mobile) =====
+let annDragging=false, annStartX=0, annScrollStart=0;
+function annDragStart(e){annDragging=true;annStartX=e.pageX;annScrollStart=document.getElementById('ann-carousel').scrollLeft;document.getElementById('ann-carousel').style.cursor='grabbing';}
+function annDragMove(e){if(!annDragging)return;e.preventDefault();const dx=e.pageX-annStartX;document.getElementById('ann-carousel').scrollLeft=annScrollStart-dx;}
+function annDragEnd(){annDragging=false;document.getElementById('ann-carousel').style.cursor='grab';updateAnnDots();}
+function updateAnnDots(){
+  const c=document.getElementById('ann-carousel');
+  const w=c.offsetWidth, idx=Math.round(c.scrollLeft/(155+10));
+  document.querySelectorAll('.ann-dot-ind').forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const c=document.getElementById('ann-carousel');
+  if(c) c.addEventListener('scroll',()=>updateAnnDots(),{passive:true});
+});
+
+// ===== MODULE VOICE =====
+let mvRecorder=null, mvChunks=[], mvTimer=null, mvSecs=0;
+let mvCurrentId='', mvCurrentTitle='', mvCurrentInvite='';
+
+function openModuleVoice(type, title, invite, meta, desc, pillClass, pillText) {
+  mvCurrentId = type;
+  mvCurrentTitle = title;
+  mvCurrentInvite = invite;
+  document.getElementById('mv-topbar-title').textContent = title;
+  document.getElementById('mv-meta').textContent = meta;
+  document.getElementById('mv-title-text').textContent = title;
+  document.getElementById('mv-desc-text').textContent = desc;
+  document.getElementById('mv-invite-text').textContent = 'Голосовой помощник запишет ваше сообщение и оформит заявку в ОСИ №14';
+  // Pre-select category
+  const targetCat = mvCatMap[type] || '';
+  const catSel = document.getElementById('mv-category');
+  if (catSel && targetCat) {
+    for (let o of catSel.options) {
+      if (o.text === targetCat) { catSel.value = o.text; o.selected = true; break; }
+    }
+  }
+  mvReset();
+  showScreen('screen-module-voice');
+}
+
+function mvState(s) {
+  ['idle','recording','processing','review','done'].forEach(n=>{
+    const el=document.getElementById('mv-'+n);
+    if(el) el.style.display = n===s ? (s==='review'||s==='done'?'flex':'block') : 'none';
+  });
+}
+
+async function mvStartRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    mvChunks=[];
+    mvRecorder = new MediaRecorder(stream);
+    mvRecorder.ondataavailable = e=>{if(e.data.size>0)mvChunks.push(e.data);};
+    mvRecorder.onstop = ()=>{stream.getTracks().forEach(t=>t.stop());mvProcess();};
+    mvRecorder.start(200);
+    mvState('recording');
+    mvSecs=0;
+    document.getElementById('mv-timer').textContent='0:00';
+    mvTimer=setInterval(()=>{
+      mvSecs++;
+      const m=Math.floor(mvSecs/60),s=mvSecs%60;
+      document.getElementById('mv-timer').textContent=m+':'+(s<10?'0':'')+s;
+      const hints=['Слышу вас...','Записываю...','Продолжайте...','Записываю вашу заявку...'];
+      document.getElementById('mv-live').textContent=hints[Math.floor(mvSecs/2)%hints.length];
+    },1000);
+    // Voice greeting
+    if('speechSynthesis' in window){
+      const u=new SpeechSynthesisUtterance(mvCurrentInvite);
+      u.lang='ru-RU'; u.rate=0.88;
+      window.speechSynthesis.speak(u);
+    }
+  } catch(e) { mvSimulate(); }
+}
+
+function mvSimulate() {
+  mvState('recording');
+  mvSecs=0;
+  const hints=['Слышу вас...','Записываю...','Продолжайте...'];
+  mvTimer=setInterval(()=>{
+    mvSecs++;
+    const m=Math.floor(mvSecs/60),s=mvSecs%60;
+    document.getElementById('mv-timer').textContent=m+':'+(s<10?'0':'')+s;
+    document.getElementById('mv-live').textContent=hints[Math.floor(mvSecs/2)%hints.length];
+    if(mvSecs>=7){clearInterval(mvTimer);mvProcess();}
+  },1000);
+}
+
+function mvStopRecording() {
+  clearInterval(mvTimer);
+  if(mvRecorder && mvRecorder.state!=='inactive') mvRecorder.stop();
+  else mvProcess();
+}
+
+const mvSamples = {
+  urgent: 'У нас в кв.23 нет холодной воды уже с утра, хотя по объявлению должна быть до 17:00. Прошу проверить состояние подачи воды в подъезде №2.',
+  vote: 'Я, жилец квартиры 23, поддерживаю установку нового домофона. Старый работает плохо, коды давно не менялись. Считаю это приоритетным вопросом.',
+  chat: 'Хочу предложить организовать субботник 7 июня. Двор давно требует уборки, особенно у второго подъезда. Готов участвовать лично.',
+  meeting: 'На собрании 1 июня прошу включить в повестку вопрос об установке камер видеонаблюдения у подъездов. Неоднократно были кражи из подъезда.',
+  promo: 'Хочу узнать подробности о страховке от КазГарант. Интересует покрытие при затоплении соседями. Прошу перезвонить на номер указанный в моём профиле.',
+  repair: 'В подъезде №1 на третьем этаже не работает лампочка уже больше двух недель. Темно, пожилым жильцам неудобно. Прошу заменить срочно.',
+  // Категории «Заявка мастеру»
+  water: 'В квартире 23 на кухне протекает кран уже третий день. Вода капает постоянно, пол мокрый. Прошу прислать сантехника как можно скорее.',
+  electric: 'В подъезде номер один на третьем этаже не работает освещение уже две недели. Очень темно, особенно опасно для пожилых жильцов и детей. Прошу срочно исправить.',
+  lift: 'Лифт в подъезде номер два издаёт сильный скрежет при движении и иногда не закрывает двери с первого раза. Боюсь, что скоро застрянет. Прошу вызвать лифтового механика.',
+  heat: 'В нашей квартире батареи стали еле тёплыми, хотя на улице уже холодно. В комнатах не больше 17 градусов. Прошу проверить систему отопления в подъезде номер один.',
+  mkd: 'На крыше над пятым этажом есть протечка. При дожде вода попадает в коридор на последнем этаже и капает с потолка. Прошу срочно осмотреть и устранить течь.',
+  other: 'Прошу рассмотреть возможность установки лавочек и урн у подъезда номер три. Пожилым жильцам негде присесть. Данный вопрос поднимался уже несколько раз.',
+};
+
+const mvCatMap = {
+  urgent: '💧 Вода и трубы', vote: '🗳️ Голосование / мнение', chat: '💬 Предложение жильца',
+  meeting: '📅 Вопрос к собранию', promo: '💬 Предложение жильца', repair: '🔧 Ремонт и обслуживание',
+  water: '💧 Вода и трубы', electric: '⚡ Электрика', lift: '🛗 Лифт',
+  heat: '🔥 Отопление', mkd: '🏗️ Общедомовое имущество', other: '📋 Прочее',
+};
+
+function mvProcess() {
+  mvState('processing');
+  setTimeout(()=>{
+    const text = mvSamples[mvCurrentId] || 'В квартире 23 проблема требует внимания управляющей компании. Прошу принять меры в ближайшее время.';
+    document.getElementById('mv-transcript').textContent = text;
+    // set category based on type
+    mvState('review');
+  },2000);
+}
+
+function mvSubmit() {
+  const text = document.getElementById('mv-transcript').textContent.trim();
+  if(!text){alert('Текст заявки пустой');return;}
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  const timeStr=now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  const cat=document.getElementById('mv-category').value;
+  const id='#'+ticketCounter++;
+  tickets.unshift({id,date:dateStr,time:timeStr,cat:cat.replace(/^[^\w]+/,'').split(' ').slice(0,2).join(' '),text,status:'proc'});
+  renderTickets();
+  document.getElementById('mv-ticket-num').textContent=id;
+  document.getElementById('mv-done-num').textContent='Заявка '+id;
+  document.getElementById('mv-done-meta').textContent=dateStr+' · '+timeStr+' · кв.23 · ОСИ №14';
+  document.getElementById('mv-done-text').textContent=text;
+  document.getElementById('mv-done').dataset.id=id;
+  document.getElementById('mv-done').dataset.text=text;
+  document.getElementById('mv-done').dataset.meta=dateStr+' '+timeStr;
+  mvState('done');
+}
+
+function mvReset() {
+  clearInterval(mvTimer);
+  if(mvRecorder&&mvRecorder.state!=='inactive')try{mvRecorder.stop();}catch(e){}
+  mvRecorder=null;mvChunks=[];mvSecs=0;
+  const t=document.getElementById('mv-timer');if(t)t.textContent='0:00';
+  const l=document.getElementById('mv-live');if(l)l.textContent='';
+  mvState('idle');
+}
+
+function mvDownload() {
+  const d=document.getElementById('mv-done');
+  downloadTicketById(d.dataset.id||'#148', d.dataset.text||'', d.dataset.meta||'');
+}
+function mvWhatsApp() {
+  const d=document.getElementById('mv-done');
+  shareWAById(d.dataset.id||'#148', d.dataset.text||'', d.dataset.meta||'');
+}
+
+// ===== ORDER MODAL =====
+function openModal(name, price, discount) {
+  document.getElementById('modal-company-name').textContent = name;
+  document.getElementById('modal-price-label').textContent = price;
+  document.getElementById('modal-discount-value').textContent = discount;
+  document.getElementById('order-modal').classList.add('open');
+}
+function closeModal(submitted) {
+  document.getElementById('order-modal').classList.remove('open');
+  if (submitted) setTimeout(() => alert('✅ Заявка отправлена! Поставщик свяжется с вами в течение 30 минут.'), 100);
+}
+document.getElementById('order-modal').addEventListener('click', function(e) { if(e.target===this) closeModal(false); });
+
+// ===== CAROUSEL =====
+const TOTAL = 5;
+let current = 0;
+function initCarousel() {
+  const dotsEl = document.getElementById('carousel-dots');
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    d.onclick = () => goTo(i);
+    d.style.cursor = 'pointer';
+    dotsEl.appendChild(d);
+  }
+  updateCarousel();
+}
+function updateCarousel() {
+  document.getElementById('cards-track').style.transform = `translateX(-${current*100}%)`;
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===current));
+  document.getElementById('carousel-counter').textContent = `${current+1} / ${TOTAL}`;
+  document.getElementById('arr-prev').disabled = current===0;
+  document.getElementById('arr-next').disabled = current===TOTAL-1;
+}
+function carouselMove(dir) { const n=current+dir; if(n>=0&&n<TOTAL){current=n;updateCarousel();} }
+function goTo(idx) { current=idx; updateCarousel(); }
+let tSX=0,tSY=0;
+const vp = document.getElementById('cards-viewport');
+vp.addEventListener('touchstart', e=>{tSX=e.touches[0].clientX;tSY=e.touches[0].clientY;},{passive:true});
+vp.addEventListener('touchend', e=>{const dx=e.changedTouches[0].clientX-tSX,dy=e.changedTouches[0].clientY-tSY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40)carouselMove(dx<0?1:-1);},{passive:true});
+let mD=false,mSX=0;
+vp.addEventListener('mousedown',e=>{mD=true;mSX=e.clientX;});
+vp.addEventListener('mouseup',e=>{if(!mD)return;mD=false;const dx=e.clientX-mSX;if(Math.abs(dx)>40)carouselMove(dx<0?1:-1);});
+vp.addEventListener('mouseleave',()=>mD=false);
+initCarousel();
+
+// ===== CHAT TABS =====
+function switchChatTab(tab) {
+  ['chat','agenda','results'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    const pane = document.getElementById('chatpane-'+t);
+    if (pane) pane.style.display = t===tab ? 'flex' : 'none';
+  });
+  const inputBar = document.getElementById('chat-input-bar');
+  if (inputBar) inputBar.style.display = tab==='chat' ? 'flex' : 'none';
+}
+
+// ===== CHAT SEND =====
+function sendChatMsg() {
+  const inp = document.getElementById('chat-text');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  const container = document.getElementById('chatpane-chat');
+  const newMsgs = document.getElementById('chat-new-messages');
+  const now = new Date();
+  const time = now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  const div = document.createElement('div');
+  div.className = 'chat-msg mine';
+  div.innerHTML = `<div class="chat-avatar" style="background:var(--teal);color:#fff;">23</div><div><div class="chat-sender" style="text-align:right;">Вы · кв.23</div><div class="chat-bubble">${text.replace(/</g,'&lt;')}</div><div class="chat-time" style="text-align:right;">${time}</div></div>`;
+  newMsgs.before(div);
+  setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+}
+
+// ===== VOTE AGENDA =====
+function voteAgenda(btn, choice) {
+  const card = btn.closest('.agenda-card');
+  const actions = card.querySelector('.agenda-actions');
+  const result = card.querySelector('[id^=agenda-result]');
+  actions.innerHTML = choice==='yes'
+    ? '<span style="color:var(--teal);font-weight:700;font-size:13px;">✅ Вы поддержали этот вопрос</span>'
+    : '<span style="color:#c62828;font-weight:700;font-size:13px;">👎 Вы проголосовали против</span>';
+  if (result) { result.style.display='block'; result.textContent = '📊 12 жильцов поддержали · 3 против · будет вынесен на голосование'; }
+}
+
+// ===== AGENDA MODAL =====
+function showAgendaModal() { document.getElementById('agenda-modal').classList.add('open'); }
+document.getElementById('agenda-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+function submitAgenda() {
+  const text = document.getElementById('agenda-input').value.trim();
+  if (!text) { alert('Введите текст вопроса'); return; }
+  document.getElementById('agenda-modal').classList.remove('open');
+  document.getElementById('agenda-input').value = '';
+  const chatBody = document.getElementById('chatpane-chat');
+  const newMsgs = document.getElementById('chat-new-messages');
+  const card = document.createElement('div');
+  card.className = 'agenda-card';
+  card.innerHTML = `<div class="agenda-label">📋 Вопрос на повестку от кв.23</div><div class="agenda-text">${text.replace(/</g,'&lt;')}</div><div class="agenda-actions"><button class="agenda-btn yes">👍 Поддержать</button><button class="agenda-btn no">👎 Против</button></div>`;
+  card.querySelectorAll('.agenda-btn').forEach(b => b.onclick = function(){voteAgenda(this,this.classList.contains('yes')?'yes':'no');});
+  newMsgs.before(card);
+  showScreen('screen-chat');
+  switchChatTab('chat');
+  setTimeout(()=>chatBody.scrollTop=chatBody.scrollHeight,100);
+}
+</script>
+</body>
+</html>
