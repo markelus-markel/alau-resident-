@@ -443,12 +443,12 @@
         </div>
 
         <!-- Module 2: Голосование -->
-        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер 23. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — в демо-версии позиция показывается только на вашем экране и в итог голосования не засчитывается.','21 мая · Осталось 3 дня','Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
+        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер 23. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — в демо-версии позиция показывается только на вашем экране и в итог голосования не засчитывается.',voteMeta(),'Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
           <div class="amc-icon" style="background:#f0f0ff;">🗳️</div>
           <div class="amc-title">Голосование: домофон</div>
-          <div class="amc-sub">21 мая · Осталось 3 дня</div>
-          <div class="amc-text">Ваш голос ещё не учтён</div>
-          <span class="amc-pill" style="background:#e8eaf6;color:#3949ab;">Требует ответа</span>
+          <div class="amc-sub" data-vote="meta">…</div>
+          <div class="amc-text" data-vote="mine-text">Ваш голос ещё не учтён</div>
+          <span class="amc-pill" data-vote="pill" style="background:#e8eaf6;color:#3949ab;">Требует ответа</span>
           <div class="amc-mic">🎙️ Высказаться</div>
         </div>
 
@@ -548,7 +548,7 @@
     <div class="ann-full-card" onclick="showScreen('screen-voting')">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#f0f0ff;">🗳️</div>
-        <div class="ann-full-body"><div class="ann-full-title">Голосование: новый домофон</div><div class="ann-full-meta">21 мая · Осталось 3 дня</div></div>
+        <div class="ann-full-body"><div class="ann-full-title">Голосование: новый домофон</div><div class="ann-full-meta" data-vote="meta">…</div></div>
         <span class="ann-tag tag-action">Голосовать →</span>
       </div>
       <div class="ann-full-text">Предлагается установить новый домофон в подъезде №2. Стоимость: 85 000 ₸ = ~977 ₸ с квартиры. Нажмите для голосования.</div>
@@ -686,47 +686,37 @@
         </div>
       </div>
 
-      <div class="chat-date-sep">Сегодня · 28 мая</div>
+      <div class="chat-date-sep">Сегодня</div>
 
       <!-- Poll result card -->
       <div class="poll-result">
-        <div class="poll-result-title">📊 Итог голосования: домофон подъезда №2</div>
+        <div class="poll-result-title">📊 Голосование: домофон подъезда №2</div>
         <div class="poll-bar-row">
           <span class="poll-bar-label">👍 За</span>
-          <div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:63%"></div></div>
-          <span class="poll-bar-pct">63%</span>
+          <div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" data-vote="yes-bar" style="width:0%"></div></div>
+          <span class="poll-bar-pct" data-vote="yes-pct">0%</span>
         </div>
         <div class="poll-bar-row">
           <span class="poll-bar-label">👎 Против</span>
-          <div class="poll-bar-bg"><div class="poll-bar-fill" style="width:37%;background:#ffb3b3;"></div></div>
-          <span class="poll-bar-pct">37%</span>
+          <div class="poll-bar-bg"><div class="poll-bar-fill" data-vote="no-bar" style="width:0%;background:#ffb3b3;"></div></div>
+          <span class="poll-bar-pct" data-vote="no-pct">0%</span>
         </div>
         <div class="donut-wrap">
           <svg width="70" height="70" viewBox="0 0 70 70">
             <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12"
-              stroke-dasharray="110.9 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12"
-              stroke-dasharray="65 175.9" stroke-dashoffset="-66.9" stroke-linecap="round"/>
-            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a">54</text>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" data-vote="yes-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" data-vote="no-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a" data-vote="voted-n">0</text>
           </svg>
           <div class="donut-legend">
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span>За — 34 кв. (63%)</span></div>
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span>Против — 20 кв. (37%)</span></div>
-            <div class="donut-leg-row" style="color:#aaa;font-size:11px;">Не голосовали — 33 кв.</div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span data-vote="yes-leg"></span></div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span data-vote="no-leg"></span></div>
+            <div class="donut-leg-row" style="color:#aaa;font-size:11px;"><span data-vote="rest-leg"></span></div>
           </div>
         </div>
-        <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;">✅ Решение принято: домофон будет установлен</div>
+        <div data-vote="status-line" style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;"></div>
       </div>
 
-      <div class="chat-msg other">
-        <div class="chat-avatar chair">П</div>
-        <div>
-          <div class="chat-sender">Председатель ОСИ</div>
-          <div class="chat-bubble" style="background:#fff3e0;color:#333;">Уважаемые жильцы, домофон закуплен. Монтаж — 5 июня. Спасибо всем, кто проголосовал!</div>
-          <div class="chat-time">08:44</div>
-        </div>
-      </div>
 
       <div id="chat-new-messages"></div>
     </div>
@@ -766,22 +756,22 @@
     <div id="chatpane-results" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;flex-direction:column;gap:12px;">
       <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
         <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Установка домофона — подъезд №2</div>
-        <div class="poll-bar-row"><span class="poll-bar-label">👍 За</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:63%"></div></div><span class="poll-bar-pct">63%</span></div>
-        <div class="poll-bar-row"><span class="poll-bar-label">👎 Против</span><div class="poll-bar-bg"><div class="poll-bar-fill" style="width:37%;background:#ffb3b3;"></div></div><span class="poll-bar-pct">37%</span></div>
+        <div class="poll-bar-row"><span class="poll-bar-label">👍 За</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" data-vote="yes-bar" style="width:0%"></div></div><span class="poll-bar-pct" data-vote="yes-pct">0%</span></div>
+        <div class="poll-bar-row"><span class="poll-bar-label">👎 Против</span><div class="poll-bar-bg"><div class="poll-bar-fill" data-vote="no-bar" style="width:0%;background:#ffb3b3;"></div></div><span class="poll-bar-pct" data-vote="no-pct">0%</span></div>
         <div class="donut-wrap">
           <svg width="70" height="70" viewBox="0 0 70 70">
             <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" stroke-dasharray="110.9 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" stroke-dasharray="65 175.9" stroke-dashoffset="-66.9" stroke-linecap="round"/>
-            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a">54</text>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" data-vote="yes-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" data-vote="no-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
+            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a" data-vote="voted-n">0</text>
           </svg>
           <div class="donut-legend">
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span>За — 34 кв. (63%)</span></div>
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span>Против — 20 кв. (37%)</span></div>
-            <div class="donut-leg-row" style="color:#aaa;font-size:11px;">Не голосовали — 33 кв.</div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span data-vote="yes-leg"></span></div>
+            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span data-vote="no-leg"></span></div>
+            <div class="donut-leg-row" style="color:#aaa;font-size:11px;"><span data-vote="rest-leg"></span></div>
           </div>
         </div>
-        <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;">✅ Решение принято. Монтаж — 5 июня.</div>
+        <div data-vote="status-line" style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;"></div>
       </div>
 
       <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
@@ -908,10 +898,16 @@
   <div class="vote-screen">
     <div class="vote-card">
       <div class="vote-q">Установить новый домофон в подъезде №2?</div>
-      <div class="vote-status">Открыто · Осталось 3 дня · Проголосовали 54 из 87</div>
-      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👍 Да</span><span>63%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" style="width:63%"></div></div></div>
-      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👎 Нет</span><span>37%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" style="width:37%"></div></div></div>
-      <div class="vote-total">54 из 87 жильцов проголосовали</div>
+      <div class="vote-status" data-vote="status-full">…</div>
+      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👍 Да</span><span data-vote="yes-pct">0%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" data-vote="yes-bar" style="width:0%"></div></div></div>
+      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👎 Нет</span><span data-vote="no-pct">0%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" data-vote="no-bar" style="width:0%"></div></div></div>
+      <div class="vote-total"><span data-vote="voted-n">0</span> из <span data-vote="total-n">87</span> жильцов проголосовали · демонстрационные данные</div>
+      <div class="agenda-actions" style="margin-top:12px;">
+        <button class="agenda-btn yes" data-vote="btn-yes" onclick="castVote('yes')">👍 Да</button>
+        <button class="agenda-btn no" data-vote="btn-no" onclick="castVote('no')">👎 Нет</button>
+      </div>
+      <div data-vote="mine-note" style="font-size:12px;color:var(--text-muted);margin-top:8px;"></div>
+      <button class="agenda-btn" data-vote="btn-clear" onclick="castVote(null)" style="display:none;margin-top:8px;width:100%;background:#f0f0f0;color:#555;">Отозвать голос</button>
       <div class="vote-comment-section">
         <div class="chair-label">💬 Председатель ОСИ</div>
         <div class="chair-comment">Стоимость: 85 000 ₸, делим на 87 квартир = ~977 ₸ с квартиры</div>
@@ -2115,6 +2111,7 @@ function alauGuard(id) {
   return 'screen-auth';
 }
 function alauOnShow(id) {
+  renderVote();
   if (id === 'screen-profile') renderProfile();
 }
 
@@ -2534,6 +2531,55 @@ function homeClear() {
   const users = lsGet(LS_USERS, {});
   ['lat', 'lon', 'geoAcc', 'geoTs'].forEach(k => delete users[u.phone][k]);
   lsSet(LS_USERS, users); renderProfile(); toast('Точка дома удалена');
+}
+
+
+// ===== ГОЛОСОВАНИЕ: домофон (один объект — все экраны рисуются из него) =====
+const LS_VOTES = 'alauDemoVotes';
+const VOTE = { id: 'intercom', status: 'open', base: { yes: 34, no: 20 }, total: 87, endsInDays: 3 };
+function ruPlural(n, a, b, c) { n = Math.abs(n) % 100; const k = n % 10; return (n > 10 && n < 20) ? c : k === 1 ? a : (k >= 2 && k <= 4) ? b : c; }
+function voteMine() { const p = currentPhone(); if (!p) return null; return (lsGet(LS_VOTES, {})[p] || {})[VOTE.id] || null; }
+function voteTally() {
+  const mine = voteMine();
+  const yes = VOTE.base.yes + (mine === 'yes' ? 1 : 0), no = VOTE.base.no + (mine === 'no' ? 1 : 0);
+  return { yes, no, voted: yes + no, rest: VOTE.total - yes - no, mine };
+}
+function voteMeta() {
+  const d = new Date(Date.now() + VOTE.endsInDays * 864e5);
+  const dm = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+  return 'до ' + dm + ' · осталось ' + VOTE.endsInDays + ' ' + ruPlural(VOTE.endsInDays, 'день', 'дня', 'дней');
+}
+function castVote(choice) {
+  const p = currentPhone(); if (!p) return;
+  const all = lsGet(LS_VOTES, {}); all[p] = all[p] || {};
+  if (choice) all[p][VOTE.id] = choice; else delete all[p][VOTE.id];
+  lsSet(LS_VOTES, all);
+  renderVote();
+  toast(choice ? 'Голос записан только в этом браузере (демо)' : 'Голос отозван');
+}
+function renderVote() {
+  const t = voteTally(), pct = n => t.voted ? Math.round(n * 100 / t.voted) : 0;
+  const yp = pct(t.yes), np = t.voted ? 100 - yp : 0, C = 175.9;
+  const set = (k, fn) => document.querySelectorAll('[data-vote="' + k + '"]').forEach(fn);
+  const txt = (k, v) => set(k, e => { e.textContent = v; });
+  txt('meta', voteMeta());
+  txt('yes-pct', yp + '%'); txt('no-pct', np + '%');
+  set('yes-bar', e => { e.style.width = yp + '%'; }); set('no-bar', e => { e.style.width = np + '%'; });
+  const yl = C * yp / 100, nl = C * np / 100;
+  set('yes-arc', e => { e.setAttribute('stroke-dasharray', yl.toFixed(1) + ' ' + C); e.setAttribute('stroke-dashoffset', '44'); });
+  set('no-arc', e => { e.setAttribute('stroke-dasharray', nl.toFixed(1) + ' ' + C); e.setAttribute('stroke-dashoffset', String(44 - yl)); });
+  txt('voted-n', t.voted); txt('total-n', VOTE.total);
+  txt('yes-leg', 'За — ' + t.yes + ' кв. (' + yp + '%)'); txt('no-leg', 'Против — ' + t.no + ' кв. (' + np + '%)');
+  txt('rest-leg', 'Не голосовали — ' + t.rest + ' кв.');
+  txt('status-full', 'Открыто · ' + voteMeta().replace('до ', 'до ') + ' · проголосовали ' + t.voted + ' из ' + VOTE.total);
+  const label = t.mine === 'yes' ? 'За' : t.mine === 'no' ? 'Против' : '';
+  txt('status-line', '⏳ Голосование открыто — ' + voteMeta() + ' (демонстрационные данные)');
+  txt('mine-text', t.mine ? 'Ваш голос: ' + label + ' (демо)' : 'Ваш голос ещё не учтён');
+  set('pill', e => { e.textContent = t.mine ? 'Вы ответили' : 'Требует ответа'; e.style.background = t.mine ? '#e0f2f1' : '#e8eaf6'; e.style.color = t.mine ? '#1a8a7a' : '#3949ab'; });
+  set('btn-yes', e => { e.style.outline = t.mine === 'yes' ? '2px solid var(--teal)' : 'none'; });
+  set('btn-no', e => { e.style.outline = t.mine === 'no' ? '2px solid #c62828' : 'none'; });
+  set('btn-clear', e => { e.style.display = t.mine ? 'block' : 'none'; });
+  txt('mine-note', t.mine ? 'Ваш голос: ' + label + '. Он сохранён только в этом браузере и никуда не отправлен.' : 'Демо: ваш голос будет виден только на этом устройстве.');
 }
 
 // ----- запуск -----
