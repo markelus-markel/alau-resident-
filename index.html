@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Alau — Кабинет жильца</title>
+<title>AlauConcierge</title>
 <style>
   :root {
     --teal: #1a8a7a; --teal-bg: #0f5f52; --teal-light: #e8f5f3; --teal-mid: #2aaa96;
@@ -345,8 +345,7 @@
 <div class="screen active" id="screen-home">
   <div class="topbar">
     <div class="topbar-logo">
-      <div class="logo-mark">Alau<br>AI</div>
-      <h1>Алау</h1>
+      <h1>AlauConcierge</h1>
     </div>
     <div class="apt-badge">Кв. №23</div>
   </div>
@@ -773,7 +772,7 @@
     <div class="cards-viewport" id="cards-viewport">
       <div class="cards-track" id="cards-track">
         <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
           <span class="card-emoji">🧹</span>
           <div class="card-name">CleanCity Semey</div>
           <div class="card-type">Уборка и клининг</div>
@@ -784,7 +783,7 @@
           <div class="swipe-hint"><div class="swipe-arrow">↑</div><span>Проведи пальцем вверх</span></div>
         </div>
         <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
           <span class="card-emoji">🔨</span>
           <div class="card-name">МастерБригада</div>
           <div class="card-type">Ремонт квартир и МКД</div>
@@ -794,7 +793,7 @@
           <button class="order-btn" onclick="openModal('МастерБригада','от 1 500 ₸/м²','−10% + приоритет')">Заказать услугу</button>
         </div>
         <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
           <span class="card-emoji">🛡️</span>
           <div class="card-name">КазГарант</div>
           <div class="card-type">Страхование жилья</div>
@@ -804,7 +803,7 @@
           <button class="order-btn" onclick="openModal('КазГарант','от 2 500 ₸/мес','−15% скидка')">Заказать услугу</button>
         </div>
         <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
           <span class="card-emoji">🏗️</span>
           <div class="card-name">Хаузмастер</div>
           <div class="card-type">AI-управление домом</div>
@@ -814,7 +813,7 @@
           <button class="order-btn" onclick="openModal('Хаузмастер','от 3 000 ₸/мес','Партнёр ОСИ')">Заказать услугу</button>
         </div>
         <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Маркетплейс</div>
+          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
           <span class="card-emoji">🏠</span>
           <div class="card-name">Абай Недвижимость</div>
           <div class="card-type">Купля · Продажа · Аренда</div>
@@ -972,7 +971,7 @@
 <div class="screen" id="screen-voice">
   <div class="topbar">
     <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
-    <h1 style="color:#fff;font-size:18px;font-weight:700;">🎙️ Алау</h1>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">🎙️ AlauConcierge</h1>
     <button class="back-topbar-btn" onclick="showScreen('screen-tickets')" style="font-size:12px;">📋 Мои заявки</button>
   </div>
   <div class="voice-screen" style="overflow-y:auto;">
@@ -998,7 +997,7 @@
         <div style="font-size:13px;color:#444;line-height:1.6;">
           1. Нажмите на микрофон<br>
           2. Произнесите описание проблемы<br>
-          3. Алау транскрибирует запись в текст<br>
+          3. AlauConcierge транскрибирует запись в текст<br>
           4. Заявка регистрируется и поступает председателю<br>
           5. Вы получаете номер заявки и можете её отслеживать
         </div>
@@ -1029,7 +1028,7 @@
     <div id="vstate-processing" style="display:none;">
       <div class="orb-wrap">
         <div class="orb" style="animation:spin-glow 1.2s linear infinite;background:radial-gradient(circle at 35% 35%,#f5c842,#e05a1e);">⏳</div>
-        <div class="orb-label">Алау распознаёт речь...</div>
+        <div class="orb-label">AlauConcierge распознаёт речь...</div>
         <div style="font-size:13px;color:var(--text-muted);">Обработка аудиозаписи</div>
       </div>
     </div>
@@ -1149,7 +1148,7 @@
 <div class="screen" id="screen-module-voice">
   <div class="topbar" id="mv-topbar">
     <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
-    <h1 id="mv-topbar-title" style="color:#fff;font-size:17px;font-weight:700;">🎙️ Алау</h1>
+    <h1 id="mv-topbar-title" style="color:#fff;font-size:17px;font-weight:700;">🎙️ AlauConcierge</h1>
     <button class="back-topbar-btn" onclick="showScreen('screen-tickets')" style="font-size:11px;">📋 Заявки</button>
   </div>
   <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
@@ -1268,7 +1267,7 @@
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-company-name">CleanCity Semey</div>
-    <div class="modal-sub">✅ Модерация пройдена · Alau Маркетплейс</div>
+    <div class="modal-sub">✅ Модерация пройдена · Alau Market</div>
     <div class="modal-field"><label>Ваша квартира</label><div class="modal-apt">Кв. №23 · ОСИ №14</div></div>
     <div class="modal-field"><label>Телефон для связи</label><input class="modal-input" type="tel" placeholder="+7 (___) ___-__-__"></div>
     <div class="modal-field"><label>Комментарий (необязательно)</label><input class="modal-input" type="text" placeholder="Уточните детали..."></div>
@@ -1487,7 +1486,7 @@ function buildTicketText(id, text, dateStr) {
 ${text}
 
 ---
-Алау — Кабинет жильца ОСИ №14
+AlauConcierge — ОСИ №14
 Заявка зарегистрирована автоматически через голосовой помощник.`;
 }
 
@@ -1517,7 +1516,7 @@ function shareWhatsApp() {
 }
 
 function shareWAById(id, text, dateStr) {
-  const msg = encodeURIComponent(`📋 *Заявка ${id} · ОСИ №14*\n🏠 Кв. №${APT} · Семей\n📅 ${dateStr}\n\n${text}\n\n_Отправлено через Алау — Кабинет жильца_`);
+  const msg = encodeURIComponent(`📋 *Заявка ${id} · ОСИ №14*\n🏠 Кв. №${APT} · Семей\n📅 ${dateStr}\n\n${text}\n\n_Отправлено через AlauConcierge_`);
   window.open('https://wa.me/?text='+msg,'_blank');
 }
 
