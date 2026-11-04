@@ -20,7 +20,8 @@
   @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
 
   /* TOPBAR */
-  .topbar { background: var(--teal); padding: 14px 16px 12px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .demo-strip { position: sticky; top: 0; z-index: 300; height: 22px; background: #b45309; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; letter-spacing: .2px; white-space: nowrap; overflow: hidden; padding: 0 8px; }
+  .topbar { background: var(--teal); padding: 14px 16px 12px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 22px; z-index: 100; }
   .topbar-logo { display: flex; align-items: center; gap: 8px; }
   .logo-mark { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--teal); line-height: 1.1; text-align: center; }
   .topbar h1 { color: #fff; font-size: 20px; font-weight: 700; }
@@ -340,6 +341,7 @@
 </head>
 <body>
 <div class="phone">
+<div class="demo-strip">ДЕМО-ВЕРСИЯ · ничего не отправляется</div>
 
 <!-- =================== HOME =================== -->
 <div class="screen active" id="screen-home">
@@ -371,7 +373,7 @@
       <div id="ann-carousel" style="display:flex;gap:10px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;cursor:grab;" onmousedown="annDragStart(event)" onmousemove="annDragMove(event)" onmouseup="annDragEnd(event)" onmouseleave="annDragEnd(event)">
 
         <!-- Module 1: Срочное объявление -->
-        <div class="ann-card-module" onclick="openModuleVoice('urgent','🚨 Отключение воды','Уважаемый житель квартиры номер 23. Вы можете сообщить о проблемах с водоснабжением или оставить своё мнение по данному вопросу. Ваше сообщение будет зафиксировано и передано председателю ОСИ.','Сегодня · Председатель ОСИ','С 09:00 до 17:00 плановые работы. Запаситесь водой заранее.','pill-urgent','🚨 Срочно')">
+        <div class="ann-card-module" onclick="openModuleVoice('urgent','🚨 Отключение воды','Уважаемый житель квартиры номер 23. Вы можете сообщить о проблемах с водоснабжением или оставить своё мнение по данному вопросу. Это демонстрационная версия: сообщение создаётся на вашем устройстве и пока никому не передаётся.','Сегодня · Председатель ОСИ','С 09:00 до 17:00 плановые работы. Запаситесь водой заранее.','pill-urgent','🚨 Срочно')">
           <div class="amc-icon" style="background:#fef0ef;">🚨</div>
           <div class="amc-title">Отключение воды 28 мая</div>
           <div class="amc-sub">Сегодня · Председатель ОСИ</div>
@@ -381,7 +383,7 @@
         </div>
 
         <!-- Module 2: Голосование -->
-        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер 23. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — ваша позиция будет зафиксирована и учтена на голосовании.','21 мая · Осталось 3 дня','Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
+        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер 23. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — в демо-версии позиция показывается только на вашем экране и в итог голосования не засчитывается.','21 мая · Осталось 3 дня','Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
           <div class="amc-icon" style="background:#f0f0ff;">🗳️</div>
           <div class="amc-title">Голосование: домофон</div>
           <div class="amc-sub">21 мая · Осталось 3 дня</div>
@@ -391,7 +393,7 @@
         </div>
 
         <!-- Module 3: Чат -->
-        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер 23. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. Ваше сообщение поступит всем активным жильцам дома.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер 23. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
           <div class="amc-icon" style="background:#e8eaf6;">💬</div>
           <div class="amc-title">Общедомовой чат</div>
           <div class="amc-sub">23 жильца онлайн</div>
@@ -401,7 +403,7 @@
         </div>
 
         <!-- Module 4: Собрание -->
-        <div class="ann-card-module" onclick="openModuleVoice('meeting','📅 Собрание 1 июня','Уважаемый житель квартиры номер 23. Вы можете заранее озвучить свои вопросы и предложения к собранию жильцов 1 июня. Запись будет включена в повестку дня.','25 мая · Председатель ОСИ','Ремонт кровли и бюджет Q2. 18:00, холл 1-го этажа.','pill-new','Новое')">
+        <div class="ann-card-module" onclick="openModuleVoice('meeting','📅 Собрание 1 июня','Уважаемый житель квартиры номер 23. Вы можете заранее озвучить свои вопросы и предложения к собранию жильцов 1 июня. В демо-версии запись не попадает в повестку собрания.','25 мая · Председатель ОСИ','Ремонт кровли и бюджет Q2. 18:00, холл 1-го этажа.','pill-new','Новое')">
           <div class="amc-icon" style="background:#eef6ff;">📅</div>
           <div class="amc-title">Собрание 1 июня</div>
           <div class="amc-sub">25 мая · Председатель</div>
@@ -411,7 +413,7 @@
         </div>
 
         <!-- Module 5: Акция -->
-        <div class="ann-card-module" onclick="openModuleVoice('promo','🎁 Скидка КазГарант','Уважаемый житель квартиры номер 23. Вы можете задать вопрос о страховании жилья или оставить заявку на консультацию. Ваш запрос будет передан представителю КазГарант.','23 мая · КазГарант','−15% на страхование от затопления и пожара для жильцов ОСИ №14.','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('promo','🎁 Скидка КазГарант','Уважаемый житель квартиры номер 23. Вы можете задать вопрос о страховании жилья или оставить заявку на консультацию. В демо-версии запрос никому не передаётся.','23 мая · КазГарант','−15% на страхование от затопления и пожара для жильцов ОСИ №14.','','')">
           <div class="amc-icon" style="background:#fff8e6;">🎁</div>
           <div class="amc-title">Скидка на страховку</div>
           <div class="amc-sub">23 мая · КазГарант</div>
@@ -421,7 +423,7 @@
         </div>
 
         <!-- Module 6: Заявка мастеру -->
-        <div class="ann-card-module" onclick="openModuleVoice('repair','🔧 Заявка мастеру','Уважаемый житель квартиры номер 23. Пожалуйста, опишите вашу проблему. Укажите где именно и что сломалось. Ваша заявка будет оформлена письменно, зарегистрирована и передана техническому специалисту.','Тех. отдел · ОСИ №14','Подайте голосовую заявку — мастер приедет в течение 24 часов.','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('repair','🔧 Заявка мастеру','Уважаемый житель квартиры номер 23. Пожалуйста, опишите вашу проблему. Укажите где именно и что сломалось. В демо-версии заявка создаётся на вашем устройстве и никому не передаётся.','Тех. отдел · ОСИ №14','Опишите проблему голосом. В демо-версии заявка создаётся только на вашем устройстве.','','')">
           <div class="amc-icon" style="background:#edfaf3;">🔧</div>
           <div class="amc-title">Заявка мастеру</div>
           <div class="amc-sub">Тех. отдел · ОСИ №14</div>
@@ -911,7 +913,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'water','💧 Вода / трубы',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с водоснабжением или трубами. Укажите этаж, подъезд и характер неисправности. Ваша заявка будет передана сантехнику.',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с водоснабжением или трубами. Укажите этаж, подъезд и характер неисправности. В демо-версии заявка никому не передаётся.',
         'Тех. отдел · ОСИ №14','Протечка, нет воды, гидравлический удар — опишите голосом.',
         'pill-new','💧 Вода')">
         <span class="cat-icon">💧</span><span class="cat-name">Вода / трубы</span>
@@ -927,7 +929,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'lift','🛗 Лифт',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите неисправность лифта. Укажите номер подъезда и характер поломки. Заявка будет передана в лифтовую службу.',
+        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите неисправность лифта. Укажите номер подъезда и характер поломки. В демо-версии заявка никому не передаётся.',
         'Тех. отдел · ОСИ №14','Застрял, не закрывается дверь, странный звук — опишите голосом.',
         'pill-new','🛗 Лифт')">
         <span class="cat-icon">🛗</span><span class="cat-name">Лифт</span>
@@ -951,7 +953,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'other','📦 Другое',
-        'Уважаемый житель квартиры номер 23. Вы можете описать любую другую проблему или пожелание. Ваше обращение будет зарегистрировано и рассмотрено председателем ОСИ.',
+        'Уважаемый житель квартиры номер 23. Вы можете описать любую другую проблему или пожелание. В демо-версии обращение никому не передаётся.',
         'Тех. отдел · ОСИ №14','Любая проблема или пожелание — опишите голосом.',
         'pill-new','📦 Другое')">
         <span class="cat-icon">📦</span><span class="cat-name">Другое</span>
@@ -997,7 +999,7 @@
         <div style="font-size:13px;color:#444;line-height:1.6;">
           1. Нажмите на микрофон<br>
           2. Произнесите описание проблемы<br>
-          3. AlauConcierge транскрибирует запись в текст<br>
+          3. AlauConcierge показывает текст заявки (в демо-версии это пример)<br>
           4. Заявка регистрируется и поступает председателю<br>
           5. Вы получаете номер заявки и можете её отслеживать
         </div>
@@ -1077,15 +1079,15 @@
     <div id="vstate-done" style="display:none;flex-direction:column;gap:14px;">
       <div style="background:linear-gradient(135deg,#edfaf3,#e0f5ea);border-radius:16px;padding:24px;text-align:center;">
         <div style="font-size:52px;margin-bottom:10px;">✅</div>
-        <div style="font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;">Заявка зарегистрирована!</div>
+        <div style="font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;">Заявка создана (демо)</div>
         <div id="ticket-number" style="font-size:28px;font-weight:900;color:var(--teal);margin-bottom:8px;">#147</div>
-        <div style="font-size:13px;color:#555;line-height:1.5;">Заявка передана председателю ОСИ и сохранена в истории. Ожидайте обратной связи в течение 2 часов.</div>
+        <div style="font-size:13px;color:#555;line-height:1.5;">Демо-режим: заявка сохранена только на этом устройстве и никому не отправлена.</div>
       </div>
       <!-- Ticket card preview -->
       <div id="ticket-card-preview" style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div style="font-size:13px;font-weight:700;color:var(--text);" id="tc-number">Заявка #147</div>
-          <span style="background:#fff3e0;color:#e65100;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700;">⏳ В обработке</span>
+          <span style="background:#fff3e0;color:#e65100;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700;">⏳ Создана (демо)</span>
         </div>
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;" id="tc-meta">28 мая 2026 · 08:35 · кв.23 · ОСИ №14</div>
         <div style="font-size:14px;color:var(--text);line-height:1.55;margin-bottom:14px;" id="tc-text"></div>
@@ -1118,7 +1120,7 @@
   <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;" id="tickets-list">
     <!-- seeded tickets -->
     <div class="tkt-card done">
-      <div class="tkt-header"><div class="tkt-num">#113</div><span class="tkt-status status-done">✅ Выполнена</span></div>
+      <div class="tkt-header"><div class="tkt-num">#113</div><span class="tkt-status status-done">✅ Выполнена (пример)</span></div>
       <div class="tkt-meta">20 мая · кв.23 · Лифт</div>
       <div class="tkt-text">Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.</div>
       <div class="tkt-actions">
@@ -1127,7 +1129,7 @@
       </div>
     </div>
     <div class="tkt-card processing">
-      <div class="tkt-header"><div class="tkt-num">#128</div><span class="tkt-status status-proc">⏳ В обработке</span></div>
+      <div class="tkt-header"><div class="tkt-num">#128</div><span class="tkt-status status-proc">⏳ Создана (демо)</span></div>
       <div class="tkt-meta">25 мая · кв.23 · Электрика</div>
       <div class="tkt-text">В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.</div>
       <div class="tkt-actions">
@@ -1177,7 +1179,7 @@
           <div style="font-size:13px;color:var(--text-muted);text-align:center;max-width:260px;line-height:1.5;" id="mv-invite-text">Голосовой помощник запишет вашу проблему и оформит заявку</div>
         </div>
         <div style="background:var(--teal-light);border-radius:12px;padding:12px 14px;border-left:3px solid var(--teal);font-size:13px;color:#444;line-height:1.6;">
-          Запись будет автоматически транскрибирована.<br>
+          В демо-версии распознавание речи имитируется.<br>
           Заявка поступит председателю ОСИ и сохранится в истории.
         </div>
       </div>
@@ -1241,9 +1243,9 @@
       <div id="mv-done" style="display:none;flex-direction:column;gap:12px;">
         <div style="background:linear-gradient(135deg,#edfaf3,#e0f5ea);border-radius:16px;padding:22px;text-align:center;">
           <div style="font-size:48px;margin-bottom:8px;">✅</div>
-          <div style="font-size:17px;font-weight:800;color:var(--green);margin-bottom:4px;">Заявка зарегистрирована!</div>
+          <div style="font-size:17px;font-weight:800;color:var(--green);margin-bottom:4px;">Заявка создана (демо)</div>
           <div id="mv-ticket-num" style="font-size:26px;font-weight:900;color:var(--teal);margin-bottom:6px;">#148</div>
-          <div style="font-size:13px;color:#555;line-height:1.5;">Передана председателю ОСИ. Ожидайте ответа в течение 2 часов.</div>
+          <div style="font-size:13px;color:#555;line-height:1.5;">Демо-режим: заявка сохранена только на этом устройстве и никому не отправлена.</div>
         </div>
         <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
           <div style="font-size:13px;font-weight:700;margin-bottom:6px;" id="mv-done-num">Заявка #148</div>
@@ -1275,7 +1277,7 @@
       <span class="modal-price-label" id="modal-price-label">от 8 000 ₸</span>
       <span class="modal-price-value" id="modal-discount-value">−20% для ОСИ</span>
     </div>
-    <button class="modal-submit" onclick="closeModal(true)">📤 Отправить заявку поставщику</button>
+    <button class="modal-submit" onclick="closeModal(true)">📤 Отправить заявку (демо)</button>
     <button class="modal-cancel" onclick="closeModal(false)">Отмена</button>
   </div>
 </div>
@@ -1361,7 +1363,7 @@ async function startRecording() {
     setTimeout(() => {
       if ('speechSynthesis' in window) {
         const u = new SpeechSynthesisUtterance(
-          `Уважаемый житель квартиры номер ${APT}. Пожалуйста, сообщите о вашей проблеме. Ваша заявка будет оформлена письменно и принята в работу администрацией ${OSI}.`
+          `Уважаемый житель квартиры номер ${APT}. Пожалуйста, сообщите о вашей проблеме. Это демонстрационная версия: заявка создаётся на вашем устройстве и никому не передаётся.`
         );
         u.lang = 'ru-RU'; u.rate = 0.9;
         window.speechSynthesis.speak(u);
@@ -1464,7 +1466,7 @@ function renderTickets() {
   const list = document.getElementById('tickets-list');
   list.innerHTML = tickets.map(t => `
     <div class="tkt-card ${t.status==='done'?'done':'processing'}">
-      <div class="tkt-header"><div class="tkt-num">${t.id}</div><span class="tkt-status ${t.status==='done'?'status-done':'status-proc'}">${t.status==='done'?'✅ Выполнена':'⏳ В обработке'}</span></div>
+      <div class="tkt-header"><div class="tkt-num">${t.id}</div><span class="tkt-status ${t.status==='done'?'status-done':'status-proc'}">${t.status==='done'?'✅ Выполнена (пример)':'⏳ Создана (демо)'}</span></div>
       <div class="tkt-meta">${t.date} · ${t.time} · кв.${APT} · ${t.cat}</div>
       <div class="tkt-text">${t.text}</div>
       <div class="tkt-actions">
@@ -1487,7 +1489,7 @@ ${text}
 
 ---
 AlauConcierge — ОСИ №14
-Заявка зарегистрирована автоматически через голосовой помощник.`;
+ДЕМО-ДОКУМЕНТ: заявка создана в демонстрационной версии, никому не отправлена и не зарегистрирована.`;
 }
 
 function downloadTicket() {
@@ -1516,7 +1518,7 @@ function shareWhatsApp() {
 }
 
 function shareWAById(id, text, dateStr) {
-  const msg = encodeURIComponent(`📋 *Заявка ${id} · ОСИ №14*\n🏠 Кв. №${APT} · Семей\n📅 ${dateStr}\n\n${text}\n\n_Отправлено через AlauConcierge_`);
+  const msg = encodeURIComponent(`📋 *Заявка ${id} · ОСИ №14*\n🏠 Кв. №${APT} · Семей\n📅 ${dateStr}\n\n${text}\n\n_Отправлено через AlauConcierge (демо-версия)_`);
   window.open('https://wa.me/?text='+msg,'_blank');
 }
 
@@ -1696,7 +1698,7 @@ function openModal(name, price, discount) {
 }
 function closeModal(submitted) {
   document.getElementById('order-modal').classList.remove('open');
-  if (submitted) setTimeout(() => alert('✅ Заявка отправлена! Поставщик свяжется с вами в течение 30 минут.'), 100);
+  if (submitted) setTimeout(() => alert('Демо-режим: заказ никому не отправлен. В рабочей версии заявку получит поставщик.'), 100);
 }
 document.getElementById('order-modal').addEventListener('click', function(e) { if(e.target===this) closeModal(false); });
 
