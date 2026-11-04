@@ -337,11 +337,63 @@
   .tkt-actions { display:flex; gap:8px; }
   .tkt-btn { flex:1; padding:9px; border:2px solid #e0e0e0; border-radius:9px; background:#fff; font-size:12px; font-weight:600; cursor:pointer; }
   .tkt-btn.wa { border-color:#25d366; background:#f0fff4; color:#128c7e; }
+
+  /* ===== AUTH / PROFILE (demo) ===== */
+  .auth-wrap { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .auth-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+  .auth-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .auth-sub { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+  .demo-note { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 12px; padding: 10px 12px; font-size: 12px; line-height: 1.5; margin-bottom: 14px; }
+  .demo-code { background: #fef3c7; border: 1px dashed #d97706; border-radius: 12px; padding: 10px; text-align: center; font-size: 13px; color: #92400e; margin-bottom: 12px; }
+  .demo-code b { font-size: 26px; letter-spacing: 6px; display: block; margin-top: 2px; }
+  .fld { margin-bottom: 14px; }
+  .fld > label { font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+  .fld .req { color: #c62828; }
+  .fld-row { display: flex; gap: 8px; align-items: stretch; }
+  .fld input, .fld select { width: 100%; border: 2px solid #e8e8e8; border-radius: 10px; padding: 12px 14px; font-size: 15px; outline: none; background: #fff; font-family: inherit; transition: border-color .15s; }
+  .fld input:focus, .fld select:focus { border-color: var(--teal); }
+  .fld input.bad, .fld select.bad { border-color: #e53935; }
+  .fld input[readonly] { background: #f4f6f8; color: #444; }
+  .fld-prefix { flex: 0 0 auto; display: flex; align-items: center; padding: 0 12px; border: 2px solid #e8e8e8; border-radius: 10px; background: #f4f6f8; font-size: 15px; font-weight: 700; color: #444; }
+  .fld-err { color: #c62828; font-size: 12px; margin-top: 5px; display: none; }
+  .fld-ok { color: var(--green); font-size: 12px; margin-top: 5px; display: none; }
+  .mic-btn { flex: 0 0 46px; border: none; border-radius: 10px; background: var(--teal-light); color: var(--teal); font-size: 18px; cursor: pointer; }
+  .mic-btn.listening { background: var(--orange); color: #fff; animation: alauPulse 1s infinite; }
+  @keyframes alauPulse { 50% { opacity: .55; } }
+  .btn-primary { width: 100%; background: var(--teal); color: #fff; border: none; border-radius: 14px; padding: 15px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .btn-primary:disabled { opacity: .5; cursor: default; }
+  .btn-ghost { width: 100%; background: #fff; color: var(--text); border: 2px solid #e8e8e8; border-radius: 14px; padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-link { background: none; border: none; color: var(--teal); font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 0; }
+  .voice-assist { background: var(--teal-light); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
+  .voice-assist .va-t { font-size: 14px; font-weight: 700; color: var(--teal-bg); }
+  .voice-assist .va-s { font-size: 12px; color: #3b5f59; line-height: 1.5; margin: 4px 0 10px; }
+  #voice-status { font-size: 13px; color: var(--teal-bg); font-weight: 600; margin-top: 8px; min-height: 18px; }
+  .profile-strip { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 14px; cursor: pointer; }
+  .ps-avatar { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .ps-name { font-size: 15px; font-weight: 700; color: var(--text); }
+  .ps-addr { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .ps-arrow { margin-left: auto; color: var(--teal); font-size: 20px; }
+  .prof-row { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .prof-row:last-child { border-bottom: none; }
+  .prof-row span:first-child { color: var(--text-muted); }
+  .prof-row span:last-child { color: var(--text); font-weight: 600; text-align: right; }
+  .toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: #1f2937; color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 1000; max-width: 90%; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .toast.show { opacity: 1; }
+  .geo-box { background: #eef6ff; border-radius: 14px; padding: 12px; margin-bottom: 14px; }
+  .geo-box .g-t { font-size: 14px; font-weight: 700; color: #1e3a5f; }
+  .geo-box .g-s { font-size: 12px; color: #3b5470; line-height: 1.5; margin: 4px 0 10px; }
+  .geo-row { display: flex; gap: 8px; }
+  .geo-row .btn-ghost { padding: 11px 8px; font-size: 13px; }
+  .geo-check { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: #3b5470; margin-top: 10px; line-height: 1.4; }
+  .geo-check input { margin-top: 2px; }
+  #geo-status { font-size: 13px; color: #1e3a5f; font-weight: 600; margin-top: 8px; min-height: 18px; line-height: 1.4; }
+  .map-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .map-frame { width: 100%; height: 240px; border: 0; border-radius: 12px; margin-top: 12px; display: none; }
 </style>
 </head>
 <body>
 <div class="phone">
-<div class="demo-strip">ДЕМО-ВЕРСИЯ · ничего не отправляется</div>
+<div class="demo-strip">ДЕМО-ВЕРСИЯ · заявки не отправляются</div>
 
 <!-- =================== HOME =================== -->
 <div class="screen active" id="screen-home">
@@ -349,9 +401,17 @@
     <div class="topbar-logo">
       <h1>AlauConcierge</h1>
     </div>
-    <div class="apt-badge">Кв. №23</div>
+    <div class="apt-badge" id="home-apt" onclick="showScreen('screen-profile')" style="cursor:pointer;">Кв. №23</div>
   </div>
   <div class="home-content">
+
+    <!-- Профиль -->
+    <div class="profile-strip" onclick="showScreen('screen-profile')">
+      <div class="ps-avatar" id="ps-avatar">?</div>
+      <div><div class="ps-name" id="ps-name">Профиль</div><div class="ps-addr" id="ps-addr">Заполните анкету</div></div>
+      <span class="ps-arrow">›</span>
+    </div>
+
 
     <!-- Banner -->
     <div class="banner-card" onclick="showScreen('screen-market')">
@@ -444,17 +504,20 @@
       </div>
     </div>
 
-    <!-- Quick Actions -->
+    <!-- Навигатор -->
     <div class="section-header">
-      <div class="section-title">Быстрые действия</div>
+      <div class="section-title">🧭 Навигатор</div>
     </div>
     <div class="quick-grid">
       <button class="quick-btn" onclick="showScreen('screen-requests')"><span class="quick-icon">🔧</span><span class="quick-label">Заявка мастеру</span></button>
       <button class="quick-btn" onclick="showScreen('screen-voting')"><span class="quick-icon">🗳️</span><span class="quick-label">Голосование</span></button>
       <button class="quick-btn" onclick="showScreen('screen-chat')"><span class="quick-icon">💬</span><span class="quick-label">Чат жильцов</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-announcements')"><span class="quick-icon">📣</span><span class="quick-label">Объявления</span></button>
       <button class="quick-btn" onclick="showScreen('screen-market')"><span class="quick-icon">🛒</span><span class="quick-label">Маркетплейс</span></button>
       <button class="quick-btn" onclick="showScreen('screen-voice')"><span class="quick-icon">🎙️</span><span class="quick-label">Голос. помощник</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-tickets')"><span class="quick-icon">📋</span><span class="quick-label">Мои заявки</span></button>
       <button class="quick-btn" onclick="showScreen('screen-contacts')"><span class="quick-icon">📞</span><span class="quick-label">Контакты</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-profile')"><span class="quick-icon">👤</span><span class="quick-label">Мой профиль</span></button>
     </div>
 
   </div>
@@ -1303,14 +1366,171 @@
   </div>
 </div>
 
+
+<!-- =================== AUTH (SMS, DEMO) =================== -->
+<div class="screen" id="screen-auth">
+  <div class="topbar">
+    <div class="topbar-logo"><h1>AlauConcierge</h1></div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-title">Вход и регистрация</div>
+      <div class="auth-sub">Введите номер телефона. Мы отправим код подтверждения.</div>
+      <div class="demo-note">⚠️ <b>Демо-версия.</b> SMS не отправляются: код подтверждения появится на этом экране. Данные анкеты хранятся только в этом браузере (наружу уходят лишь запросы к картам по вашей кнопке). Используйте тестовые данные, не вводите настоящий ИИН.</div>
+
+      <div id="auth-step-phone">
+        <div class="fld">
+          <label for="auth-phone">Номер телефона <span class="req">*</span></label>
+          <div class="fld-row">
+            <div class="fld-prefix">+7</div>
+            <input id="auth-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="(701) 123-45-67" maxlength="15">
+          </div>
+          <div class="fld-ok" id="auth-known">✅ Этот номер уже зарегистрирован. Войдите по коду.</div>
+          <div class="fld-err" id="auth-phone-err"></div>
+        </div>
+        <button class="btn-primary" onclick="authSendCode()">Получить код</button>
+      </div>
+
+      <div id="auth-step-code" style="display:none;">
+        <div class="auth-sub" style="margin-bottom:8px;">Код отправлен на <b id="auth-phone-shown"></b></div>
+        <div class="demo-code">Демо-код (в рабочей версии придёт по SMS)<b id="auth-demo-code">----</b></div>
+        <div class="fld">
+          <label for="auth-code">Код из SMS <span class="req">*</span></label>
+          <input id="auth-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="4 цифры">
+          <div class="fld-err" id="auth-code-err"></div>
+        </div>
+        <button class="btn-primary" onclick="authVerify()">Подтвердить</button>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <button class="btn-link" onclick="authBack()">← Изменить номер</button>
+          <button class="btn-link" id="auth-resend" onclick="authSendCode()" disabled>Отправить код повторно</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== REGISTER / PROFILE FORM =================== -->
+<div class="screen" id="screen-register">
+  <div class="topbar">
+    <button class="back-topbar-btn" id="reg-back" onclick="showScreen('screen-profile')" style="display:none;">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;" id="reg-title">Анкета жильца</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-sub">Заполните обязательные поля <span style="color:#c62828;">*</span>, чтобы открыть функции приложения. Можно вводить руками или голосом.</div>
+
+      <div class="voice-assist">
+        <div class="va-t">🎙️ Заполнить голосом</div>
+        <div class="va-s">Помощник по очереди спросит фамилию, имя, отчество, улицу, дом и квартиру. ИИН и телефон вводятся только вручную. Распознавание речи выполняет ваш браузер (в Chrome аудио обрабатывается на серверах Google).</div>
+        <button class="btn-primary" id="voice-start" onclick="voiceFillAll()" style="padding:12px;font-size:15px;">🎙️ Начать</button>
+        <button class="btn-ghost" id="voice-stop" onclick="stopVoice()" style="display:none;">⏹ Остановить</button>
+        <div id="voice-status"></div>
+      </div>
+
+      <div class="geo-box">
+        <div class="g-t">📍 Определить по геолокации</div>
+        <div class="g-s">Город определяется на вашем устройстве, координаты никуда не отправляются. Для улицы и дома координаты отправляются в сервис карт OpenStreetMap (сначала спросим согласие). Номер квартиры определить нельзя, введите его сами.</div>
+        <div class="geo-row">
+          <button class="btn-ghost" type="button" onclick="geoFillCity()">🏙 Город</button>
+          <button class="btn-ghost" type="button" onclick="geoFillStreet()">🏠 Улица и дом</button>
+        </div>
+        <label class="geo-check"><input type="checkbox" id="geo-save"><span>Запомнить эту точку как мой дом для карты и маршрута (хранится только на этом устройстве)</span></label>
+        <div id="geo-status"></div>
+      </div>
+
+      <div class="fld"><label for="reg-last">Фамилия <span class="req">*</span></label>
+        <div class="fld-row"><input id="reg-last" autocomplete="off"><button class="mic-btn" type="button" onclick="fieldVoice('reg-last','name')" aria-label="Фамилия голосом">🎙️</button></div>
+        <div class="fld-err" id="err-reg-last"></div></div>
+
+      <div class="fld"><label for="reg-first">Имя <span class="req">*</span></label>
+        <div class="fld-row"><input id="reg-first" autocomplete="off"><button class="mic-btn" type="button" onclick="fieldVoice('reg-first','name')" aria-label="Имя голосом">🎙️</button></div>
+        <div class="fld-err" id="err-reg-first"></div></div>
+
+      <div class="fld"><label for="reg-mid">Отчество (по желанию)</label>
+        <div class="fld-row"><input id="reg-mid" autocomplete="off"><button class="mic-btn" type="button" onclick="fieldVoice('reg-mid','name')" aria-label="Отчество голосом">🎙️</button></div>
+        <div class="fld-err" id="err-reg-mid"></div></div>
+
+      <div class="fld"><label for="reg-iin">ИИН (12 цифр) <span class="req">*</span></label>
+        <input id="reg-iin" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="12 цифр">
+        <div class="fld-ok" id="ok-reg-iin">✅ ИИН корректен</div>
+        <div class="fld-err" id="err-reg-iin"></div></div>
+
+      <div class="fld"><label for="reg-city">Город <span class="req">*</span></label>
+        <select id="reg-city" onchange="onCityChange()"></select>
+        <div class="fld-err" id="err-reg-city"></div></div>
+
+      <div class="fld"><label for="reg-street">Улица <span class="req">*</span></label>
+        <div class="fld-row"><input id="reg-street" list="dl-streets" autocomplete="off" placeholder="Выберите из списка или введите"><button class="mic-btn" type="button" onclick="fieldVoice('reg-street','street')" aria-label="Улица голосом">🎙️</button></div>
+        <div class="fld-err" id="err-reg-street"></div></div>
+
+      <div class="fld"><label for="reg-house">Номер дома <span class="req">*</span></label>
+        <div class="fld-row"><input id="reg-house" list="dl-houses" autocomplete="off" placeholder="Например, 12 или 12А"><button class="mic-btn" type="button" onclick="fieldVoice('reg-house','house')" aria-label="Дом голосом">🎙️</button></div>
+        <div class="fld-err" id="err-reg-house"></div></div>
+
+      <div class="fld"><label for="reg-apt">Номер квартиры <span class="req">*</span></label>
+        <div class="fld-row"><input id="reg-apt" list="dl-apts" inputmode="numeric" autocomplete="off" placeholder="Например, 23"><button class="mic-btn" type="button" onclick="fieldVoice('reg-apt','apt')" aria-label="Квартира голосом">🎙️</button></div>
+        <div class="fld-err" id="err-reg-apt"></div></div>
+
+      <div class="fld"><label for="reg-phone">Номер телефона</label>
+        <input id="reg-phone" readonly>
+        <div class="fld-ok" style="display:block;">✅ Подтверждён по коду</div></div>
+
+      <button class="btn-primary" onclick="saveProfile()">Сохранить и войти</button>
+      <div style="text-align:center;margin-top:6px;"><button class="btn-link" onclick="fillTestData()">Заполнить тестовыми данными (демо)</button></div>
+    </div>
+  </div>
+  <datalist id="dl-streets"></datalist>
+  <datalist id="dl-houses"></datalist>
+  <datalist id="dl-apts"></datalist>
+</div>
+
+<!-- =================== PROFILE =================== -->
+<div class="screen" id="screen-profile">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">👤 Мой профиль</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="prof-row"><span>ФИО</span><span id="pf-fio">—</span></div>
+      <div class="prof-row"><span>ИИН</span><span id="pf-iin">—</span></div>
+      <div class="prof-row"><span>Телефон</span><span id="pf-phone">—</span></div>
+      <div class="prof-row"><span>Город</span><span id="pf-city">—</span></div>
+      <div class="prof-row"><span>Адрес</span><span id="pf-addr">—</span></div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-title" style="font-size:16px;">🗺 Мой дом на карте</div>
+      <div class="auth-sub" id="hm-text" style="margin-bottom:0;"></div>
+      <div class="map-actions" id="hm-actions">
+        <button class="btn-ghost" onclick="mapShow()">🗺 Показать на карте</button>
+        <button class="btn-ghost" onclick="mapRoute()">🧭 Построить маршрут</button>
+        <button class="btn-ghost" onclick="mapOpenOsm()">↗ Открыть в OpenStreetMap</button>
+        <button class="btn-link" onclick="homeClear()">Удалить сохранённую точку</button>
+      </div>
+      <button class="btn-ghost" id="hm-set" onclick="homeSetHere()" style="margin-top:10px;">📍 Запомнить это место как мой дом</button>
+      <iframe class="map-frame" id="hm-frame" title="Карта дома" loading="lazy"></iframe>
+    </div>
+    <div class="demo-note" style="margin:0;">Данные анкеты хранятся только в этом браузере. Наружу уходят только запросы к картам и только по вашей кнопке. Очистка данных сайта удалит профиль.</div>
+    <button class="btn-primary" onclick="editProfile()">✏️ Изменить анкету</button>
+    <button class="btn-ghost" onclick="logout()">Выйти</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 </div><!-- /phone -->
 
 <script>
 // ===== SCREENS =====
 function showScreen(id) {
+  id = alauGuard(id);
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  alauOnShow(id);
 }
 
 // ===== REQUESTS =====
@@ -1320,7 +1540,7 @@ function submitRequest(catName) {
 }
 
 // ===== VOICE / MIC / TICKETS =====
-const APT = '23';
+let APT = '23';
 const OSI = 'ОСИ №14';
 let mediaRecorder = null;
 let audioChunks = [];
@@ -1793,6 +2013,542 @@ function submitAgenda() {
   switchChatTab('chat');
   setTimeout(()=>chatBody.scrollTop=chatBody.scrollHeight,100);
 }
+
+// ===== AUTH / PROFILE (DEMO): регистрация по SMS-коду, анкета, голосовой ввод =====
+const LS_USERS = 'alauDemoUsers', LS_SESSION = 'alauDemoSession';
+const memStore = {};
+function lsGet(k, def) {
+  try { const v = localStorage.getItem(k); if (v !== null) return JSON.parse(v); } catch (e) {}
+  return (k in memStore) ? memStore[k] : def;
+}
+function lsSet(k, v) { memStore[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function lsDel(k) { delete memStore[k]; try { localStorage.removeItem(k); } catch (e) {} }
+const $ = id => document.getElementById(id);
+
+const CITIES = ['Семей','Астана','Алматы','Шымкент','Караганда','Усть-Каменогорск','Павлодар','Актобе','Тараз','Атырау','Костанай','Кызылорда','Уральск','Петропавловск','Актау','Туркестан','Талдыкорган','Кокшетау','Экибастуз','Рудный'];
+// Примерный демо-справочник. Если адреса нет в списке, он вводится вручную.
+const DEMO_STREETS = { 'Семей': ['ул. Найманбаева','ул. Абая','пр. Шакарима','ул. Ауэзова','ул. Интернациональная'] };
+
+let guardSilent = false;
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast'); if (!t) return;
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ----- проверки -----
+const NAME_RE = /^[A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүІіҺһ][A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүІіҺһ\-' ]{1,59}$/;
+const HOUSE_RE = /^\d{1,4}([А-Яа-яA-Za-z]|\/\d{1,3})?$/;
+const APT_RE = /^\d{1,4}$/;
+function digitsOf(s) { return String(s || '').replace(/\D/g, ''); }
+function phone10(raw) {
+  let d = digitsOf(raw);
+  if (d.length > 10 && (d[0] === '7' || d[0] === '8')) d = d.slice(1);
+  return d.slice(0, 10);
+}
+function fmt10(d) {
+  let o = '';
+  if (d.length > 0) o += '(' + d.slice(0, 3);
+  if (d.length >= 3) o += ')';
+  if (d.length > 3) o += ' ' + d.slice(3, 6);
+  if (d.length > 6) o += '-' + d.slice(6, 8);
+  if (d.length > 8) o += '-' + d.slice(8, 10);
+  return o;
+}
+function fmtFull(d10) { return '+7 ' + fmt10(d10); }
+function iinValid(s) {
+  if (!/^\d{12}$/.test(s)) return false;
+  const d = s.split('').map(Number);
+  const mm = +s.slice(2, 4), dd = +s.slice(4, 6);
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return false;
+  if (d[6] < 1 || d[6] > 6) return false;
+  let sum = 0;
+  for (let i = 0; i < 11; i++) sum += d[i] * (i + 1);
+  let c = sum % 11;
+  if (c === 10) {
+    const w = [3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2];
+    sum = 0;
+    for (let i = 0; i < 11; i++) sum += d[i] * w[i];
+    c = sum % 11;
+    if (c === 10) return false;
+  }
+  return c === d[11];
+}
+function makeTestIIN() {
+  for (let n = 1; n < 10000; n++) {
+    const base = '850315' + '3' + String(n).padStart(4, '0');
+    const d = base.split('').map(Number);
+    let sum = 0;
+    for (let i = 0; i < 11; i++) sum += d[i] * (i + 1);
+    let c = sum % 11;
+    if (c === 10) {
+      const w = [3, 4, 5, 6, 7, 8, 9, 10, 11, 1, 2];
+      sum = 0;
+      for (let i = 0; i < 11; i++) sum += d[i] * w[i];
+      c = sum % 11;
+    }
+    if (c < 10) return base + c;
+  }
+  return '';
+}
+
+// ----- состояние -----
+function currentPhone() { return lsGet(LS_SESSION, null); }
+function currentProfile() {
+  const p = currentPhone(); if (!p) return null;
+  const users = lsGet(LS_USERS, {});
+  return users[p] || null;
+}
+function isProfileComplete(u) {
+  return !!(u && NAME_RE.test(u.last || '') && NAME_RE.test(u.first || '') && iinValid(u.iin || '') &&
+    u.city && (u.street || '').trim().length >= 2 && HOUSE_RE.test(u.house || '') && APT_RE.test(u.apt || ''));
+}
+
+// ----- защита экранов: без заполненной анкеты доступны только вход и анкета -----
+function alauGuard(id) {
+  if (isProfileComplete(currentProfile())) return id;
+  if (id === 'screen-auth') return id;
+  if (id === 'screen-register') { if (currentPhone()) { openRegister(false); return id; } return 'screen-auth'; }
+  if (!guardSilent) toast('Сначала войдите и заполните анкету');
+  if (currentPhone()) { openRegister(false); return 'screen-register'; }
+  return 'screen-auth';
+}
+function alauOnShow(id) {
+  if (id === 'screen-profile') renderProfile();
+}
+
+// ----- вход по SMS-коду (демо) -----
+let authPhone = '', authCode = '', authTries = 0, resendTimer = null;
+function showErr(id, msg) { const e = $(id); if (e) { e.textContent = msg; e.style.display = msg ? 'block' : 'none'; } }
+function onAuthPhoneInput() {
+  const el = $('auth-phone');
+  const d = phone10(el.value);
+  el.value = fmt10(d);
+  showErr('auth-phone-err', '');
+  const known = d.length === 10 && !!lsGet(LS_USERS, {})['7' + d];
+  $('auth-known').style.display = known ? 'block' : 'none';
+}
+function authSendCode() {
+  const d = phone10($('auth-phone').value);
+  if (d.length !== 10) { showErr('auth-phone-err', 'Введите 10 цифр номера, например (701) 123-45-67'); authBack(); return; }
+  authPhone = '7' + d;
+  authCode = String(Math.floor(1000 + Math.random() * 9000));
+  authTries = 0;
+  $('auth-demo-code').textContent = authCode;
+  $('auth-phone-shown').textContent = fmtFull(d);
+  $('auth-step-phone').style.display = 'none';
+  $('auth-step-code').style.display = 'block';
+  $('auth-code').value = ''; showErr('auth-code-err', '');
+  $('auth-code').focus();
+  startResend(60);
+}
+function startResend(sec) {
+  const b = $('auth-resend'); clearInterval(resendTimer);
+  let left = sec; b.disabled = true;
+  const tick = () => {
+    if (left <= 0) { clearInterval(resendTimer); b.disabled = false; b.textContent = 'Отправить код повторно'; return; }
+    b.textContent = 'Повторно через ' + left + ' с'; left--;
+  };
+  tick(); resendTimer = setInterval(tick, 1000);
+}
+function authBack() {
+  clearInterval(resendTimer);
+  $('auth-step-code').style.display = 'none';
+  $('auth-step-phone').style.display = 'block';
+}
+function authVerify() {
+  const v = $('auth-code').value.trim();
+  if (!/^\d{4}$/.test(v)) { showErr('auth-code-err', 'Введите 4 цифры кода'); return; }
+  if (v !== authCode) {
+    authTries++;
+    if (authTries >= 5) { authBack(); toast('Слишком много попыток. Запросите новый код.'); return; }
+    showErr('auth-code-err', 'Неверный код. Осталось попыток: ' + (5 - authTries)); return;
+  }
+  lsSet(LS_SESSION, authPhone);
+  clearInterval(resendTimer);
+  const u = lsGet(LS_USERS, {})[authPhone];
+  if (isProfileComplete(u)) {
+    applyProfile(u); showScreen('screen-home'); toast('С возвращением, ' + u.first + '!');
+  } else {
+    openRegister(false); showScreen('screen-register');
+  }
+}
+function logout() {
+  stopVoice();
+  lsDel(LS_SESSION);
+  $('auth-phone').value = ''; $('auth-known').style.display = 'none';
+  authBack();
+  showScreen('screen-auth');
+  toast('Вы вышли из аккаунта');
+}
+
+// ----- анкета -----
+function streetsFor(city) { return DEMO_STREETS[city] || []; }
+function fillList(id, arr) {
+  const dl = $(id); dl.textContent = '';
+  arr.forEach(v => { const o = document.createElement('option'); o.value = v; dl.appendChild(o); });
+}
+function onCityChange() { fillList('dl-streets', streetsFor($('reg-city').value)); }
+function openRegister(editing) {
+  const sel = $('reg-city');
+  if (!sel.options.length) CITIES.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+  const houses = [], apts = [];
+  for (let i = 1; i <= 60; i++) houses.push(String(i));
+  for (let i = 1; i <= 120; i++) apts.push(String(i));
+  fillList('dl-houses', houses); fillList('dl-apts', apts);
+  const u = currentProfile() || {};
+  $('reg-last').value = u.last || ''; $('reg-first').value = u.first || ''; $('reg-mid').value = u.mid || '';
+  $('reg-iin').value = u.iin || '';
+  sel.value = u.city || 'Семей';
+  onCityChange();
+  $('reg-street').value = u.street || ''; $('reg-house').value = u.house || ''; $('reg-apt').value = u.apt || '';
+  const ph = currentPhone() || '';
+  $('reg-phone').value = ph ? fmtFull(ph.slice(1)) : '';
+  $('reg-back').style.display = editing ? 'block' : 'none';
+  $('reg-title').textContent = editing ? 'Изменить анкету' : 'Анкета жильца';
+  ['reg-last','reg-first','reg-mid','reg-iin','reg-city','reg-street','reg-house','reg-apt'].forEach(f => markBad(f, ''));
+  geoFix = null; $('geo-save').checked = (u.lat != null); setGeoStatus('');
+  onIinInput();
+}
+function editProfile() { openRegister(true); showScreen('screen-register'); }
+function markBad(id, msg) {
+  const el = $(id), er = $('err-' + id);
+  if (el) el.classList.toggle('bad', !!msg);
+  if (er) { er.textContent = msg; er.style.display = msg ? 'block' : 'none'; }
+}
+function onIinInput() {
+  const el = $('reg-iin');
+  el.value = digitsOf(el.value).slice(0, 12);
+  const ok = $('ok-reg-iin');
+  if (el.value.length === 12) {
+    if (iinValid(el.value)) { ok.style.display = 'block'; markBad('reg-iin', ''); }
+    else { ok.style.display = 'none'; markBad('reg-iin', 'ИИН не прошёл проверку контрольной цифры. Проверьте ввод.'); }
+  } else { ok.style.display = 'none'; markBad('reg-iin', ''); }
+}
+function cleanName(t) {
+  return String(t || '').replace(/[.,!?]/g, '').trim().split(/\s+/).filter(Boolean)
+    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
+function saveProfile() {
+  const v = {
+    last: cleanName($('reg-last').value), first: cleanName($('reg-first').value), mid: cleanName($('reg-mid').value),
+    iin: digitsOf($('reg-iin').value), city: $('reg-city').value,
+    street: $('reg-street').value.trim(), house: $('reg-house').value.trim().replace(/\s+/g, ''), apt: $('reg-apt').value.trim()
+  };
+  let ok = true;
+  const chk = (id, cond, msg) => { markBad(id, cond ? '' : msg); if (!cond) ok = false; };
+  chk('reg-last', NAME_RE.test(v.last), 'Введите фамилию (минимум 2 буквы)');
+  chk('reg-first', NAME_RE.test(v.first), 'Введите имя (минимум 2 буквы)');
+  chk('reg-mid', !v.mid || NAME_RE.test(v.mid), 'Отчество указано некорректно');
+  chk('reg-iin', iinValid(v.iin), 'Введите корректный ИИН: 12 цифр');
+  chk('reg-city', !!v.city, 'Выберите город');
+  chk('reg-street', v.street.length >= 2, 'Укажите улицу');
+  chk('reg-house', HOUSE_RE.test(v.house), 'Укажите номер дома, например 12, 12А или 12/1');
+  chk('reg-apt', APT_RE.test(v.apt), 'Укажите номер квартиры (цифры)');
+  if (!ok) { toast('Проверьте выделенные поля'); const bad = document.querySelector('#screen-register .bad'); if (bad) bad.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  const phone = currentPhone();
+  if (!phone) { showScreen('screen-auth'); return; }
+  const users = lsGet(LS_USERS, {});
+  v.phone = phone; v.updatedAt = new Date().toISOString();
+  if (users[phone] && users[phone].createdAt) v.createdAt = users[phone].createdAt; else v.createdAt = v.updatedAt;
+  if ($('geo-save').checked) {
+    const prev = users[phone] || {};
+    if (geoFix) { v.lat = +geoFix.lat.toFixed(5); v.lon = +geoFix.lon.toFixed(5); v.geoAcc = geoFix.acc; v.geoTs = geoFix.ts; }
+    else if (prev.lat != null) { v.lat = prev.lat; v.lon = prev.lon; v.geoAcc = prev.geoAcc; v.geoTs = prev.geoTs; }
+  }
+  users[phone] = v; lsSet(LS_USERS, users);
+  applyProfile(v); stopVoice();
+  showScreen('screen-home');
+  toast('Анкета сохранена (демо, только на этом устройстве)');
+}
+function fillTestData() {
+  $('reg-last').value = 'Тестов'; $('reg-first').value = 'Тест'; $('reg-mid').value = 'Тестович';
+  $('reg-iin').value = makeTestIIN(); onIinInput();
+  $('reg-city').value = 'Семей'; onCityChange();
+  $('reg-street').value = 'ул. Найманбаева'; $('reg-house').value = '12'; $('reg-apt').value = '23';
+  ['reg-last','reg-first','reg-mid','reg-city','reg-street','reg-house','reg-apt'].forEach(f => markBad(f, ''));
+}
+
+// ----- применение профиля в интерфейсе -----
+function applyProfile(u) {
+  APT = u.apt;
+  const badge = $('home-apt'); if (badge) badge.textContent = 'Кв. №' + u.apt;
+  $('ps-avatar').textContent = ((u.first[0] || '') + (u.last[0] || '')).toUpperCase();
+  $('ps-name').textContent = u.last + ' ' + u.first;
+  $('ps-addr').textContent = u.city + ', ' + u.street + ', д. ' + u.house + ', кв. ' + u.apt;
+}
+function renderProfile() {
+  const u = currentProfile(); if (!u) return;
+  $('pf-fio').textContent = [u.last, u.first, u.mid].filter(Boolean).join(' ');
+  $('pf-iin').textContent = '••••••••' + u.iin.slice(-4);
+  $('pf-phone').textContent = fmtFull(u.phone.slice(1));
+  $('pf-city').textContent = u.city;
+  $('pf-addr').textContent = u.street + ', д. ' + u.house + ', кв. ' + u.apt;
+  renderHomeMap(u);
+}
+
+// ----- голосовой ввод анкеты (Web Speech API; текст всегда можно поправить руками) -----
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let currentRec = null, voiceAbort = false;
+function setVoiceStatus(t) { const s = $('voice-status'); if (s) s.textContent = t; }
+function speak(text) {
+  return new Promise(res => {
+    if (!('speechSynthesis' in window)) { res(); return; }
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text); u.lang = 'ru-RU'; u.rate = 0.95;
+      const done = () => res(); u.onend = done; u.onerror = done;
+      speechSynthesis.speak(u); setTimeout(done, 9000);
+    } catch (e) { res(); }
+  });
+}
+function listenOnce() {
+  return new Promise((resolve, reject) => {
+    if (!SpeechRec) { reject({ code: 'unsupported' }); return; }
+    let got = false;
+    try {
+      const r = new SpeechRec(); currentRec = r;
+      r.lang = 'ru-RU'; r.interimResults = false; r.maxAlternatives = 1;
+      r.onresult = e => { got = true; resolve((e.results[0][0].transcript || '').trim()); };
+      r.onerror = e => reject({ code: e.error || 'error' });
+      r.onend = () => { currentRec = null; if (!got) reject({ code: 'no-speech' }); };
+      r.start();
+    } catch (e) { reject({ code: 'start-failed' }); }
+  });
+}
+function voiceErrText(code) {
+  if (code === 'unsupported') return 'Этот браузер не поддерживает голосовой ввод. Введите данные руками (лучше всего работает Chrome).';
+  if (code === 'not-allowed' || code === 'service-not-allowed') return 'Нет доступа к микрофону. Разрешите его в настройках браузера или введите данные руками.';
+  if (code === 'no-speech') return 'Речь не распознана. Попробуйте ещё раз или введите руками.';
+  if (code === 'aborted') return '';
+  return 'Не удалось распознать речь (' + code + '). Введите руками.';
+}
+function matchStreet(t) {
+  const list = streetsFor($('reg-city').value);
+  const q = t.toLowerCase().replace(/^(улица|проспект|переулок)\s+/, '').replace(/[.,!?]/g, '').trim();
+  for (const s of list) {
+    const core = s.toLowerCase().replace(/^(ул\.|пр\.|пер\.)\s*/, '');
+    if (q && (core.includes(q) || q.includes(core))) return s;
+  }
+  return cleanName(q);
+}
+function applyVoice(id, kind, text) {
+  if (kind === 'name') {
+    if (id === 'reg-mid' && /^(нет|пропустить|без отчества)\.?$/i.test(text.trim())) { $(id).value = ''; return true; }
+    $(id).value = cleanName(text); return true;
+  }
+  if (kind === 'street') { $(id).value = matchStreet(text); return true; }
+  if (kind === 'house') {
+    const m = text.match(/(\d{1,4})\s*([А-Яа-яA-Za-z])?(?![А-Яа-яA-Za-z])/);
+    if (!m) { $(id).value = text; toast('Не нашёл цифры в «' + text + '». Проверьте поле.'); return false; }
+    $(id).value = m[1] + (m[2] ? m[2].toUpperCase() : ''); return true;
+  }
+  if (kind === 'apt') {
+    const m = text.match(/(\d{1,4})/);
+    if (!m) { $(id).value = text; toast('Не нашёл цифры в «' + text + '». Проверьте поле.'); return false; }
+    $(id).value = m[1]; return true;
+  }
+  return false;
+}
+async function fieldVoice(id, kind) {
+  stopVoice(); voiceAbort = false;
+  const btn = document.querySelector('#screen-register [onclick*="' + id + '"]');
+  if (btn) btn.classList.add('listening');
+  setVoiceStatus('Слушаю…');
+  try {
+    const t = await listenOnce();
+    applyVoice(id, kind, t); markBad(id, '');
+    setVoiceStatus('Записано: ' + t);
+  } catch (e) {
+    const m = voiceErrText(e.code); setVoiceStatus(m); if (m) toast(m);
+  } finally { if (btn) btn.classList.remove('listening'); }
+}
+const VOICE_STEPS = [
+  ['reg-last', 'name', 'Назовите вашу фамилию'],
+  ['reg-first', 'name', 'Назовите ваше имя'],
+  ['reg-mid', 'name', 'Назовите отчество. Если отчества нет, скажите: нет'],
+  ['reg-street', 'street', 'Назовите улицу'],
+  ['reg-house', 'house', 'Назовите номер дома'],
+  ['reg-apt', 'apt', 'Назовите номер квартиры']
+];
+async function voiceFillAll() {
+  if (!SpeechRec) { const m = voiceErrText('unsupported'); setVoiceStatus(m); toast(m); return; }
+  stopVoice(); voiceAbort = false;
+  $('voice-start').style.display = 'none'; $('voice-stop').style.display = 'block';
+  for (const [id, kind, prompt] of VOICE_STEPS) {
+    if (voiceAbort) return;
+    $(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setVoiceStatus('🔊 ' + prompt);
+    await speak(prompt);
+    if (voiceAbort) return;
+    setVoiceStatus('🎙️ Слушаю…');
+    try {
+      const t = await listenOnce();
+      if (voiceAbort) return;
+      applyVoice(id, kind, t); markBad(id, '');
+    } catch (e) {
+      if (voiceAbort) return;
+      const m = voiceErrText(e.code); setVoiceStatus(m); if (m) toast(m);
+      $('voice-start').style.display = 'block'; $('voice-stop').style.display = 'none'; return;
+    }
+  }
+  setVoiceStatus('Готово. Проверьте поля, введите ИИН руками и нажмите «Сохранить и войти».');
+  $('voice-start').style.display = 'block'; $('voice-stop').style.display = 'none';
+  $('reg-iin').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function stopVoice() {
+  voiceAbort = true;
+  try { if (currentRec) currentRec.abort(); } catch (e) {}
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+  document.querySelectorAll('.mic-btn.listening').forEach(b => b.classList.remove('listening'));
+  setVoiceStatus('');
+  const s = $('voice-start'), p = $('voice-stop');
+  if (s) s.style.display = 'block'; if (p) p.style.display = 'none';
+}
+
+
+// ----- геолокация: город (на устройстве), улица и дом (OpenStreetMap), карта и маршрут -----
+// Координаты городов приблизительные (центры), нужны только для выбора ближайшего города.
+const CITY_COORDS = {
+  'Семей': [50.411, 80.228], 'Астана': [51.169, 71.449], 'Алматы': [43.222, 76.851], 'Шымкент': [42.342, 69.590],
+  'Караганда': [49.805, 73.109], 'Усть-Каменогорск': [49.948, 82.628], 'Павлодар': [52.287, 76.967], 'Актобе': [50.284, 57.167],
+  'Тараз': [42.900, 71.367], 'Атырау': [47.095, 51.924], 'Костанай': [53.214, 63.625], 'Кызылорда': [44.849, 65.482],
+  'Уральск': [51.228, 51.387], 'Петропавловск': [54.867, 69.150], 'Актау': [43.650, 51.150], 'Туркестан': [43.297, 68.252],
+  'Талдыкорган': [45.016, 78.374], 'Кокшетау': [53.283, 69.400], 'Экибастуз': [51.730, 75.323], 'Рудный': [52.973, 63.117]
+};
+const MAX_CITY_KM = 60;
+let geoFix = null, osmConsent = false;
+function haversineKm(a, b, c, d) {
+  const R = 6371, rad = x => x * Math.PI / 180, dLat = rad(c - a), dLon = rad(d - b);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function nearestCity(lat, lon) {
+  let best = null;
+  for (const [name, [la, lo]] of Object.entries(CITY_COORDS)) {
+    const km = haversineKm(lat, lon, la, lo);
+    if (!best || km < best.km) best = { name, km };
+  }
+  return best;
+}
+function setGeoStatus(t) { const s = $('geo-status'); if (s) s.textContent = t; }
+function geoErrText(code) {
+  if (code === 'insecure') return 'Геолокация работает только на защищённой (https) странице. Введите адрес вручную.';
+  if (code === 'unsupported') return 'Этот браузер не поддерживает геолокацию. Введите адрес вручную.';
+  if (code === 'denied') return 'Доступ к местоположению запрещён. Разрешите его в настройках браузера или введите адрес вручную.';
+  if (code === 'unavailable') return 'Не удалось определить местоположение (нет сигнала). Попробуйте ещё раз или введите адрес вручную.';
+  if (code === 'timeout') return 'Определение местоположения заняло слишком много времени. Попробуйте ещё раз.';
+  if (code === 'net') return 'Сервис адресов недоступен. Введите улицу и дом вручную.';
+  if (String(code).startsWith('http-')) return 'Сервис адресов вернул ошибку (' + code.slice(5) + '). Введите улицу и дом вручную.';
+  return 'Не удалось определить местоположение. Введите адрес вручную.';
+}
+function getPosition() {
+  return new Promise((resolve, reject) => {
+    if (window.isSecureContext === false) { reject({ code: 'insecure' }); return; }
+    if (!('geolocation' in navigator)) { reject({ code: 'unsupported' }); return; }
+    navigator.geolocation.getCurrentPosition(
+      p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude, acc: Math.round(p.coords.accuracy || 0), ts: Date.now() }),
+      e => reject({ code: e.code === 1 ? 'denied' : e.code === 2 ? 'unavailable' : e.code === 3 ? 'timeout' : 'error' }),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+  });
+}
+async function geoLocate() { setGeoStatus('📍 Определяю местоположение…'); geoFix = await getPosition(); return geoFix; }
+function accNote(f) { return f.acc > 300 ? ' Точность низкая (±' + f.acc + ' м), проверьте.' : ''; }
+
+async function geoFillCity() {
+  try {
+    const f = await geoLocate(), n = nearestCity(f.lat, f.lon);
+    if (n.km > MAX_CITY_KM) {
+      setGeoStatus('Вы далеко от городов списка (ближайший: ' + n.name + ', около ' + Math.round(n.km) + ' км). Выберите город вручную.'); return;
+    }
+    $('reg-city').value = n.name; onCityChange(); markBad('reg-city', '');
+    setGeoStatus('Город: ' + n.name + '.' + accNote(f));
+  } catch (e) { const m = geoErrText(e.code); setGeoStatus(m); toast(m); }
+}
+async function geoFillStreet() {
+  if (!osmConsent) {
+    if (!confirm('Чтобы определить улицу и дом, ваши координаты будут отправлены в сервис OpenStreetMap (nominatim.openstreetmap.org). Продолжить?')) return;
+    osmConsent = true;
+  }
+  try {
+    const f = await geoLocate();
+    setGeoStatus('🔎 Ищу адрес…');
+    const url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&accept-language=ru&lat=' + f.lat.toFixed(5) + '&lon=' + f.lon.toFixed(5);
+    const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 12000);
+    let r;
+    try { r = await fetch(url, { signal: ctl.signal }); } catch (err) { throw { code: err && err.name === 'AbortError' ? 'timeout' : 'net' }; } finally { clearTimeout(tm); }
+    if (!r.ok) throw { code: 'http-' + r.status };
+    const a = (await r.json()).address || {};
+    const place = a.city || a.town || a.village || a.municipality || '';
+    const city = CITIES.find(c => place && place.toLowerCase().includes(c.toLowerCase()));
+    const road = a.road || a.pedestrian || a.residential || '';
+    const house = String(a.house_number || '').replace(/\s+/g, '');
+    const notes = [];
+    if (city) { $('reg-city').value = city; onCityChange(); markBad('reg-city', ''); }
+    else notes.push('город не из списка, выберите вручную');
+    if (road) { $('reg-street').value = matchStreet(road); markBad('reg-street', ''); } else notes.push('улица не найдена');
+    if (house && HOUSE_RE.test(house)) { $('reg-house').value = house; markBad('reg-house', ''); } else notes.push('номер дома не найден, введите вручную');
+    setGeoStatus((road ? 'Найдено: ' + (city || place) + ', ' + road + (house ? ', ' + house : '') + '. ' : '') +
+      (notes.length ? 'Внимание: ' + notes.join('; ') + '. ' : '') + 'Данные карты могут быть неточны, проверьте адрес.' + accNote(f));
+  } catch (e) { const m = geoErrText(e.code); setGeoStatus(m); toast(m); }
+}
+
+// ----- карта и маршрут (по сохранённой точке дома) -----
+function renderHomeMap(u) {
+  const has = u.lat != null && u.lon != null;
+  $('hm-actions').style.display = has ? 'flex' : 'none';
+  $('hm-set').textContent = has ? '📍 Обновить точку: я сейчас дома' : '📍 Запомнить это место как мой дом';
+  $('hm-text').textContent = has
+    ? 'Точка сохранена на этом устройстве (±' + (u.geoAcc || '?') + ' м). Карта и маршрут открываются только по вашему нажатию.'
+    : 'Точка дома не задана. Находясь дома, нажмите кнопку ниже или отметьте точку при заполнении анкеты.';
+  const f = $('hm-frame'); f.style.display = 'none'; f.removeAttribute('src');
+}
+function mapShow() {
+  const u = currentProfile(); if (!u || u.lat == null) return;
+  const d = 0.003, bbox = [u.lon - d, u.lat - d, u.lon + d, u.lat + d].map(x => x.toFixed(5)).join('%2C');
+  const f = $('hm-frame');
+  f.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik&marker=' + u.lat + '%2C' + u.lon;
+  f.style.display = 'block';
+}
+function mapRoute() {
+  const u = currentProfile(); if (!u || u.lat == null) return;
+  window.open('https://www.google.com/maps/dir/?api=1&destination=' + u.lat + ',' + u.lon + '&travelmode=walking', '_blank', 'noopener');
+}
+function mapOpenOsm() {
+  const u = currentProfile(); if (!u || u.lat == null) return;
+  window.open('https://www.openstreetmap.org/?mlat=' + u.lat + '&mlon=' + u.lon + '#map=18/' + u.lat + '/' + u.lon, '_blank', 'noopener');
+}
+async function homeSetHere() {
+  const u = currentProfile(); if (!u) return;
+  try {
+    const f = await getPosition();
+    if (!confirm('Сохранить текущее место как вашу домашнюю точку? Она будет храниться только на этом устройстве.')) return;
+    const users = lsGet(LS_USERS, {});
+    Object.assign(users[u.phone], { lat: +f.lat.toFixed(5), lon: +f.lon.toFixed(5), geoAcc: f.acc, geoTs: f.ts });
+    lsSet(LS_USERS, users); renderProfile(); toast('Точка дома сохранена');
+  } catch (e) { toast(geoErrText(e.code)); }
+}
+function homeClear() {
+  const u = currentProfile(); if (!u) return;
+  const users = lsGet(LS_USERS, {});
+  ['lat', 'lon', 'geoAcc', 'geoTs'].forEach(k => delete users[u.phone][k]);
+  lsSet(LS_USERS, users); renderProfile(); toast('Точка дома удалена');
+}
+
+// ----- запуск -----
+(function alauInit() {
+  $('auth-phone').addEventListener('input', onAuthPhoneInput);
+  $('auth-phone').addEventListener('keydown', e => { if (e.key === 'Enter') authSendCode(); });
+  $('auth-code').addEventListener('input', e => { e.target.value = digitsOf(e.target.value).slice(0, 4); showErr('auth-code-err', ''); });
+  $('auth-code').addEventListener('keydown', e => { if (e.key === 'Enter') authVerify(); });
+  $('reg-iin').addEventListener('input', onIinInput);
+  guardSilent = true;
+  const u = currentProfile();
+  if (isProfileComplete(u)) { applyProfile(u); showScreen('screen-home'); }
+  else showScreen(currentPhone() ? 'screen-register' : 'screen-auth');
+  guardSilent = false;
+})();
 </script>
 </body>
 </html>
