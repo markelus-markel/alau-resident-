@@ -401,7 +401,7 @@
     <div class="topbar-logo">
       <h1>AlauConcierge</h1>
     </div>
-    <div class="apt-badge" id="home-apt" onclick="showScreen('screen-profile')" style="cursor:pointer;">Кв. №23</div>
+    <div class="apt-badge" id="home-apt" onclick="showScreen('screen-profile')" style="cursor:pointer;">Кв. №—</div>
   </div>
   <div class="home-content">
 
@@ -433,9 +433,9 @@
       <div id="ann-carousel" style="display:flex;gap:10px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;cursor:grab;" onmousedown="annDragStart(event)" onmousemove="annDragMove(event)" onmouseup="annDragEnd(event)" onmouseleave="annDragEnd(event)">
 
         <!-- Module 1: Срочное объявление -->
-        <div class="ann-card-module" onclick="openModuleVoice('urgent','🚨 Отключение воды','Уважаемый житель квартиры номер 23. Вы можете сообщить о проблемах с водоснабжением или оставить своё мнение по данному вопросу. Это демонстрационная версия: сообщение создаётся на вашем устройстве и пока никому не передаётся.','Сегодня · Председатель ОСИ','С 09:00 до 17:00 плановые работы. Запаситесь водой заранее.','pill-urgent','🚨 Срочно')">
+        <div class="ann-card-module" onclick="openModuleVoice('urgent','🚨 Отключение воды','Уважаемый житель квартиры номер {apt}. Вы можете сообщить о проблемах с водоснабжением или оставить своё мнение по данному вопросу. Это демонстрационная версия: сообщение создаётся на вашем устройстве и пока никому не передаётся.','Сегодня · Председатель ОСИ','С 09:00 до 17:00 плановые работы. Запаситесь водой заранее.','pill-urgent','🚨 Срочно')">
           <div class="amc-icon" style="background:#fef0ef;">🚨</div>
-          <div class="amc-title">Отключение воды 28 мая</div>
+          <div class="amc-title">Отключение воды <span data-rd="0"></span></div>
           <div class="amc-sub">Сегодня · Председатель ОСИ</div>
           <div class="amc-text">С 09:00 до 17:00 плановые работы</div>
           <span class="amc-pill" style="background:#fce4e4;color:#c62828;">Срочно</span>
@@ -443,7 +443,7 @@
         </div>
 
         <!-- Module 2: Голосование -->
-        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер 23. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — в демо-версии позиция показывается только на вашем экране и в итог голосования не засчитывается.',voteMeta(),'Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
+        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер {apt}. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — в демо-версии позиция показывается только на вашем экране и в итог голосования не засчитывается.',voteMeta(),'Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
           <div class="amc-icon" style="background:#f0f0ff;">🗳️</div>
           <div class="amc-title">Голосование: домофон</div>
           <div class="amc-sub" data-vote="meta">…</div>
@@ -453,7 +453,7 @@
         </div>
 
         <!-- Module 3: Чат -->
-        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер 23. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер {apt}. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
           <div class="amc-icon" style="background:#e8eaf6;">💬</div>
           <div class="amc-title">Общедомовой чат</div>
           <div class="amc-sub">23 жильца онлайн</div>
@@ -463,27 +463,27 @@
         </div>
 
         <!-- Module 4: Собрание -->
-        <div class="ann-card-module" onclick="openModuleVoice('meeting','📅 Собрание 1 июня','Уважаемый житель квартиры номер 23. Вы можете заранее озвучить свои вопросы и предложения к собранию жильцов 1 июня. В демо-версии запись не попадает в повестку собрания.','25 мая · Председатель ОСИ','Ремонт кровли и бюджет Q2. 18:00, холл 1-го этажа.','pill-new','Новое')">
+        <div class="ann-card-module" onclick="openModuleVoice('meeting','📅 Собрание {d4}','Уважаемый житель квартиры номер {apt}. Вы можете заранее озвучить свои вопросы и предложения к собранию жильцов {d4}. В демо-версии запись не попадает в повестку собрания.','{d-3} · Председатель ОСИ','Ремонт кровли и бюджет Q2. 18:00, холл 1-го этажа.','pill-new','Новое')">
           <div class="amc-icon" style="background:#eef6ff;">📅</div>
-          <div class="amc-title">Собрание 1 июня</div>
-          <div class="amc-sub">25 мая · Председатель</div>
+          <div class="amc-title">Собрание <span data-rd="4"></span></div>
+          <div class="amc-sub"><span data-rd="-3"></span> · Председатель</div>
           <div class="amc-text">Кровля и бюджет Q2</div>
           <span class="amc-pill" style="background:#e8f5e9;color:#2e7d32;">Новое</span>
           <div class="amc-mic">🎙️ На повестку</div>
         </div>
 
         <!-- Module 5: Акция -->
-        <div class="ann-card-module" onclick="openModuleVoice('promo','🎁 Скидка КазГарант','Уважаемый житель квартиры номер 23. Вы можете задать вопрос о страховании жилья или оставить заявку на консультацию. В демо-версии запрос никому не передаётся.','23 мая · КазГарант','−15% на страхование от затопления и пожара для жильцов ОСИ №14.','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('promo','🎁 Скидка КазГарант','Уважаемый житель квартиры номер {apt}. Вы можете задать вопрос о страховании жилья или оставить заявку на консультацию. В демо-версии запрос никому не передаётся.','{d-5} · КазГарант','−15% на страхование от затопления и пожара для жильцов ОСИ №14.','','')">
           <div class="amc-icon" style="background:#fff8e6;">🎁</div>
           <div class="amc-title">Скидка на страховку</div>
-          <div class="amc-sub">23 мая · КазГарант</div>
+          <div class="amc-sub"><span data-rd="-5"></span> · КазГарант</div>
           <div class="amc-text">−15% для жильцов ОСИ</div>
           <span class="amc-pill" style="background:#fff3e0;color:#e65100;">🔥 Акция</span>
           <div class="amc-mic">🎙️ Задать вопрос</div>
         </div>
 
         <!-- Module 6: Заявка мастеру -->
-        <div class="ann-card-module" onclick="openModuleVoice('repair','🔧 Заявка мастеру','Уважаемый житель квартиры номер 23. Пожалуйста, опишите вашу проблему. Укажите где именно и что сломалось. В демо-версии заявка создаётся на вашем устройстве и никому не передаётся.','Тех. отдел · ОСИ №14','Опишите проблему голосом. В демо-версии заявка создаётся только на вашем устройстве.','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('repair','🔧 Заявка мастеру','Уважаемый житель квартиры номер {apt}. Пожалуйста, опишите вашу проблему. Укажите где именно и что сломалось. В демо-версии заявка создаётся на вашем устройстве и никому не передаётся.','Тех. отдел · ОСИ №14','Опишите проблему голосом. В демо-версии заявка создаётся только на вашем устройстве.','','')">
           <div class="amc-icon" style="background:#edfaf3;">🔧</div>
           <div class="amc-title">Заявка мастеру</div>
           <div class="amc-sub">Тех. отдел · ОСИ №14</div>
@@ -540,7 +540,7 @@
     <div class="ann-full-card">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#fef0ef;">🚨</div>
-        <div class="ann-full-body"><div class="ann-full-title">Отключение воды 28 мая</div><div class="ann-full-meta">Сегодня · Председатель ОСИ</div></div>
+        <div class="ann-full-body"><div class="ann-full-title">Отключение воды <span data-rd="0"></span></div><div class="ann-full-meta">Сегодня · Председатель ОСИ</div></div>
         <span class="ann-tag tag-urgent">Срочно</span>
       </div>
       <div class="ann-full-text">С 09:00 до 17:00 — плановые работы по замене труб на ул. Найманбаева. Рекомендуем запастись водой. Горячее водоснабжение не затронуто.</div>
@@ -564,7 +564,7 @@
     <div class="ann-full-card">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#eef6ff;">📅</div>
-        <div class="ann-full-body"><div class="ann-full-title">Собрание жильцов 1 июня</div><div class="ann-full-meta">25 мая · Председатель ОСИ</div></div>
+        <div class="ann-full-body"><div class="ann-full-title">Собрание жильцов <span data-rd="4"></span></div><div class="ann-full-meta"><span data-rd="-3"></span> · Председатель ОСИ</div></div>
         <span class="ann-tag tag-new">Новое</span>
       </div>
       <div class="ann-full-text">Обсуждение ремонта кровли и бюджета Q2. 18:00, холл 1-го этажа. Ваш голос важен! Явка обязательна — будем принимать решение большинством.</div>
@@ -572,7 +572,7 @@
     <div class="ann-full-card">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#fff8e6;">🎁</div>
-        <div class="ann-full-body"><div class="ann-full-title">Скидка на страховку жилья</div><div class="ann-full-meta">23 мая · КазГарант</div></div>
+        <div class="ann-full-body"><div class="ann-full-title">Скидка на страховку жилья</div><div class="ann-full-meta"><span data-rd="-5"></span> · КазГарант</div></div>
         <span class="ann-tag tag-promo">🔥 Акция</span>
       </div>
       <div class="ann-full-text">Жильцы ОСИ №14 получают −15% на страхование от затопления, пожара и кражи. Оформление за 5 минут онлайн.</div>
@@ -580,7 +580,7 @@
     <div class="ann-full-card">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#edfaf3;">🔧</div>
-        <div class="ann-full-body"><div class="ann-full-title">Заявка #113 выполнена</div><div class="ann-full-meta">20 мая · Технический отдел</div></div>
+        <div class="ann-full-body"><div class="ann-full-title">Заявка #113 выполнена</div><div class="ann-full-meta"><span data-rd="-8"></span> · Технический отдел</div></div>
         <span class="ann-tag tag-new" style="background:#edfaf3;color:#2e7d32;">Выполнено</span>
       </div>
       <div class="ann-full-text">Лифт №2 отремонтирован. Если проблема осталась — подайте повторную заявку через раздел «Заявки».</div>
@@ -626,7 +626,7 @@
 
     <!-- TAB: CHAT -->
     <div id="chatpane-chat" class="chat-body" id="chat-messages">
-      <div class="chat-date-sep">27 мая</div>
+      <div class="chat-date-sep"><span data-rd="-1"></span></div>
 
       <div class="chat-sys">Ахметова Г. (кв.12) присоединилась к чату</div>
 
@@ -680,7 +680,7 @@
       <div class="chat-msg mine">
         <div class="chat-avatar" style="background:var(--teal);color:#fff;">23</div>
         <div>
-          <div class="chat-sender" style="text-align:right;">Вы · кв.23</div>
+          <div class="chat-sender" style="text-align:right;">Вы · кв.<span class="js-apt">—</span></div>
           <div class="chat-bubble">Тоже за! И ещё хотелось бы обсудить уборку лестниц — грязновато.</div>
           <div class="chat-time" style="text-align:right;">10:35</div>
         </div>
@@ -724,7 +724,7 @@
     <!-- TAB: AGENDA -->
     <div id="chatpane-agenda" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;display:none;flex-direction:column;gap:10px;">
       <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
-        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Повестка · Собрание 1 июня</div>
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Повестка · Собрание <span data-rd="4"></span></div>
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <div style="min-width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">1</div>
@@ -775,7 +775,7 @@
       </div>
 
       <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
-        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Уборка двора — 7 июня</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Уборка двора — <span data-rd="10"></span></div>
         <div class="poll-bar-row"><span class="poll-bar-label">✅ Участвую</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:82%"></div></div><span class="poll-bar-pct">82%</span></div>
         <div class="poll-bar-row"><span class="poll-bar-label">❌ Не смогу</span><div class="poll-bar-bg"><div class="poll-bar-fill" style="width:18%;background:#ffb3b3;"></div></div><span class="poll-bar-pct">18%</span></div>
         <div class="donut-wrap">
@@ -916,7 +916,7 @@
       </div>
     </div>
     <div class="vote-card">
-      <div class="vote-q">Провести общую уборку двора 7 июня?</div>
+      <div class="vote-q">Провести общую уборку двора <span data-rd="10"></span>?</div>
       <div class="vote-status">Открыто · Осталось 6 дней · Проголосовали 28 из 87</div>
       <div class="vote-bar-wrap"><div class="vote-opt-label"><span>✅ Участвую!</span><span>82%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" style="width:82%"></div></div></div>
       <div class="vote-bar-wrap"><div class="vote-opt-label"><span>❌ Не смогу</span><span>18%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" style="width:18%"></div></div></div>
@@ -972,7 +972,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'water','💧 Вода / трубы',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с водоснабжением или трубами. Укажите этаж, подъезд и характер неисправности. В демо-версии заявка никому не передаётся.',
+        'Уважаемый житель квартиры номер {apt}. Пожалуйста, опишите проблему с водоснабжением или трубами. Укажите этаж, подъезд и характер неисправности. В демо-версии заявка никому не передаётся.',
         'Тех. отдел · ОСИ №14','Протечка, нет воды, гидравлический удар — опишите голосом.',
         'pill-new','💧 Вода')">
         <span class="cat-icon">💧</span><span class="cat-name">Вода / трубы</span>
@@ -980,7 +980,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'electric','⚡ Электрика',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с электроснабжением. Укажите где именно — квартира, подъезд или двор. Ваша заявка поступит электрику.',
+        'Уважаемый житель квартиры номер {apt}. Пожалуйста, опишите проблему с электроснабжением. Укажите где именно — квартира, подъезд или двор. Ваша заявка поступит электрику.',
         'Тех. отдел · ОСИ №14','Нет света, искрение, короткое замыкание — опишите голосом.',
         'pill-new','⚡ Электрика')">
         <span class="cat-icon">⚡</span><span class="cat-name">Электрика</span>
@@ -988,7 +988,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'lift','🛗 Лифт',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите неисправность лифта. Укажите номер подъезда и характер поломки. В демо-версии заявка никому не передаётся.',
+        'Уважаемый житель квартиры номер {apt}. Пожалуйста, опишите неисправность лифта. Укажите номер подъезда и характер поломки. В демо-версии заявка никому не передаётся.',
         'Тех. отдел · ОСИ №14','Застрял, не закрывается дверь, странный звук — опишите голосом.',
         'pill-new','🛗 Лифт')">
         <span class="cat-icon">🛗</span><span class="cat-name">Лифт</span>
@@ -996,7 +996,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'heat','🔥 Отопление',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с отоплением. Холодные батареи, течь из радиатора или посторонний шум — всё это важно зафиксировать.',
+        'Уважаемый житель квартиры номер {apt}. Пожалуйста, опишите проблему с отоплением. Холодные батареи, течь из радиатора или посторонний шум — всё это важно зафиксировать.',
         'Тех. отдел · ОСИ №14','Холодные батареи, протечка, шум — опишите голосом.',
         'pill-new','🔥 Отопление')">
         <span class="cat-icon">🔥</span><span class="cat-name">Отопление</span>
@@ -1004,7 +1004,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'mkd','🏗️ Ремонт МКД',
-        'Уважаемый житель квартиры номер 23. Пожалуйста, опишите проблему с общедомовым имуществом. Крыша, фасад, подъезд, подвал — любая неисправность важна. Заявка поступит управляющей компании.',
+        'Уважаемый житель квартиры номер {apt}. Пожалуйста, опишите проблему с общедомовым имуществом. Крыша, фасад, подъезд, подвал — любая неисправность важна. Заявка поступит управляющей компании.',
         'Тех. отдел · УК АбайГрупп','Кровля, фасад, подъезд, окна МКД — опишите голосом.',
         'pill-new','🏗️ МКД')">
         <span class="cat-icon">🏗️</span><span class="cat-name">Ремонт МКД</span>
@@ -1012,7 +1012,7 @@
 
       <button class="cat-btn" onclick="openModuleVoice(
         'other','📦 Другое',
-        'Уважаемый житель квартиры номер 23. Вы можете описать любую другую проблему или пожелание. В демо-версии обращение никому не передаётся.',
+        'Уважаемый житель квартиры номер {apt}. Вы можете описать любую другую проблему или пожелание. В демо-версии обращение никому не передаётся.',
         'Тех. отдел · ОСИ №14','Любая проблема или пожелание — опишите голосом.',
         'pill-new','📦 Другое')">
         <span class="cat-icon">📦</span><span class="cat-name">Другое</span>
@@ -1050,17 +1050,19 @@
         </div>
         <div class="orb-label">Нажмите на микрофон</div>
         <div style="font-size:13px;color:var(--text-muted);line-height:1.6;text-align:center;max-width:280px;">
-          Голосовой помощник запишет вашу проблему,<br>создаст заявку и отправит председателю ОСИ
+          Нажмите на микрофон и опишите проблему голосом,<br>или введите текст руками
         </div>
       </div>
+      <button onclick="manualEntry()" style="width:100%;padding:13px;margin:0 0 14px;background:#fff;border:2px solid var(--teal);border-radius:12px;color:var(--teal);font-size:14px;font-weight:700;cursor:pointer;">⌨️ Ввести текст руками</button>
       <div style="background:var(--teal-light);border-radius:14px;padding:14px 16px;margin:0 0 16px;border-left:3px solid var(--teal);">
         <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;">ℹ️ Как это работает</div>
         <div style="font-size:13px;color:#444;line-height:1.6;">
           1. Нажмите на микрофон<br>
           2. Произнесите описание проблемы<br>
-          3. AlauConcierge показывает текст заявки (в демо-версии это пример)<br>
-          4. Заявка регистрируется и поступает председателю<br>
-          5. Вы получаете номер заявки и можете её отслеживать
+          3. Распознанный текст появится на экране, его можно исправить руками<br>
+          4. Нажмите «Отправить заявку»: она сохранится в истории<br>
+          5. В демо-версии заявка хранится только на этом устройстве и никому не отправляется<br>
+          <span style="color:var(--text-muted);font-size:12px;">Речь распознаёт ваш браузер (в Chrome аудио обрабатывает сервер Google). Если микрофон недоступен, введите текст руками.</span>
         </div>
       </div>
     </div>
@@ -1085,27 +1087,18 @@
       </div>
     </div>
 
-    <!-- STATE 2: Transcribing -->
-    <div id="vstate-processing" style="display:none;">
-      <div class="orb-wrap">
-        <div class="orb" style="animation:spin-glow 1.2s linear infinite;background:radial-gradient(circle at 35% 35%,#f5c842,#e05a1e);">⏳</div>
-        <div class="orb-label">AlauConcierge распознаёт речь...</div>
-        <div style="font-size:13px;color:var(--text-muted);">Обработка аудиозаписи</div>
-      </div>
-    </div>
-
     <!-- STATE 3: Review transcript -->
     <div id="vstate-review" style="display:none;flex-direction:column;gap:12px;">
       <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
-        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎤 Распознанный текст</div>
-        <div id="transcript-text" style="font-size:15px;color:var(--text);line-height:1.6;border:2px solid #e8e8e8;border-radius:10px;padding:12px;min-height:80px;" contenteditable="true"></div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Вы можете отредактировать текст перед отправкой</div>
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎤 Текст заявки</div>
+        <textarea id="transcript-text" rows="5" placeholder="Текст заявки" style="width:100%;font:inherit;font-size:15px;color:var(--text);line-height:1.6;border:2px solid #e8e8e8;border-radius:10px;padding:12px;min-height:110px;resize:vertical;outline:none;"></textarea>
+        <div id="review-note" style="font-size:11px;color:var(--text-muted);margin-top:6px;"></div>
       </div>
       <div style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
         <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">📋 Детали заявки</div>
         <div style="margin-bottom:10px;">
           <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">ЗАЯВИТЕЛЬ</div>
-          <div style="background:var(--teal-light);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:var(--teal);">Жилец кв. №23 · ОСИ №14</div>
+          <div style="background:var(--teal-light);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:var(--teal);">Жилец кв. №<span class="js-apt">—</span> · ОСИ №14</div>
         </div>
         <div style="margin-bottom:10px;">
           <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">КАТЕГОРИЯ</div>
@@ -1139,16 +1132,16 @@
       <div style="background:linear-gradient(135deg,#edfaf3,#e0f5ea);border-radius:16px;padding:24px;text-align:center;">
         <div style="font-size:52px;margin-bottom:10px;">✅</div>
         <div style="font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;">Заявка создана (демо)</div>
-        <div id="ticket-number" style="font-size:28px;font-weight:900;color:var(--teal);margin-bottom:8px;">#147</div>
+        <div id="ticket-number" style="font-size:28px;font-weight:900;color:var(--teal);margin-bottom:8px;">—</div>
         <div style="font-size:13px;color:#555;line-height:1.5;">Демо-режим: заявка сохранена только на этом устройстве и никому не отправлена.</div>
       </div>
       <!-- Ticket card preview -->
       <div id="ticket-card-preview" style="background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-size:13px;font-weight:700;color:var(--text);" id="tc-number">Заявка #147</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);" id="tc-number">Заявка</div>
           <span style="background:#fff3e0;color:#e65100;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700;">⏳ Создана (демо)</span>
         </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;" id="tc-meta">28 мая 2026 · 08:35 · кв.23 · ОСИ №14</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;" id="tc-meta"></div>
         <div style="font-size:14px;color:var(--text);line-height:1.55;margin-bottom:14px;" id="tc-text"></div>
         <!-- Action buttons -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
@@ -1174,28 +1167,9 @@
   <div class="topbar">
     <button class="back-topbar-btn" onclick="showScreen('screen-voice')">← Назад</button>
     <h1 style="color:#fff;font-size:18px;font-weight:700;">📋 Мои заявки</h1>
-    <div style="font-size:11px;color:rgba(255,255,255,0.8);">кв.23</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.8);">кв.<span class="js-apt">—</span></div>
   </div>
   <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;" id="tickets-list">
-    <!-- seeded tickets -->
-    <div class="tkt-card done">
-      <div class="tkt-header"><div class="tkt-num">#113</div><span class="tkt-status status-done">✅ Выполнена (пример)</span></div>
-      <div class="tkt-meta">20 мая · кв.23 · Лифт</div>
-      <div class="tkt-text">Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.</div>
-      <div class="tkt-actions">
-        <button onclick="downloadTicketById('#113','Лифт №2 периодически останавливается между этажами.')" class="tkt-btn">📥 Скачать</button>
-        <button onclick="shareWAById('#113','Лифт №2 периодически останавливается между этажами.')" class="tkt-btn wa">💚 WhatsApp</button>
-      </div>
-    </div>
-    <div class="tkt-card processing">
-      <div class="tkt-header"><div class="tkt-num">#128</div><span class="tkt-status status-proc">⏳ Создана (демо)</span></div>
-      <div class="tkt-meta">25 мая · кв.23 · Электрика</div>
-      <div class="tkt-text">В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.</div>
-      <div class="tkt-actions">
-        <button onclick="downloadTicketById('#128','В подъезде №1 на 3-м этаже не работает освещение.')" class="tkt-btn">📥 Скачать</button>
-        <button onclick="shareWAById('#128','В подъезде №1 на 3-м этаже не работает освещение.')" class="tkt-btn wa">💚 WhatsApp</button>
-      </div>
-    </div>
   </div>
   <nav class="bottom-nav">
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
@@ -1235,11 +1209,12 @@
             </svg>
           </div>
           <div style="font-size:15px;font-weight:700;color:var(--teal);">Нажмите на микрофон</div>
-          <div style="font-size:13px;color:var(--text-muted);text-align:center;max-width:260px;line-height:1.5;" id="mv-invite-text">Голосовой помощник запишет вашу проблему и оформит заявку</div>
+          <div style="font-size:13px;color:var(--text-muted);text-align:center;max-width:260px;line-height:1.5;" id="mv-invite-text">Опишите обращение голосом или введите текст руками</div>
         </div>
+        <button onclick="mvManual()" style="width:100%;padding:12px;margin:0 0 12px;background:#fff;border:2px solid var(--teal);border-radius:12px;color:var(--teal);font-size:14px;font-weight:700;cursor:pointer;">⌨️ Ввести текст руками</button>
         <div style="background:var(--teal-light);border-radius:12px;padding:12px 14px;border-left:3px solid var(--teal);font-size:13px;color:#444;line-height:1.6;">
-          В демо-версии распознавание речи имитируется.<br>
-          Заявка поступит председателю ОСИ и сохранится в истории.
+          Речь распознаёт ваш браузер (в Chrome аудио обрабатывает сервер Google). Если микрофон недоступен, введите текст руками.<br>
+          В демо-версии обращение сохраняется в истории на этом устройстве и никому не отправляется.
         </div>
       </div>
 
@@ -1260,24 +1235,16 @@
         </div>
       </div>
 
-      <!-- Processing -->
-      <div id="mv-processing" style="display:none;">
-        <div style="display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:14px;">
-          <div class="orb" style="animation:spin-glow 1.2s linear infinite;background:radial-gradient(circle at 35% 35%,#f5c842,#e05a1e);">⏳</div>
-          <div style="font-size:14px;font-weight:700;color:var(--teal);">Распознаю речь...</div>
-        </div>
-      </div>
-
       <!-- Review -->
       <div id="mv-review" style="display:none;flex-direction:column;gap:12px;">
         <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
-          <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:7px;">🎤 Распознанный текст</div>
-          <div id="mv-transcript" style="font-size:14px;color:var(--text);line-height:1.6;border:2px solid #e8e8e8;border-radius:9px;padding:11px;min-height:70px;" contenteditable="true"></div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">Отредактируйте при необходимости</div>
+          <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:7px;">🎤 Текст заявки</div>
+          <textarea id="mv-transcript" rows="4" placeholder="Текст заявки" style="width:100%;font:inherit;font-size:14px;color:var(--text);line-height:1.6;border:2px solid #e8e8e8;border-radius:9px;padding:11px;min-height:90px;resize:vertical;outline:none;"></textarea>
+          <div id="mv-review-note" style="font-size:11px;color:var(--text-muted);margin-top:5px;"></div>
         </div>
         <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
           <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;margin-bottom:8px;">📋 Детали</div>
-          <div style="background:var(--teal-light);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--teal);margin-bottom:10px;">Кв. №23 · ОСИ №14</div>
+          <div style="background:var(--teal-light);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--teal);margin-bottom:10px;">Кв. №<span class="js-apt">—</span> · ОСИ №14</div>
           <select id="mv-category" style="width:100%;border:2px solid #e8e8e8;border-radius:8px;padding:10px;font-size:13px;outline:none;background:#fff;">
             <option>🔧 Ремонт и обслуживание</option>
             <option>💧 Вода и трубы</option>
@@ -1303,11 +1270,11 @@
         <div style="background:linear-gradient(135deg,#edfaf3,#e0f5ea);border-radius:16px;padding:22px;text-align:center;">
           <div style="font-size:48px;margin-bottom:8px;">✅</div>
           <div style="font-size:17px;font-weight:800;color:var(--green);margin-bottom:4px;">Заявка создана (демо)</div>
-          <div id="mv-ticket-num" style="font-size:26px;font-weight:900;color:var(--teal);margin-bottom:6px;">#148</div>
+          <div id="mv-ticket-num" style="font-size:26px;font-weight:900;color:var(--teal);margin-bottom:6px;">—</div>
           <div style="font-size:13px;color:#555;line-height:1.5;">Демо-режим: заявка сохранена только на этом устройстве и никому не отправлена.</div>
         </div>
         <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
-          <div style="font-size:13px;font-weight:700;margin-bottom:6px;" id="mv-done-num">Заявка #148</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;" id="mv-done-num">Заявка</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" id="mv-done-meta"></div>
           <div style="font-size:13px;color:#444;line-height:1.5;margin-bottom:12px;" id="mv-done-text"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
@@ -1329,7 +1296,7 @@
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-company-name">CleanCity Semey</div>
     <div class="modal-sub">✅ Модерация пройдена · Alau Market</div>
-    <div class="modal-field"><label>Ваша квартира</label><div class="modal-apt">Кв. №23 · ОСИ №14</div></div>
+    <div class="modal-field"><label>Ваша квартира</label><div class="modal-apt">Кв. №<span class="js-apt">—</span> · ОСИ №14</div></div>
     <div class="modal-field"><label>Телефон для связи</label><input class="modal-input" type="tel" placeholder="+7 (___) ___-__-__"></div>
     <div class="modal-field"><label>Комментарий (необязательно)</label><input class="modal-input" type="text" placeholder="Уточните детали..."></div>
     <div class="modal-price-row">
@@ -1346,7 +1313,7 @@
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title">📋 Внести вопрос на повестку</div>
-    <div class="modal-sub">Кв. №23 · ОСИ №14 — ваше имя будет указано как автор</div>
+    <div class="modal-sub">Кв. №<span class="js-apt">—</span> · ОСИ №14 — ваше имя будет указано как автор</div>
     <div class="modal-field"><label>Опишите вопрос</label><textarea class="modal-input" rows="3" placeholder="Например: установить лавочки у подъезда №3..." id="agenda-input" style="resize:none;"></textarea></div>
     <div class="modal-field"><label>Категория</label>
       <select class="modal-input" style="appearance:none;">
@@ -1536,210 +1503,190 @@ function submitRequest(catName) {
 }
 
 // ===== VOICE / MIC / TICKETS =====
-let APT = '23';
+let APT = '—';
+let CITY = '';
 const OSI = 'ОСИ №14';
-let mediaRecorder = null;
-let audioChunks = [];
-let recTimerInterval = null;
-let recSeconds = 0;
-let lastTranscript = '';
-let ticketCounter = 148;
-const tickets = [
-  {id:'#113', date:'20 мая 2026', time:'14:22', cat:'Лифт', text:'Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.', status:'done'},
-  {id:'#128', date:'25 мая 2026', time:'09:10', cat:'Электрика', text:'В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.', status:'proc'},
-];
+const LS_TICKETS = 'alauDemoTickets';
+// Два потока заявок: у каждого свой счётчик и свой префикс номера.
+const FLOWS = {
+  v: { prefix: 'В-', name: 'Голосовая заявка' },
+  m: { prefix: 'О-', name: 'Обращение по объявлению' }
+};
 
+// ----- даты и квартира из профиля -----
+function relDate(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }); }
+function tok(s) { return String(s || '').replace(/\{d(-?\d+)\}/g, (_, n) => relDate(+n)).replace(/\{apt\}/g, APT); }
+function fillRelDates() { document.querySelectorAll('[data-rd]').forEach(el => { el.textContent = relDate(+el.dataset.rd); }); }
+function fillApt() { document.querySelectorAll('.js-apt').forEach(el => { el.textContent = APT; }); }
+function pad2(n) { return String(n).padStart(2, '0'); }
+function fmtDay(ts) { return new Date(ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }); }
+function fmtTime(ts) { const d = new Date(ts); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function catName(s) { return String(s || '').replace(/^[^\p{L}\p{N}]+/u, '').trim(); }
+
+// ----- хранилище заявок (на этом устройстве, отдельно для каждого номера телефона) -----
+function ticketBox() {
+  const all = lsGet(LS_TICKETS, {});
+  const p = currentPhone() || 'anon';
+  const box = all[p] || { cnt: {}, list: [] };
+  if (!box.cnt) box.cnt = {};
+  if (!box.list) box.list = [];
+  return { all, p, box };
+}
+function agoTs(days, h, m) { const d = new Date(); d.setDate(d.getDate() - days); d.setHours(h, m, 0, 0); return d.getTime(); }
+function seedTickets() {
+  return [
+    { id: '#113', example: true, ts: agoTs(8, 14, 22), cat: 'Лифт', status: 'done', text: 'Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.' },
+    { id: '#128', example: true, ts: agoTs(3, 9, 10), cat: 'Электрика', status: 'proc', text: 'В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.' }
+  ];
+}
+function allTickets() { return ticketBox().box.list.concat(seedTickets()).sort((a, b) => b.ts - a.ts); }
+function findTicket(id) { return allTickets().find(t => t.id === id); }
+function addTicket(flow, cat, text, prio) {
+  const { all, p, box } = ticketBox();
+  box.cnt[flow] = (box.cnt[flow] || 0) + 1;
+  const t = { id: FLOWS[flow].prefix + String(box.cnt[flow]).padStart(3, '0'), flow, ts: Date.now(), cat: catName(cat), text, prio: prio || 'normal', status: 'proc' };
+  box.list.unshift(t); all[p] = box; lsSet(LS_TICKETS, all);
+  return t;
+}
+function ticketMeta(t) { return fmtDay(t.ts) + ' · ' + fmtTime(t.ts) + ' · кв.' + APT + ' · ' + OSI; }
+
+function renderTickets() {
+  const list = document.getElementById('tickets-list'); if (!list) return;
+  list.innerHTML = allTickets().map(t => {
+    const done = t.status === 'done';
+    const label = done ? '✅ Выполнена (пример)' : (t.example ? '⏳ В работе (пример)' : '⏳ Создана (демо)');
+    const flow = t.flow ? FLOWS[t.flow].name + ' · ' : '';
+    const urgent = t.prio === 'urgent' ? ' · 🔴 Срочная' : '';
+    const id = escHtml(t.id);
+    return `<div class="tkt-card ${done ? 'done' : 'processing'}">
+      <div class="tkt-header"><div class="tkt-num">${id}</div><span class="tkt-status ${done ? 'status-done' : 'status-proc'}">${label}</span></div>
+      <div class="tkt-meta">${fmtDay(t.ts)} · ${fmtTime(t.ts)} · кв.${escHtml(APT)} · ${flow}${escHtml(t.cat)}${urgent}</div>
+      <div class="tkt-text">${escHtml(t.text)}</div>
+      <div class="tkt-actions">
+        <button data-id="${id}" onclick="ticketDownload(this.dataset.id)" class="tkt-btn">📥 Скачать</button>
+        <button data-id="${id}" onclick="ticketShare(this.dataset.id)" class="tkt-btn wa">💚 WhatsApp</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildTicketText(t) {
+  return `ЗАЯВКА ${t.id}
+${OSI} · ${CITY || '—'}
+Заявитель: Жилец кв. №${APT}
+Дата: ${fmtDay(t.ts)} ${fmtTime(t.ts)}
+Категория: ${t.cat}
+Статус: создана в демо-режиме
+
+ОПИСАНИЕ ПРОБЛЕМЫ:
+${t.text}
+
+---
+AlauConcierge — ${OSI}
+ДЕМО-ДОКУМЕНТ: заявка создана в демонстрационной версии, никому не отправлена и не зарегистрирована.`;
+}
+function ticketDownload(id) {
+  const t = findTicket(id); if (!t) return;
+  const blob = new Blob([buildTicketText(t)], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `Заявка_${t.id}_кв${APT}.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+function ticketShare(id) {
+  const t = findTicket(id); if (!t) return;
+  const msg = encodeURIComponent(`📋 *Заявка ${t.id} · ${OSI}*\n🏠 Кв. №${APT} · ${CITY || ''}\n📅 ${fmtDay(t.ts)} ${fmtTime(t.ts)}\n\n${t.text}\n\n_Отправлено через AlauConcierge (демо-версия)_`);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+// ----- распознавание речи (Web Speech API, ru-RU); текст всегда можно ввести и поправить руками -----
+let vr = null;
+function vrStart(ui) {
+  vrCancel();
+  const r = new SpeechRec();
+  const st = { rec: r, fin: '', int: '', err: null, cancelled: false, secs: 0, tick: null };
+  vr = st;
+  r.lang = 'ru-RU'; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
+  r.onresult = e => {
+    let fin = '', int = '';
+    for (let i = 0; i < e.results.length; i++) {
+      const tr = e.results[i][0].transcript;
+      if (e.results[i].isFinal) fin += tr + ' '; else int += tr;
+    }
+    st.fin = fin.trim(); st.int = int.trim();
+    ui.live.textContent = (st.fin + ' ' + st.int).trim() || 'Слушаю…';
+  };
+  r.onerror = e => { st.err = e.error || 'error'; };
+  r.onend = () => {
+    clearInterval(st.tick); if (vr === st) vr = null;
+    if (!st.cancelled) ui.done({ text: (st.fin + ' ' + st.int).trim(), err: st.err });
+  };
+  ui.timer.textContent = '0:00'; ui.live.textContent = 'Слушаю…';
+  st.tick = setInterval(() => { st.secs++; ui.timer.textContent = Math.floor(st.secs / 60) + ':' + pad2(st.secs % 60); }, 1000);
+  try { r.start(); } catch (e) { clearInterval(st.tick); vr = null; ui.done({ text: '', err: 'start-failed' }); }
+}
+function vrStop() { if (vr) { try { vr.rec.stop(); } catch (e) {} } }
+function vrCancel() { if (vr) { vr.cancelled = true; clearInterval(vr.tick); try { vr.rec.abort(); } catch (e) {} vr = null; } }
+function voiceResultNote(res) {
+  if (res.text) return 'Проверьте текст и при необходимости исправьте его руками.';
+  const m = voiceErrText(res.err || 'no-speech');
+  if (m) toast(m);
+  return m || 'Речь не распознана. Введите текст руками.';
+}
+
+// ----- поток 1: голосовая заявка (номера В-001, В-002, …) -----
 function voiceState(state) {
-  ['idle','recording','processing','review','done'].forEach(s => {
-    const el = document.getElementById('vstate-'+s);
-    if (el) el.style.display = s===state ? (s==='idle'||s==='recording'||s==='processing'?'block':'flex') : 'none';
+  ['idle', 'recording', 'review', 'done'].forEach(s => {
+    const el = document.getElementById('vstate-' + s);
+    if (el) el.style.display = s === state ? (s === 'idle' || s === 'recording' ? 'block' : 'flex') : 'none';
   });
 }
-
-async function startRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => { if (e.data.size>0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = () => { stream.getTracks().forEach(t=>t.stop()); processRecording(); };
-    mediaRecorder.start(200);
-    voiceState('recording');
-    recSeconds = 0;
-    document.getElementById('rec-timer').textContent = '0:00';
-    recTimerInterval = setInterval(() => {
-      recSeconds++;
-      const m = Math.floor(recSeconds/60), s = recSeconds%60;
-      document.getElementById('rec-timer').textContent = m+':'+(s<10?'0':'')+s;
-      // Simulate live transcript hints
-      const hints = ['Слышу вас...','Записываю...','Продолжайте говорить...'];
-      document.getElementById('live-transcript').textContent = hints[Math.floor(recSeconds/3)%hints.length];
-    }, 1000);
-    // Announce to user
-    setTimeout(() => {
-      if ('speechSynthesis' in window) {
-        const u = new SpeechSynthesisUtterance(
-          `Уважаемый житель квартиры номер ${APT}. Пожалуйста, сообщите о вашей проблеме. Это демонстрационная версия: заявка создаётся на вашем устройстве и никому не передаётся.`
-        );
-        u.lang = 'ru-RU'; u.rate = 0.9;
-        window.speechSynthesis.speak(u);
-      }
-    }, 300);
-  } catch(err) {
-    // Fallback: simulate recording for demo
-    simulateRecording();
-  }
+function vDone(res) {
+  $('transcript-text').value = res.text;
+  $('review-note').textContent = voiceResultNote(res);
+  voiceState('review');
+  if (!res.text) $('transcript-text').focus();
 }
-
-function simulateRecording() {
+function startRecording() {
+  if (!SpeechRec) { vDone({ text: '', err: 'unsupported' }); return; }
   voiceState('recording');
-  recSeconds = 0;
-  document.getElementById('rec-timer').textContent = '0:00';
-  const hints = ['Слышу вас...','Записываю...','Продолжайте говорить...'];
-  recTimerInterval = setInterval(() => {
-    recSeconds++;
-    const m = Math.floor(recSeconds/60), s = recSeconds%60;
-    document.getElementById('rec-timer').textContent = m+':'+(s<10?'0':'')+s;
-    document.getElementById('live-transcript').textContent = hints[Math.floor(recSeconds/3)%hints.length];
-    if (recSeconds >= 8) { clearInterval(recTimerInterval); simulateTranscription(); }
-  }, 1000);
+  vrStart({ timer: $('rec-timer'), live: $('live-transcript'), done: vDone });
 }
-
-function stopRecording() {
-  clearInterval(recTimerInterval);
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-  } else {
-    simulateTranscription();
-  }
+function stopRecording() { vrStop(); }
+function manualEntry() {
+  vrCancel();
+  $('transcript-text').value = '';
+  $('review-note').textContent = 'Введите текст заявки руками.';
+  voiceState('review');
+  $('transcript-text').focus();
 }
-
-function processRecording() {
-  voiceState('processing');
-  // Try Web Speech API live transcription (already captured in live-transcript)
-  // Here we simulate server-side transcription result after 2s
-  setTimeout(() => {
-    const sampleTexts = [
-      'В нашем подъезде №1 не работает освещение на третьем этаже уже больше двух недель. Темно и небезопасно, особенно для пожилых жильцов.',
-      'Прошу проверить протечку в крыше над пятым этажом. При дожде вода капает в коридоре.',
-      'В лифте подъезда №2 странный шум при работе и двери закрываются с задержкой. Боюсь, что скоро сломается.',
-    ];
-    lastTranscript = sampleTexts[Math.floor(Math.random()*sampleTexts.length)];
-    document.getElementById('transcript-text').textContent = lastTranscript;
-    voiceState('review');
-  }, 2200);
-}
-
-function simulateTranscription() {
-  voiceState('processing');
-  setTimeout(() => {
-    lastTranscript = 'В нашем подъезде №1 не работает освещение на третьем этаже уже больше двух недель. Темно и небезопасно, особенно для пожилых жильцов.';
-    document.getElementById('transcript-text').textContent = lastTranscript;
-    voiceState('review');
-  }, 2000);
-}
-
 function setPrio(btn) {
-  document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.prio-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
-
 function submitTicket() {
-  const text = document.getElementById('transcript-text').textContent.trim();
-  const cat = document.getElementById('ticket-category').value;
+  const text = $('transcript-text').value.trim();
+  if (!text) { toast('Введите текст заявки'); return; }
   const prio = document.querySelector('.prio-btn.active')?.dataset.prio || 'normal';
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
-  const timeStr = now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
-  const id = '#'+ticketCounter++;
-
-  // Add to tickets array
-  tickets.unshift({id, date:dateStr, time:timeStr, cat:cat.replace(/^[^\w]+/,'').split(' ')[0], text, status:'proc'});
-
-  // Populate done card
-  document.getElementById('ticket-number').textContent = id;
-  document.getElementById('tc-number').textContent = 'Заявка '+id;
-  document.getElementById('tc-meta').textContent = dateStr+' · '+timeStr+' · кв.'+APT+' · '+OSI;
-  document.getElementById('tc-text').textContent = text;
-  document.getElementById('ticket-card-preview').dataset.ticketId = id;
-  document.getElementById('ticket-card-preview').dataset.ticketText = text;
-
-  // Refresh ticket list
+  const t = addTicket('v', $('ticket-category').value, text, prio);
+  $('ticket-number').textContent = t.id;
+  $('tc-number').textContent = 'Заявка ' + t.id;
+  $('tc-meta').textContent = ticketMeta(t);
+  $('tc-text').textContent = t.text;
+  $('ticket-card-preview').dataset.ticketId = t.id;
   renderTickets();
   voiceState('done');
 }
-
 function resetVoice() {
-  clearInterval(recTimerInterval);
-  if (mediaRecorder && mediaRecorder.state!=='inactive') try{mediaRecorder.stop();}catch(e){}
-  mediaRecorder = null; audioChunks = [];
-  document.getElementById('live-transcript').textContent = '';
-  document.getElementById('rec-timer').textContent = '0:00';
+  vrCancel();
+  $('transcript-text').value = '';
+  $('live-transcript').textContent = '';
+  $('rec-timer').textContent = '0:00';
   voiceState('idle');
 }
-
-function renderTickets() {
-  const list = document.getElementById('tickets-list');
-  list.innerHTML = tickets.map(t => `
-    <div class="tkt-card ${t.status==='done'?'done':'processing'}">
-      <div class="tkt-header"><div class="tkt-num">${t.id}</div><span class="tkt-status ${t.status==='done'?'status-done':'status-proc'}">${t.status==='done'?'✅ Выполнена (пример)':'⏳ Создана (демо)'}</span></div>
-      <div class="tkt-meta">${t.date} · ${t.time} · кв.${APT} · ${t.cat}</div>
-      <div class="tkt-text">${t.text}</div>
-      <div class="tkt-actions">
-        <button onclick="downloadTicketById('${t.id}','${t.text.replace(/'/g,"\\'")}','${t.date} ${t.time}')" class="tkt-btn">📥 Скачать</button>
-        <button onclick="shareWAById('${t.id}','${t.text.replace(/'/g,"\\'")}','${t.date} ${t.time}')" class="tkt-btn wa">💚 WhatsApp</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function buildTicketText(id, text, dateStr) {
-  return `ЗАЯВКА ${id}
-ОСИ №14 · Семей
-Заявитель: Жилец кв. №${APT}
-Дата: ${dateStr || new Date().toLocaleString('ru-RU')}
-Статус: Принята в обработку
-
-ОПИСАНИЕ ПРОБЛЕМЫ:
-${text}
-
----
-AlauConcierge — ОСИ №14
-ДЕМО-ДОКУМЕНТ: заявка создана в демонстрационной версии, никому не отправлена и не зарегистрирована.`;
-}
-
-function downloadTicket() {
-  const card = document.getElementById('ticket-card-preview');
-  const id = card.dataset.ticketId || '#147';
-  const text = card.dataset.ticketText || document.getElementById('tc-text').textContent;
-  const meta = document.getElementById('tc-meta').textContent;
-  downloadTicketById(id, text, meta);
-}
-
-function downloadTicketById(id, text, dateStr) {
-  const content = buildTicketText(id, text, dateStr);
-  const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `Заявка_${id}_кв${APT}.txt`; a.click();
-  URL.revokeObjectURL(url);
-}
-
-function shareWhatsApp() {
-  const card = document.getElementById('ticket-card-preview');
-  const id = card.dataset.ticketId || '#147';
-  const text = card.dataset.ticketText || document.getElementById('tc-text').textContent;
-  const meta = document.getElementById('tc-meta').textContent;
-  shareWAById(id, text, meta);
-}
-
-function shareWAById(id, text, dateStr) {
-  const msg = encodeURIComponent(`📋 *Заявка ${id} · ОСИ №14*\n🏠 Кв. №${APT} · Семей\n📅 ${dateStr}\n\n${text}\n\n_Отправлено через AlauConcierge (демо-версия)_`);
-  window.open('https://wa.me/?text='+msg,'_blank');
-}
-
-// Init tickets on load
-renderTickets();
+function downloadTicket() { ticketDownload($('ticket-card-preview').dataset.ticketId); }
+function shareWhatsApp() { ticketShare($('ticket-card-preview').dataset.ticketId); }
 
 // ===== ANN CAROUSEL DRAG (desktop+mobile) =====
 let annDragging=false, annStartX=0, annScrollStart=0;
@@ -1756,99 +1703,50 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(c) c.addEventListener('scroll',()=>updateAnnDots(),{passive:true});
 });
 
-// ===== MODULE VOICE =====
-let mvRecorder=null, mvChunks=[], mvTimer=null, mvSecs=0;
-let mvCurrentId='', mvCurrentTitle='', mvCurrentInvite='';
+// ===== ПОТОК 2: ОБРАЩЕНИЕ ПО ОБЪЯВЛЕНИЮ (номера О-001, О-002, …) =====
+let mvCurrentId = '';
 
-function openModuleVoice(type, title, invite, meta, desc, pillClass, pillText) {
+function openModuleVoice(type, title, invite, meta, desc) {
   mvCurrentId = type;
-  mvCurrentTitle = title;
-  mvCurrentInvite = invite;
-  document.getElementById('mv-topbar-title').textContent = title;
-  document.getElementById('mv-meta').textContent = meta;
-  document.getElementById('mv-title-text').textContent = title;
-  document.getElementById('mv-desc-text').textContent = desc;
-  document.getElementById('mv-invite-text').textContent = 'Голосовой помощник запишет ваше сообщение и оформит заявку в ОСИ №14';
-  // Pre-select category
+  $('mv-topbar-title').textContent = tok(title);
+  $('mv-meta').textContent = tok(meta);
+  $('mv-title-text').textContent = tok(title);
+  $('mv-desc-text').textContent = tok(desc);
+  $('mv-invite-text').textContent = tok(invite);
   const targetCat = mvCatMap[type] || '';
-  const catSel = document.getElementById('mv-category');
+  const catSel = $('mv-category');
   if (catSel && targetCat) {
-    for (let o of catSel.options) {
-      if (o.text === targetCat) { catSel.value = o.text; o.selected = true; break; }
-    }
+    for (const o of catSel.options) { if (o.text === targetCat) { catSel.value = o.text; break; } }
   }
   mvReset();
   showScreen('screen-module-voice');
 }
 
 function mvState(s) {
-  ['idle','recording','processing','review','done'].forEach(n=>{
-    const el=document.getElementById('mv-'+n);
-    if(el) el.style.display = n===s ? (s==='review'||s==='done'?'flex':'block') : 'none';
+  ['idle', 'recording', 'review', 'done'].forEach(n => {
+    const el = $('mv-' + n);
+    if (el) el.style.display = n === s ? (s === 'review' || s === 'done' ? 'flex' : 'block') : 'none';
   });
 }
-
-async function mvStartRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    mvChunks=[];
-    mvRecorder = new MediaRecorder(stream);
-    mvRecorder.ondataavailable = e=>{if(e.data.size>0)mvChunks.push(e.data);};
-    mvRecorder.onstop = ()=>{stream.getTracks().forEach(t=>t.stop());mvProcess();};
-    mvRecorder.start(200);
-    mvState('recording');
-    mvSecs=0;
-    document.getElementById('mv-timer').textContent='0:00';
-    mvTimer=setInterval(()=>{
-      mvSecs++;
-      const m=Math.floor(mvSecs/60),s=mvSecs%60;
-      document.getElementById('mv-timer').textContent=m+':'+(s<10?'0':'')+s;
-      const hints=['Слышу вас...','Записываю...','Продолжайте...','Записываю вашу заявку...'];
-      document.getElementById('mv-live').textContent=hints[Math.floor(mvSecs/2)%hints.length];
-    },1000);
-    // Voice greeting
-    if('speechSynthesis' in window){
-      const u=new SpeechSynthesisUtterance(mvCurrentInvite);
-      u.lang='ru-RU'; u.rate=0.88;
-      window.speechSynthesis.speak(u);
-    }
-  } catch(e) { mvSimulate(); }
+function mvDone(res) {
+  $('mv-transcript').value = res.text;
+  $('mv-review-note').textContent = voiceResultNote(res);
+  mvState('review');
+  if (!res.text) $('mv-transcript').focus();
 }
-
-function mvSimulate() {
+function mvStartRecording() {
+  if (!SpeechRec) { mvDone({ text: '', err: 'unsupported' }); return; }
   mvState('recording');
-  mvSecs=0;
-  const hints=['Слышу вас...','Записываю...','Продолжайте...'];
-  mvTimer=setInterval(()=>{
-    mvSecs++;
-    const m=Math.floor(mvSecs/60),s=mvSecs%60;
-    document.getElementById('mv-timer').textContent=m+':'+(s<10?'0':'')+s;
-    document.getElementById('mv-live').textContent=hints[Math.floor(mvSecs/2)%hints.length];
-    if(mvSecs>=7){clearInterval(mvTimer);mvProcess();}
-  },1000);
+  vrStart({ timer: $('mv-timer'), live: $('mv-live'), done: mvDone });
 }
-
-function mvStopRecording() {
-  clearInterval(mvTimer);
-  if(mvRecorder && mvRecorder.state!=='inactive') mvRecorder.stop();
-  else mvProcess();
+function mvStopRecording() { vrStop(); }
+function mvManual() {
+  vrCancel();
+  $('mv-transcript').value = '';
+  $('mv-review-note').textContent = 'Введите текст обращения руками.';
+  mvState('review');
+  $('mv-transcript').focus();
 }
-
-const mvSamples = {
-  urgent: 'У нас в кв.23 нет холодной воды уже с утра, хотя по объявлению должна быть до 17:00. Прошу проверить состояние подачи воды в подъезде №2.',
-  vote: 'Я, жилец квартиры 23, поддерживаю установку нового домофона. Старый работает плохо, коды давно не менялись. Считаю это приоритетным вопросом.',
-  chat: 'Хочу предложить организовать субботник 7 июня. Двор давно требует уборки, особенно у второго подъезда. Готов участвовать лично.',
-  meeting: 'На собрании 1 июня прошу включить в повестку вопрос об установке камер видеонаблюдения у подъездов. Неоднократно были кражи из подъезда.',
-  promo: 'Хочу узнать подробности о страховке от КазГарант. Интересует покрытие при затоплении соседями. Прошу перезвонить на номер указанный в моём профиле.',
-  repair: 'В подъезде №1 на третьем этаже не работает лампочка уже больше двух недель. Темно, пожилым жильцам неудобно. Прошу заменить срочно.',
-  // Категории «Заявка мастеру»
-  water: 'В квартире 23 на кухне протекает кран уже третий день. Вода капает постоянно, пол мокрый. Прошу прислать сантехника как можно скорее.',
-  electric: 'В подъезде номер один на третьем этаже не работает освещение уже две недели. Очень темно, особенно опасно для пожилых жильцов и детей. Прошу срочно исправить.',
-  lift: 'Лифт в подъезде номер два издаёт сильный скрежет при движении и иногда не закрывает двери с первого раза. Боюсь, что скоро застрянет. Прошу вызвать лифтового механика.',
-  heat: 'В нашей квартире батареи стали еле тёплыми, хотя на улице уже холодно. В комнатах не больше 17 градусов. Прошу проверить систему отопления в подъезде номер один.',
-  mkd: 'На крыше над пятым этажом есть протечка. При дожде вода попадает в коридор на последнем этаже и капает с потолка. Прошу срочно осмотреть и устранить течь.',
-  other: 'Прошу рассмотреть возможность установки лавочек и урн у подъезда номер три. Пожилым жильцам негде присесть. Данный вопрос поднимался уже несколько раз.',
-};
 
 const mvCatMap = {
   urgent: '💧 Вода и трубы', vote: '🗳️ Голосование / мнение', chat: '💬 Предложение жильца',
@@ -1857,53 +1755,27 @@ const mvCatMap = {
   heat: '🔥 Отопление', mkd: '🏗️ Общедомовое имущество', other: '📋 Прочее',
 };
 
-function mvProcess() {
-  mvState('processing');
-  setTimeout(()=>{
-    const text = mvSamples[mvCurrentId] || 'В квартире 23 проблема требует внимания управляющей компании. Прошу принять меры в ближайшее время.';
-    document.getElementById('mv-transcript').textContent = text;
-    // set category based on type
-    mvState('review');
-  },2000);
-}
-
 function mvSubmit() {
-  const text = document.getElementById('mv-transcript').textContent.trim();
-  if(!text){alert('Текст заявки пустой');return;}
-  const now=new Date();
-  const dateStr=now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
-  const timeStr=now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
-  const cat=document.getElementById('mv-category').value;
-  const id='#'+ticketCounter++;
-  tickets.unshift({id,date:dateStr,time:timeStr,cat:cat.replace(/^[^\w]+/,'').split(' ').slice(0,2).join(' '),text,status:'proc'});
+  const text = $('mv-transcript').value.trim();
+  if (!text) { toast('Введите текст обращения'); return; }
+  const t = addTicket('m', $('mv-category').value, text, 'normal');
+  $('mv-ticket-num').textContent = t.id;
+  $('mv-done-num').textContent = 'Заявка ' + t.id;
+  $('mv-done-meta').textContent = ticketMeta(t);
+  $('mv-done-text').textContent = t.text;
+  $('mv-done').dataset.id = t.id;
   renderTickets();
-  document.getElementById('mv-ticket-num').textContent=id;
-  document.getElementById('mv-done-num').textContent='Заявка '+id;
-  document.getElementById('mv-done-meta').textContent=dateStr+' · '+timeStr+' · кв.23 · ОСИ №14';
-  document.getElementById('mv-done-text').textContent=text;
-  document.getElementById('mv-done').dataset.id=id;
-  document.getElementById('mv-done').dataset.text=text;
-  document.getElementById('mv-done').dataset.meta=dateStr+' '+timeStr;
   mvState('done');
 }
-
 function mvReset() {
-  clearInterval(mvTimer);
-  if(mvRecorder&&mvRecorder.state!=='inactive')try{mvRecorder.stop();}catch(e){}
-  mvRecorder=null;mvChunks=[];mvSecs=0;
-  const t=document.getElementById('mv-timer');if(t)t.textContent='0:00';
-  const l=document.getElementById('mv-live');if(l)l.textContent='';
+  vrCancel();
+  const tr = $('mv-transcript'); if (tr) tr.value = '';
+  const t = $('mv-timer'); if (t) t.textContent = '0:00';
+  const l = $('mv-live'); if (l) l.textContent = '';
   mvState('idle');
 }
-
-function mvDownload() {
-  const d=document.getElementById('mv-done');
-  downloadTicketById(d.dataset.id||'#148', d.dataset.text||'', d.dataset.meta||'');
-}
-function mvWhatsApp() {
-  const d=document.getElementById('mv-done');
-  shareWAById(d.dataset.id||'#148', d.dataset.text||'', d.dataset.meta||'');
-}
+function mvDownload() { ticketDownload($('mv-done').dataset.id); }
+function mvWhatsApp() { ticketShare($('mv-done').dataset.id); }
 
 // ===== ORDER MODAL =====
 function openModal(name, price, discount) {
@@ -1974,7 +1846,7 @@ function sendChatMsg() {
   const time = now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
   const div = document.createElement('div');
   div.className = 'chat-msg mine';
-  div.innerHTML = `<div class="chat-avatar" style="background:var(--teal);color:#fff;">23</div><div><div class="chat-sender" style="text-align:right;">Вы · кв.23</div><div class="chat-bubble">${text.replace(/</g,'&lt;')}</div><div class="chat-time" style="text-align:right;">${time}</div></div>`;
+  div.innerHTML = `<div class="chat-avatar" style="background:var(--teal);color:#fff;">${APT}</div><div><div class="chat-sender" style="text-align:right;">Вы · кв.${APT}</div><div class="chat-bubble">${text.replace(/</g,'&lt;')}</div><div class="chat-time" style="text-align:right;">${time}</div></div>`;
   newMsgs.before(div);
   setTimeout(() => container.scrollTop = container.scrollHeight, 50);
 }
@@ -1995,14 +1867,14 @@ function showAgendaModal() { document.getElementById('agenda-modal').classList.a
 document.getElementById('agenda-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
 function submitAgenda() {
   const text = document.getElementById('agenda-input').value.trim();
-  if (!text) { alert('Введите текст вопроса'); return; }
+  if (!text) { toast('Введите текст вопроса'); return; }
   document.getElementById('agenda-modal').classList.remove('open');
   document.getElementById('agenda-input').value = '';
   const chatBody = document.getElementById('chatpane-chat');
   const newMsgs = document.getElementById('chat-new-messages');
   const card = document.createElement('div');
   card.className = 'agenda-card';
-  card.innerHTML = `<div class="agenda-label">📋 Вопрос на повестку от кв.23</div><div class="agenda-text">${text.replace(/</g,'&lt;')}</div><div class="agenda-actions"><button class="agenda-btn yes">👍 Поддержать</button><button class="agenda-btn no">👎 Против</button></div>`;
+  card.innerHTML = `<div class="agenda-label">📋 Вопрос на повестку от кв.${APT}</div><div class="agenda-text">${text.replace(/</g,'&lt;')}</div><div class="agenda-actions"><button class="agenda-btn yes">👍 Поддержать</button><button class="agenda-btn no">👎 Против</button></div>`;
   card.querySelectorAll('.agenda-btn').forEach(b => b.onclick = function(){voteAgenda(this,this.classList.contains('yes')?'yes':'no');});
   newMsgs.before(card);
   showScreen('screen-chat');
@@ -2112,6 +1984,8 @@ function alauGuard(id) {
 }
 function alauOnShow(id) {
   renderVote();
+  fillRelDates(); fillApt();
+  if (id === 'screen-tickets') renderTickets();
   if (id === 'screen-profile') renderProfile();
 }
 
@@ -2269,7 +2143,7 @@ function fillTestData() {
 
 // ----- применение профиля в интерфейсе -----
 function applyProfile(u) {
-  APT = u.apt;
+  APT = u.apt; CITY = u.city; fillApt();
   const badge = $('home-apt'); if (badge) badge.textContent = 'Кв. №' + u.apt;
   $('ps-avatar').textContent = ((u.first[0] || '') + (u.last[0] || '')).toUpperCase();
   $('ps-name').textContent = u.last + ' ' + u.first;
