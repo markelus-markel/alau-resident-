@@ -32,10 +32,6 @@
   .home-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 0; }
 
   /* BANNER */
-  .banner-card { background: linear-gradient(135deg, var(--teal), var(--teal-mid)); border-radius: var(--radius); padding: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: #fff; margin-bottom: 16px; }
-  .banner-label { font-size: 11px; opacity: 0.85; margin-bottom: 4px; }
-  .banner-title { font-size: 18px; font-weight: 700; }
-  .banner-sub { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 
   /* ===== ANN+DISCUSSION BLOCK (styled like banner) ===== */
   .ann-block {
@@ -66,7 +62,6 @@
   .pill-urgent { background: #fce4e4; color: #c62828; }
   .pill-new { background: #e8f5e9; color: #2e7d32; }
   .pill-action { background: #e8eaf6; color: #3949ab; }
-  .pill-promo { background: #fff3e0; color: #e65100; }
   .ann-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 4px; }
 
   /* QUICK ACTIONS */
@@ -87,18 +82,6 @@
 
   /* MARKETPLACE */
   .market-screen-inner { flex: 1; overflow-y: auto; }
-  .cards-viewport { position: relative; overflow: hidden; border-radius: var(--radius); margin: 0 14px; box-shadow: var(--shadow); touch-action: pan-y; }
-  .cards-track { display: flex; transition: transform 0.38s cubic-bezier(0.4,0,0.2,1); }
-  .market-card { min-width: 100%; background: linear-gradient(160deg, #0d6b5c 0%, #1a8a7a 50%, #22a896 100%); color: #fff; padding: 22px 22px 20px; position: relative; overflow: hidden; }
-  .market-card::before { content: ''; position: absolute; right: -30px; top: -30px; width: 180px; height: 180px; background: rgba(255,255,255,0.07); border-radius: 50%; }
-  .moderation-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 5px 12px; margin-bottom: 16px; font-size: 12px; font-weight: 500; }
-  .card-emoji { font-size: 40px; margin-bottom: 14px; display: block; position: relative; z-index: 1; }
-  .card-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-  .card-type { font-size: 13px; opacity: 0.8; margin-bottom: 14px; }
-  .card-desc { font-size: 14px; line-height: 1.55; opacity: 0.9; margin-bottom: 20px; }
-  .card-price-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .price-block .price-new { font-size: 24px; font-weight: 800; }
-  .price-block .price-old { font-size: 13px; opacity: 0.6; text-decoration: line-through; }
   .discount-pill { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); border-radius: 12px; padding: 8px 14px; text-align: center; }
   .discount-pill .disc-pct { font-size: 22px; font-weight: 900; }
   .discount-pill .disc-sub { font-size: 11px; opacity: 0.85; }
@@ -108,18 +91,6 @@
   .swipe-arrow { width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; animation: pulse-arrow 1.8s ease-in-out infinite; }
   @keyframes bounce-up { 0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(-4px);opacity:1} }
   @keyframes pulse-arrow { 0%,100%{border-color:rgba(255,255,255,.4)}50%{border-color:rgba(255,255,255,.9);box-shadow:0 0 8px rgba(255,255,255,.3)} }
-  .order-btn { background: #fff; color: var(--teal); border: none; border-radius: 14px; width: 100%; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin: 0 0 6px; transition: transform 0.15s; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
-  .order-btn:active { transform: scale(0.98); }
-  .carousel-controls { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; }
-  .carousel-dots { display: flex; gap: 5px; align-items: center; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.2); transition: all 0.25s; }
-  .dot.active { width: 20px; border-radius: 4px; background: var(--teal); }
-  .carousel-arrows { display: flex; gap: 8px; }
-  .arr-btn { width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 2px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.15s; color: var(--teal); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .arr-btn:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
-  .arr-btn:active { transform: scale(0.92); }
-  .arr-btn:disabled { opacity: 0.3; pointer-events: none; }
-  .carousel-counter { font-size: 12px; color: var(--text-muted); font-weight: 600; }
 
   /* ORDER MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; justify-content: center; }
@@ -134,9 +105,6 @@
   .modal-apt { background: var(--teal-light); border-radius: 10px; padding: 12px 14px; font-size: 15px; font-weight: 600; color: var(--teal); }
   .modal-input { width: 100%; border: 2px solid #e8e8e8; border-radius: 10px; padding: 12px 14px; font-size: 15px; outline: none; transition: border-color 0.15s; }
   .modal-input:focus { border-color: var(--teal); }
-  .modal-price-row { display: flex; justify-content: space-between; align-items: center; background: var(--teal-light); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
-  .modal-price-label { font-size: 13px; color: var(--text-muted); }
-  .modal-price-value { font-size: 16px; font-weight: 700; color: var(--teal); }
   .modal-submit { width: 100%; background: var(--teal); color: #fff; border: none; border-radius: 14px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; }
   .modal-cancel { width: 100%; background: none; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; margin-top: 10px; padding: 6px; }
 
@@ -170,7 +138,6 @@
   .ann-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
   .tag-new { background: #e8f5e9; color: #2e7d32; }
   .tag-urgent { background: #fce4e4; color: #c62828; }
-  .tag-promo { background: #fff3e0; color: #e65100; }
   .tag-action { background: #e8eaf6; color: #3949ab; }
 
   /* ===== ОБЩЕДОМОВОЙ ЧАТ ===== */
@@ -311,6 +278,14 @@
   .tkt-btn.wa { border-color:#25d366; background:#f0fff4; color:#128c7e; }
   .tkt-btn.chk { border-color:#3949ab; background:#eef0fb; color:#3949ab; }
   .chip-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+  .mk-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .mk-cat { position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding:12px; background:#fff; border:2px solid #eee; border-radius:12px; cursor:pointer; text-align:left; }
+  .mk-icon { font-size:22px; }
+  .mk-name { font-size:13px; font-weight:600; color:var(--text); line-height:1.3; }
+  .mk-cnt { position:absolute; top:8px; right:8px; background:var(--teal); color:#fff; font-size:11px; font-weight:700; border-radius:10px; padding:1px 7px; }
+  .mk-prov { background:#f7f9fa; border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+  .mk-prov-name { font-size:14px; font-weight:700; }
+  .mk-prov-desc { font-size:12px; color:var(--text-muted); margin-top:2px; }
   .sit-hint { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
   .sit-group { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin:12px 0 6px; }
   .sit-row { display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px; margin-bottom:6px; background:#fff; border:2px solid #eee; border-radius:12px; cursor:pointer; text-align:left; font-size:14px; }
@@ -408,16 +383,6 @@
     </div>
 
 
-    <!-- Banner -->
-    <div class="banner-card" onclick="showScreen('screen-market')">
-      <div>
-        <div class="banner-label">🏠 Главная ОСИ №14 · Семей</div>
-        <div class="banner-title">−20% на клининг</div>
-        <div class="banner-sub">CleanCity Semey · только для жильцов ОСИ №14</div>
-      </div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600;">Узнать →</div>
-    </div>
-
     <!-- Общий календарь (внешняя ссылка, см. CALENDAR_URL) -->
     <div class="cal-card" id="cal-card" onclick="showScreen('screen-calendar')">
       <div style="font-size:28px;">📅</div>
@@ -458,8 +423,8 @@
         <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер {apt}. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
           <div class="amc-icon" style="background:#e8eaf6;">💬</div>
           <div class="amc-title">Общедомовой чат</div>
-          <div class="amc-sub">23 жильца онлайн</div>
-          <div class="amc-text">8 новых сообщений</div>
+          <div class="amc-sub">Обсуждения дома</div>
+          <div class="amc-text">Сообщения пока хранятся только на этом устройстве (демо)</div>
           <span class="amc-pill" style="background:#e8eaf6;color:#3949ab;">Войти в чат</span>
           <div class="amc-mic">🎙️ Написать голосом</div>
         </div>
@@ -472,16 +437,6 @@
           <div class="amc-text">Кровля и бюджет Q2</div>
           <span class="amc-pill" style="background:#e8f5e9;color:#2e7d32;">Новое</span>
           <div class="amc-mic">🎙️ На повестку</div>
-        </div>
-
-        <!-- Module 5: Акция -->
-        <div class="ann-card-module" onclick="openModuleVoice('promo','🎁 Скидка КазГарант','Уважаемый житель квартиры номер {apt}. Вы можете задать вопрос о страховании жилья или оставить заявку на консультацию. В демо-версии запрос никому не передаётся.','{d-5} · КазГарант','−15% на страхование от затопления и пожара для жильцов ОСИ №14.','','')">
-          <div class="amc-icon" style="background:#fff8e6;">🎁</div>
-          <div class="amc-title">Скидка на страховку</div>
-          <div class="amc-sub"><span data-rd="-5"></span> · КазГарант</div>
-          <div class="amc-text">−15% для жильцов ОСИ</div>
-          <span class="amc-pill" style="background:#fff3e0;color:#e65100;">🔥 Акция</span>
-          <div class="amc-mic">🎙️ Задать вопрос</div>
         </div>
 
         <!-- Module 6: Заявка мастеру -->
@@ -498,7 +453,6 @@
       <!-- scroll dots -->
       <div style="display:flex;gap:5px;justify-content:center;padding-top:4px;" id="ann-dots">
         <div class="ann-dot-ind active"></div>
-        <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
@@ -570,14 +524,6 @@
         <span class="ann-tag tag-new">Новое</span>
       </div>
       <div class="ann-full-text">Обсуждение ремонта кровли и бюджета Q2. 18:00, холл 1-го этажа. Ваш голос важен! Явка обязательна — будем принимать решение большинством.</div>
-    </div>
-    <div class="ann-full-card">
-      <div class="ann-full-header">
-        <div class="ann-full-icon" style="background:#fff8e6;">🎁</div>
-        <div class="ann-full-body"><div class="ann-full-title">Скидка на страховку жилья</div><div class="ann-full-meta"><span data-rd="-5"></span> · КазГарант</div></div>
-        <span class="ann-tag tag-promo">🔥 Акция</span>
-      </div>
-      <div class="ann-full-text">Жильцы ОСИ №14 получают −15% на страхование от затопления, пожара и кражи. Оформление за 5 минут онлайн.</div>
     </div>
     <div class="ann-full-card">
       <div class="ann-full-header">
@@ -677,72 +623,11 @@
     <h1 style="color:#fff;font-size:18px;font-weight:700;">Маркетплейс</h1>
     <div style="width:60px;"></div>
   </div>
-  <div class="market-screen-inner" style="padding:14px 0 14px;">
-    <div class="carousel-controls">
-      <div class="carousel-dots" id="carousel-dots"></div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span class="carousel-counter" id="carousel-counter">1 / 5</span>
-        <div class="carousel-arrows">
-          <button class="arr-btn" id="arr-prev" onclick="carouselMove(-1)">‹</button>
-          <button class="arr-btn" id="arr-next" onclick="carouselMove(1)">›</button>
-        </div>
-      </div>
-    </div>
-    <div class="cards-viewport" id="cards-viewport">
-      <div class="cards-track" id="cards-track">
-        <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
-          <span class="card-emoji">🧹</span>
-          <div class="card-name">CleanCity Semey</div>
-          <div class="card-type">Уборка и клининг</div>
-          <div class="card-desc">Профессиональная уборка подъездов, квартир и офисов. Работают в Семее с 2018 года, 4.9★ от 230 отзывов жильцов ОСИ. Используют сертифицированную химию, безопасную для детей и животных.</div>
-          <div class="card-price-row"><div class="price-block"><div class="price-new">от 8 000 ₸</div><div class="price-old">от 10 000 ₸</div></div><div class="discount-pill"><div class="disc-pct">−20%</div><div class="disc-sub">для ОСИ №14</div></div></div>
-          <div class="card-tags"><span class="card-tag">🏠 Квартиры</span><span class="card-tag">🏢 Подъезды</span><span class="card-tag">🧴 Дезинфекция</span></div>
-          <button class="order-btn" onclick="openModal('CleanCity Semey','от 8 000 ₸','−20% для ОСИ')">Заказать услугу</button>
-          <div class="swipe-hint"><div class="swipe-arrow">↑</div><span>Проведи пальцем вверх</span></div>
-        </div>
-        <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
-          <span class="card-emoji">🔨</span>
-          <div class="card-name">МастерБригада</div>
-          <div class="card-type">Ремонт квартир и МКД</div>
-          <div class="card-desc">Комплексный ремонт квартир под ключ и отдельные виды работ: штукатурка, плитка, электрика, сантехника. Лицензия МЮ РК, официальный договор, гарантия 2 года.</div>
-          <div class="card-price-row"><div class="price-block"><div class="price-new">от 1 500 ₸/м²</div><div class="price-old">Смета бесплатно</div></div><div class="discount-pill"><div class="disc-pct">−10%</div><div class="disc-sub">+ приоритет</div></div></div>
-          <div class="card-tags"><span class="card-tag">🧱 Под ключ</span><span class="card-tag">⚡ Электрика</span><span class="card-tag">🚿 Сантехника</span></div>
-          <button class="order-btn" onclick="openModal('МастерБригада','от 1 500 ₸/м²','−10% + приоритет')">Заказать услугу</button>
-        </div>
-        <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
-          <span class="card-emoji">🛡️</span>
-          <div class="card-name">КазГарант</div>
-          <div class="card-type">Страхование жилья</div>
-          <div class="card-desc">Страховой полис от затопления, пожара, кражи и стихийных бедствий. Оформление за 5 минут онлайн, без визита в офис. Выплаты — в течение 5 рабочих дней.</div>
-          <div class="card-price-row"><div class="price-block"><div class="price-new">от 2 500 ₸/мес</div><div class="price-old">от 2 950 ₸/мес</div></div><div class="discount-pill"><div class="disc-pct">−15%</div><div class="disc-sub">скидка</div></div></div>
-          <div class="card-tags"><span class="card-tag">🔥 Пожар</span><span class="card-tag">💧 Затопление</span><span class="card-tag">🔐 Кража</span></div>
-          <button class="order-btn" onclick="openModal('КазГарант','от 2 500 ₸/мес','−15% скидка')">Заказать услугу</button>
-        </div>
-        <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
-          <span class="card-emoji">🏗️</span>
-          <div class="card-name">Хаузмастер</div>
-          <div class="card-type">AI-управление домом</div>
-          <div class="card-desc">Умный сервис управления МКД: диагностика здания, предсказание поломок, автоматизация заявок. Официальный технологический партнёр ОСИ №14 и ТОО «Абай-Гермес».</div>
-          <div class="card-price-row"><div class="price-block"><div class="price-new">от 3 000 ₸/мес</div><div class="price-old">Осмотр бесплатно</div></div><div class="discount-pill"><div class="disc-pct">🤝</div><div class="disc-sub">Партнёр ОСИ</div></div></div>
-          <div class="card-tags"><span class="card-tag">🤖 AI-диагностика</span><span class="card-tag">📊 Аналитика</span><span class="card-tag">🔔 Уведомления</span></div>
-          <button class="order-btn" onclick="openModal('Хаузмастер','от 3 000 ₸/мес','Партнёр ОСИ')">Заказать услугу</button>
-        </div>
-        <div class="market-card">
-          <div class="moderation-badge">✅ Прошёл модерацию Alau Market</div>
-          <span class="card-emoji">🏠</span>
-          <div class="card-name">Абай Недвижимость</div>
-          <div class="card-type">Купля · Продажа · Аренда</div>
-          <div class="card-desc">Крупнейшее агентство Семея — 500+ сделок в год. Полное юридическое сопровождение, проверка документов, помощь с ипотекой. Для жильцов ОСИ №14 — сниженная комиссия.</div>
-          <div class="card-price-row"><div class="price-block"><div class="price-new">Консультация бесплатно</div><div class="price-old">комиссия 3% → 1%</div></div><div class="discount-pill"><div class="disc-pct">−2%</div><div class="disc-sub">комиссия</div></div></div>
-          <div class="card-tags"><span class="card-tag">🔑 Продажа</span><span class="card-tag">🏘️ Аренда</span><span class="card-tag">📋 Ипотека</span></div>
-          <button class="order-btn" onclick="openModal('Абай Недвижимость','Консультация бесплатно','−2% комиссия')">Заказать услугу</button>
-        </div>
-      </div>
-    </div>
+  <div class="market-screen-inner" style="padding:14px;">
+    <input id="mk-search" type="text" placeholder="Поиск: материал, услуга или поставщик…" oninput="renderMarket()" style="width:100%;border:2px solid #e8e8e8;border-radius:10px;padding:11px 12px;font-size:14px;box-sizing:border-box;">
+    <div id="mk-tabs" style="display:flex;gap:8px;margin:10px 0 2px;"></div>
+    <div id="mk-body"></div>
+    <div class="sit-note">Реестр категорий расширяется по мере развития проекта. Поставщики добавляются после проверки; пока список пуст.</div>
   </div>
   <nav class="bottom-nav">
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
@@ -761,16 +646,18 @@
   </div>
   <div class="contacts-content">
     <div class="section-title">Управление домом</div>
-    <div class="contact-card"><div class="contact-avatar">🧑‍💼</div><div class="contact-info"><div class="contact-name">Кудайберген Болтабеков</div><div class="contact-role">Председатель ОСИ №14</div></div><span style="color:#bbb;font-size:18px;">›</span></div>
-    <div class="contact-card"><div class="contact-avatar">🔧</div><div class="contact-info"><div class="contact-name">Хаусмастер</div><div class="contact-role">Технический специалист</div><div class="contact-online"><span class="online-dot"></span>онлайн</div></div><span style="color:#bbb;font-size:18px;">›</span></div>
-    <div class="contact-card"><div class="contact-avatar">🏢</div><div class="contact-info"><div class="contact-name">ТОО «АбайГрупп Сервис»</div><div class="contact-role">Управляющая компания</div></div><span style="color:#bbb;font-size:18px;">›</span></div>
+    <div id="ct-house" style="display:flex;flex-direction:column;gap:10px;"></div>
     <div class="section-title">Аварийные службы</div>
     <div class="emergency-grid">
-      <a class="emergency-btn" href="tel:+77224111111"><span class="emr-icon">💧</span><span class="emr-name">Водоканал</span><span class="emr-phone">+7 722 411-11-11</span></a>
-      <a class="emergency-btn" href="tel:+77224222222"><span class="emr-icon">🔥</span><span class="emr-name">Теплоком.</span><span class="emr-phone">+7 722 422-22-22</span></a>
-      <a class="emergency-btn" href="tel:115"><span class="emr-icon">⚡</span><span class="emr-name">Электросбыт</span><span class="emr-phone">115</span></a>
-      <a class="emergency-btn" href="tel:04"><span class="emr-icon">🔵</span><span class="emr-name">ГорГаз</span><span class="emr-phone">04</span></a>
+      <a class="emergency-btn" href="tel:112"><span class="emr-icon">🆘</span><span class="emr-name">Единая служба спасения</span><span class="emr-phone">112</span></a>
+      <a class="emergency-btn" href="tel:101"><span class="emr-icon">🔥</span><span class="emr-name">Пожарная</span><span class="emr-phone">101</span></a>
+      <a class="emergency-btn" href="tel:102"><span class="emr-icon">👮</span><span class="emr-name">Полиция</span><span class="emr-phone">102</span></a>
+      <a class="emergency-btn" href="tel:103"><span class="emr-icon">🚑</span><span class="emr-name">Скорая помощь</span><span class="emr-phone">103</span></a>
+      <a class="emergency-btn" href="tel:104"><span class="emr-icon">🔵</span><span class="emr-name">Газовая служба</span><span class="emr-phone">104</span></a>
     </div>
+    <div class="section-title">Службы вашего города</div>
+    <div id="ct-city" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div class="sit-note">Контакты заполняются вручную и хранятся только на этом устройстве. Номера национальных служб проверьте для вашего региона.</div>
   </div>
   <nav class="bottom-nav">
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
@@ -1111,21 +998,29 @@
   </div>
 </div>
 
-<!-- =================== ORDER MODAL =================== -->
-<div class="modal-overlay" id="order-modal">
+<!-- =================== CONTACT MODAL =================== -->
+<div class="modal-overlay" id="ct-modal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="modal-company-name">CleanCity Semey</div>
-    <div class="modal-sub">✅ Модерация пройдена · Alau Market</div>
-    <div class="modal-field"><label>Ваша квартира</label><div class="modal-apt">Кв. №<span class="js-apt">—</span> · ОСИ №14</div></div>
-    <div class="modal-field"><label>Телефон для связи</label><input class="modal-input" type="tel" placeholder="+7 (___) ___-__-__"></div>
-    <div class="modal-field"><label>Комментарий (необязательно)</label><input class="modal-input" type="text" placeholder="Уточните детали..."></div>
-    <div class="modal-price-row">
-      <span class="modal-price-label" id="modal-price-label">от 8 000 ₸</span>
-      <span class="modal-price-value" id="modal-discount-value">−20% для ОСИ</span>
-    </div>
-    <button class="modal-submit" onclick="closeModal(true)">📤 Отправить заявку (демо)</button>
-    <button class="modal-cancel" onclick="closeModal(false)">Отмена</button>
+    <div class="modal-title" id="ct-title">Контакт</div>
+    <div class="modal-sub">Заполните данные: они сохранятся на этом устройстве.</div>
+    <div class="modal-field"><label>Имя или название</label><input class="modal-input" id="ct-name" type="text" placeholder="Например: ФИО или название организации"></div>
+    <div class="modal-field"><label>Телефон</label><input class="modal-input" id="ct-phone" type="tel" placeholder="+7 (___) ___-__-__"></div>
+    <div class="modal-field"><label>Примечание (необязательно)</label><input class="modal-input" id="ct-note" type="text" placeholder="Часы приёма, адрес…"></div>
+    <button class="modal-submit" onclick="ctSave()">Сохранить</button>
+    <button class="modal-cancel" id="ct-clear" onclick="ctClear()">Очистить контакт</button>
+    <button class="modal-cancel" onclick="ctClose()">Отмена</button>
+  </div>
+</div>
+
+<!-- =================== MARKET MODAL =================== -->
+<div class="modal-overlay" id="mk-modal">
+  <div class="modal-sheet" style="max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="mk-title"></div>
+    <div class="modal-sub" id="mk-sub"></div>
+    <div id="mk-body2" style="overflow-y:auto;flex:1;"></div>
+    <button class="modal-submit" style="margin-top:10px;" onclick="mkClose()">Закрыть</button>
   </div>
 </div>
 
@@ -1837,51 +1732,143 @@ function mvReset() {
 function mvDownload() { ticketDownload($('mv-done').dataset.id); }
 function mvWhatsApp() { ticketShare($('mv-done').dataset.id); }
 
-// ===== ORDER MODAL =====
-function openModal(name, price, discount) {
-  document.getElementById('modal-company-name').textContent = name;
-  document.getElementById('modal-price-label').textContent = price;
-  document.getElementById('modal-discount-value').textContent = discount;
-  document.getElementById('order-modal').classList.add('open');
+// ===== КОНТАКТЫ: поля для заполнения (без выдуманных людей и номеров) =====
+const LS_CONTACTS = 'alauDemoContacts';
+const CONTACT_SLOTS = [
+  { id: 'chair', grp: 'house', icon: '🧑‍💼', role: 'Председатель ОСИ №14' },
+  { id: 'tech', grp: 'house', icon: '🔧', role: 'Технический специалист' },
+  { id: 'uk', grp: 'house', icon: '🏢', role: 'Управляющая компания' },
+  { id: 'water', grp: 'city', icon: '💧', role: 'Водоканал' },
+  { id: 'heat', grp: 'city', icon: '🔥', role: 'Теплоснабжение' },
+  { id: 'power', grp: 'city', icon: '⚡', role: 'Электросети' },
+  { id: 'gas', grp: 'city', icon: '🔵', role: 'Городская газовая служба' },
+];
+let ctCurrent = null;
+function ctData() { const p = currentPhone(); return p ? (lsGet(LS_CONTACTS, {})[p] || {}) : {}; }
+function renderContacts() {
+  const d = ctData();
+  const card = c => {
+    const v = d[c.id];
+    return '<div class="contact-card" data-slot="' + c.id + '" onclick="ctOpen(this.dataset.slot)"><div class="contact-avatar">' + c.icon + '</div><div class="contact-info"><div class="contact-name"' + (v ? '' : ' style="color:var(--text-muted);font-weight:600;"') + '>' + (v ? escHtml(v.name) : 'Не указан') + '</div><div class="contact-role">' + escHtml(c.role) + (v && v.phone ? ' · ' + escHtml(v.phone) : '') + (v && v.note ? ' · ' + escHtml(v.note) : '') + '</div></div>'
+      + (v && v.phone ? '<a class="tkt-btn sit-call" style="flex:none;padding:8px 10px;text-decoration:none;" href="tel:' + escHtml(v.phone.replace(/[^+\d]/g, '')) + '" onclick="event.stopPropagation()">📞</a>' : '')
+      + '<span style="color:var(--teal);font-size:12px;font-weight:700;">' + (v ? '✏️' : '＋ Заполнить') + '</span></div>';
+  };
+  $('ct-house').innerHTML = CONTACT_SLOTS.filter(c => c.grp === 'house').map(card).join('');
+  $('ct-city').innerHTML = CONTACT_SLOTS.filter(c => c.grp === 'city').map(card).join('');
 }
-function closeModal(submitted) {
-  document.getElementById('order-modal').classList.remove('open');
-  if (submitted) setTimeout(() => alert('Демо-режим: заказ никому не отправлен. В рабочей версии заявку получит поставщик.'), 100);
+function ctOpen(id) {
+  const c = CONTACT_SLOTS.find(x => x.id === id); if (!c) return;
+  ctCurrent = id; const v = ctData()[id] || {};
+  $('ct-title').textContent = c.icon + ' ' + c.role;
+  $('ct-name').value = v.name || ''; $('ct-phone').value = v.phone || ''; $('ct-note').value = v.note || '';
+  $('ct-clear').style.display = v.name ? 'block' : 'none';
+  $('ct-modal').classList.add('open');
 }
-document.getElementById('order-modal').addEventListener('click', function(e) { if(e.target===this) closeModal(false); });
+function ctClose() { $('ct-modal').classList.remove('open'); ctCurrent = null; }
+function ctStore(fn) { const p = currentPhone(); if (!p) return; const all = lsGet(LS_CONTACTS, {}); all[p] = all[p] || {}; fn(all[p]); lsSet(LS_CONTACTS, all); renderContacts(); }
+function ctSave() {
+  const name = $('ct-name').value.trim(); if (!name) { toast('Укажите имя или название'); return; }
+  const phone = $('ct-phone').value.trim();
+  if (phone && phone.replace(/\D/g, '').length < 3) { toast('Проверьте номер телефона'); return; }
+  const id = ctCurrent; ctStore(o => { o[id] = { name, phone, note: $('ct-note').value.trim() }; });
+  ctClose(); toast('Контакт сохранён на этом устройстве');
+}
+function ctClear() { const id = ctCurrent; ctStore(o => { delete o[id]; }); ctClose(); }
+document.getElementById('ct-modal').addEventListener('click', function (e) { if (e.target === this) ctClose(); });
 
-// ===== CAROUSEL =====
-const TOTAL = 5;
-let current = 0;
-function initCarousel() {
-  const dotsEl = document.getElementById('carousel-dots');
-  for (let i = 0; i < TOTAL; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i===0?' active':'');
-    d.onclick = () => goTo(i);
-    d.style.cursor = 'pointer';
-    dotsEl.appendChild(d);
-  }
-  updateCarousel();
+// ===== МАРКЕТПЛЕЙС: реестр категорий и поиск поставщиков =====
+// Реестр расширяется: добавляйте категории в MARKET_CATS, проверенных поставщиков в MARKET_PROVIDERS.
+const MK_GROUPS = [['mat', '🧱 Материалы'], ['srv', '🛠️ Услуги']];
+const MARKET_CATS = [
+  { id: 'm-build', grp: 'mat', icon: '🧱', name: 'Строительные материалы', kw: 'кирпич цемент бетон блок смесь арматура пиломатериал доска' },
+  { id: 'm-finish', grp: 'mat', icon: '🏗️', name: 'Отделочные материалы', kw: 'плитка обои ламинат гипсокартон штукатурка потолок' },
+  { id: 'm-paint', grp: 'mat', icon: '🎨', name: 'Лакокрасочные материалы', kw: 'краска лак грунтовка эмаль' },
+  { id: 'm-plumb', grp: 'mat', icon: '🚰', name: 'Сантехнические материалы', kw: 'труба кран смеситель сантехника унитаз ванна радиатор' },
+  { id: 'm-electro', grp: 'mat', icon: '⚡', name: 'Электрика', kw: 'кабель провод розетка выключатель автомат лампа светильник' },
+  { id: 'm-telemetry', grp: 'mat', icon: '📟', name: 'Системы телеметрии', kw: 'счетчик датчик учет диспетчеризация' },
+  { id: 'm-security', grp: 'mat', icon: '📹', name: 'Системы охраны и наблюдения', kw: 'камера видеонаблюдение сигнализация охрана замок' },
+  { id: 'm-furniture', grp: 'mat', icon: '🛋️', name: 'Мебель', kw: 'шкаф диван кровать стол кухня' },
+  { id: 'm-hardware', grp: 'mat', icon: '🔩', name: 'Фурнитура', kw: 'ручки петли замок доводчик крепеж' },
+  { id: 'm-glazing', grp: 'mat', icon: '🪟', name: 'Остекление', kw: 'окно стеклопакет балкон лоджия витраж' },
+  { id: 'm-textile', grp: 'mat', icon: '🧵', name: 'Текстиль', kw: 'шторы занавески ткань ковер постельное' },
+  { id: 's-design-project', grp: 'srv', icon: '📐', name: 'Проектирование', kw: 'проект чертеж планировка перепланировка согласование' },
+  { id: 's-design', grp: 'srv', icon: '🖼️', name: 'Дизайн', kw: 'интерьер дизайнер дизайн-проект' },
+  { id: 's-build', grp: 'srv', icon: '👷', name: 'Общестроительные работы', kw: 'строительство кладка стяжка фундамент демонтаж' },
+  { id: 's-plumb', grp: 'srv', icon: '🔧', name: 'Сантехнические работы', kw: 'сантехник установка смесителя замена труб засор' },
+  { id: 's-finish', grp: 'srv', icon: '🖌️', name: 'Отделочные работы', kw: 'покраска поклейка обоев укладка плитки шпаклевка' },
+  { id: 's-electro', grp: 'srv', icon: '🔌', name: 'Электромонтаж', kw: 'электрик проводка щиток розетки освещение' },
+  { id: 's-alarm', grp: 'srv', icon: '🚨', name: 'Сигнализация и связь', kw: 'сигнализация домофон интернет телевидение видеонаблюдение связь' },
+  { id: 's-repair', grp: 'srv', icon: '🛠️', name: 'Ремонт', kw: 'ремонт квартиры под ключ косметический капитальный мастер' },
+  { id: 's-furnmove', grp: 'srv', icon: '🚚', name: 'Перевозка мебели', kw: 'грузчики газель доставка мебели' },
+  { id: 's-move', grp: 'srv', icon: '📦', name: 'Переезд из квартиры', kw: 'переезд грузчики упаковка вещей' },
+  { id: 's-clean', grp: 'srv', icon: '🧹', name: 'Клининг', kw: 'уборка мойка окон химчистка' },
+  { id: 's-fumig', grp: 'srv', icon: '🪲', name: 'Фумигация', kw: 'тараканы клопы дезинсекция насекомые грызуны' },
+  { id: 's-sanit', grp: 'srv', icon: '🧼', name: 'Санитария', kw: 'дезинфекция санитарная обработка дератизация' },
+  { id: 's-consult', grp: 'srv', icon: '🏠', name: 'Жилищный консалтинг', kw: 'консультация жилищные вопросы оси кск управление домом' },
+  { id: 's-realty', grp: 'srv', icon: '🔑', name: 'Риэлтерские услуги', kw: 'купля продажа аренда квартиры недвижимость' },
+  { id: 's-legal', grp: 'srv', icon: '⚖️', name: 'Юридические услуги', kw: 'юрист договор иск суд приватизация наследство' },
+];
+// Проверенные поставщики: { id, cats: ['s-clean'], name, phone, desc }. Пока список пуст, реальные поставщики появятся после проверки.
+const MARKET_PROVIDERS = [];
+const LS_RECS = 'alauDemoRecs';
+let mkTab = 'all', mkCurrent = null;
+const mkNorm = s => String(s || '').toLowerCase().replace(/ё/g, 'е').trim();
+function mkRecs(catId) { const p = currentPhone(); if (!p) return []; return ((lsGet(LS_RECS, {})[p]) || []).filter(r => r.cat === catId); }
+function mkProviders(catId) { return MARKET_PROVIDERS.filter(p => p.cats.includes(catId)); }
+function mkCount(catId) { return mkProviders(catId).length + mkRecs(catId).length; }
+function mkSetTab(t) { mkTab = t; renderMarket(); }
+function renderMarket() {
+  const body = $('mk-body'); if (!body) return;
+  const q = mkNorm($('mk-search').value);
+  $('mk-tabs').innerHTML = [['all', 'Все'], ['mat', 'Материалы'], ['srv', 'Услуги']].map(([k, l]) => '<button class="chip' + (mkTab === k ? ' active' : '') + '" onclick="mkSetTab(\'' + k + '\')">' + l + '</button>').join('');
+  const provHit = c => MARKET_PROVIDERS.some(p => p.cats.includes(c.id) && mkNorm(p.name + ' ' + p.desc).includes(q));
+  let html = '', n = 0;
+  MK_GROUPS.forEach(([g, label]) => {
+    if (mkTab !== 'all' && mkTab !== g) return;
+    const rows = MARKET_CATS.filter(c => c.grp === g && (!q || mkNorm(c.name + ' ' + c.kw).includes(q) || provHit(c)));
+    if (!rows.length) return; n += rows.length;
+    html += '<div class="sit-group">' + label + ' · ' + rows.length + '</div><div class="mk-grid">' + rows.map(c => '<button class="mk-cat" data-cat="' + c.id + '" onclick="mkOpen(this.dataset.cat)"><span class="mk-icon">' + c.icon + '</span><span class="mk-name">' + escHtml(c.name) + '</span>' + (mkCount(c.id) ? '<span class="mk-cnt">' + mkCount(c.id) + '</span>' : '') + '</button>').join('') + '</div>';
+  });
+  if (!n) html = '<div class="sit-empty">Ничего не найдено. Оставьте запрос в ОСИ, и мы добавим нужную категорию.<br><button class="tkt-btn chk" style="margin-top:10px;" onclick="mkRequestFree()">🔧 Оставить запрос</button></div>';
+  body.innerHTML = html;
 }
-function updateCarousel() {
-  document.getElementById('cards-track').style.transform = `translateX(-${current*100}%)`;
-  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===current));
-  document.getElementById('carousel-counter').textContent = `${current+1} / ${TOTAL}`;
-  document.getElementById('arr-prev').disabled = current===0;
-  document.getElementById('arr-next').disabled = current===TOTAL-1;
+function mkRequestFree() {
+  const q = $('mk-search').value.trim();
+  openModuleVoice('other', '🛒 Запрос в маркетплейс', 'Уважаемый житель квартиры номер {apt}. Опишите, какой материал или услуга вам нужны.', 'Маркетплейс', 'Запрос: ' + (q || 'нужна новая категория') + '.');
 }
-function carouselMove(dir) { const n=current+dir; if(n>=0&&n<TOTAL){current=n;updateCarousel();} }
-function goTo(idx) { current=idx; updateCarousel(); }
-let tSX=0,tSY=0;
-const vp = document.getElementById('cards-viewport');
-vp.addEventListener('touchstart', e=>{tSX=e.touches[0].clientX;tSY=e.touches[0].clientY;},{passive:true});
-vp.addEventListener('touchend', e=>{const dx=e.changedTouches[0].clientX-tSX,dy=e.changedTouches[0].clientY-tSY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40)carouselMove(dx<0?1:-1);},{passive:true});
-let mD=false,mSX=0;
-vp.addEventListener('mousedown',e=>{mD=true;mSX=e.clientX;});
-vp.addEventListener('mouseup',e=>{if(!mD)return;mD=false;const dx=e.clientX-mSX;if(Math.abs(dx)>40)carouselMove(dx<0?1:-1);});
-vp.addEventListener('mouseleave',()=>mD=false);
-initCarousel();
+function mkOpen(catId) {
+  const c = MARKET_CATS.find(x => x.id === catId); if (!c) return;
+  mkCurrent = c.id;
+  $('mk-title').textContent = c.icon + ' ' + c.name;
+  $('mk-sub').textContent = c.grp === 'mat' ? 'Материалы' : 'Услуги';
+  const provs = mkProviders(c.id), recs = mkRecs(c.id);
+  let h = '';
+  if (provs.length) h += '<div class="sit-h">Проверенные поставщики</div>' + provs.map(p => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">' + escHtml(p.desc || '') + '</div>' + (p.phone ? '<a class="tkt-btn sit-call" style="display:block;margin-top:6px;" href="tel:' + escHtml(p.phone) + '">📞 ' + escHtml(p.phone) + '</a>' : '') + '</div>').join('');
+  if (recs.length) h += '<div class="sit-h">Ваши рекомендации (не проверены)</div>' + recs.map(r => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(r.name) + '</div><div class="mk-prov-desc">' + escHtml(r.note || '') + (r.phone ? ' · ' + escHtml(r.phone) : '') + '</div></div>').join('');
+  if (!provs.length && !recs.length) h += '<div class="sit-empty">Проверенных поставщиков в этой категории пока нет. Реестр пополняется после проверки.</div>';
+  h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="mkRequest()">🔧 Оставить запрос в ОСИ</button><button class="tkt-btn" onclick="mkRecForm()">➕ Рекомендовать поставщика</button></div>';
+  $('mk-body2').innerHTML = h;
+  $('mk-modal').classList.add('open');
+}
+function mkClose() { $('mk-modal').classList.remove('open'); mkCurrent = null; renderMarket(); }
+function mkRequest() {
+  const c = MARKET_CATS.find(x => x.id === mkCurrent); if (!c) return;
+  mkClose();
+  openModuleVoice('other', c.icon + ' ' + c.name, 'Уважаемый житель квартиры номер {apt}. Опишите, что именно вам нужно и когда.', 'Маркетплейс', 'Запрос: подобрать поставщика, категория «' + c.name + '».');
+}
+function mkRecForm() {
+  const c = MARKET_CATS.find(x => x.id === mkCurrent); if (!c) return;
+  $('mk-body2').innerHTML = '<div class="sit-h">Рекомендовать поставщика</div><div class="sit-note" style="margin:0 0 8px;">Запись сохраняется только на этом устройстве и помечена как непроверенная.</div>'
+    + '<input id="mk-r-name" class="modal-input" placeholder="Название или имя*" style="margin-bottom:8px;"><input id="mk-r-phone" class="modal-input" type="tel" placeholder="Телефон (необязательно)" style="margin-bottom:8px;"><input id="mk-r-note" class="modal-input" placeholder="Комментарий (необязательно)">'
+    + '<div class="sit-calls"><button class="tkt-btn chk" onclick="mkRecSave()">Сохранить</button><button class="tkt-btn" onclick="mkOpen(mkCurrent)">Отмена</button></div>';
+}
+function mkRecSave() {
+  const name = $('mk-r-name').value.trim(); if (!name) { toast('Укажите название или имя'); return; }
+  const p = currentPhone(); if (!p) return;
+  const all = lsGet(LS_RECS, {}); all[p] = all[p] || [];
+  all[p].push({ cat: mkCurrent, name, phone: $('mk-r-phone').value.trim(), note: $('mk-r-note').value.trim(), ts: Date.now() });
+  lsSet(LS_RECS, all); toast('Рекомендация сохранена на этом устройстве'); mkOpen(mkCurrent);
+}
 
 // ===== ЧАТ: сообщения, повестка и помощник =====
 // Демо: всё хранится на этом устройстве отдельно для каждого номера телефона. Другие жильцы сообщений не видят.
@@ -2275,6 +2262,8 @@ function alauGuard(id) {
 function alauOnShow(id) {
   fillRelDates(); fillApt();
   if (id === 'screen-tickets') renderTickets();
+  if (id === 'screen-market') renderMarket();
+  if (id === 'screen-contacts') renderContacts();
   if (id === 'screen-calendar') renderCalendar();
   if (id === 'screen-chat') renderChatScreen();
   else if (chatDictating || botListening) stopAllMics();
