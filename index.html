@@ -399,16 +399,6 @@
       <!-- Horizontal scroll carousel -->
       <div id="ann-carousel" style="display:flex;gap:10px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;cursor:grab;" onmousedown="annDragStart(event)" onmousemove="annDragMove(event)" onmouseup="annDragEnd(event)" onmouseleave="annDragEnd(event)">
 
-        <!-- Module 1: Срочное объявление -->
-        <div class="ann-card-module" onclick="openModuleVoice('urgent','🚨 Отключение воды','Уважаемый житель квартиры номер {apt}. Вы можете сообщить о проблемах с водоснабжением или оставить своё мнение по данному вопросу. Это демонстрационная версия: сообщение создаётся на вашем устройстве и пока никому не передаётся.','Сегодня · Председатель ОСИ','С 09:00 до 17:00 плановые работы. Запаситесь водой заранее.','pill-urgent','🚨 Срочно')">
-          <div class="amc-icon" style="background:#fef0ef;">🚨</div>
-          <div class="amc-title">Отключение воды <span data-rd="0"></span></div>
-          <div class="amc-sub">Сегодня · Председатель ОСИ</div>
-          <div class="amc-text">С 09:00 до 17:00 плановые работы</div>
-          <span class="amc-pill" style="background:#fce4e4;color:#c62828;">Срочно</span>
-          <div class="amc-mic">🎙️ Сообщить</div>
-        </div>
-
         <!-- Module 2: Ситуации -->
         <div class="ann-card-module" onclick="openSituations()">
           <div class="amc-icon" style="background:#fdecea;">🚨</div>
@@ -456,7 +446,6 @@
         <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
-        <div class="ann-dot-ind"></div>
       </div>
     </div>
 
@@ -493,14 +482,6 @@
     <div style="width:60px;"></div>
   </div>
   <div class="ann-screen-content">
-    <div class="ann-full-card">
-      <div class="ann-full-header">
-        <div class="ann-full-icon" style="background:#fef0ef;">🚨</div>
-        <div class="ann-full-body"><div class="ann-full-title">Отключение воды <span data-rd="0"></span></div><div class="ann-full-meta">Сегодня · Председатель ОСИ</div></div>
-        <span class="ann-tag tag-urgent">Срочно</span>
-      </div>
-      <div class="ann-full-text">С 09:00 до 17:00 — плановые работы по замене труб на ул. Найманбаева. Рекомендуем запастись водой. Горячее водоснабжение не затронуто.</div>
-    </div>
     <div class="ann-full-card" onclick="openSituations()">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#fdecea;">🚨</div>
@@ -1479,7 +1460,6 @@ const CAL_SRCS = { osi: 'ОСИ', telegram: 'Telegram', instagram: 'Instagram', 
 const CAL_ICON = { meeting: '👥', works: '🔧', event: '🧹', post: '📝', podcast: '🎙️' };
 function houseEvents() {
   return [
-    { id: 'water', off: 0, from: '09:00', to: '17:00', type: 'works', src: 'osi', title: 'Плановое отключение воды', place: 'Весь дом', text: 'Плановые работы по замене труб. Запаситесь водой заранее.' },
     { id: 'photo', off: -2, type: 'post', src: 'instagram', title: 'Фотоотчёт по двору', place: 'Instagram дома', text: 'Пост с фотографиями двора.' },
     { id: 'wa-note', off: 3, type: 'post', src: 'whatsapp', title: 'Напоминание о собрании', place: 'Чат дома', text: 'Сообщение в чате дома.' },
     { id: 'meeting', off: 4, from: '18:00', to: '19:30', type: 'meeting', src: 'osi', title: 'Собрание жильцов', place: 'Холл 1-го этажа', text: 'Ремонт кровли и бюджет.' },
@@ -2112,7 +2092,6 @@ function botEventByWords(t) {
   if (/собран/.test(t)) return by('meeting');
   if (/уборк|субботник/.test(t)) return by('clean');
   if (/подкаст/.test(t)) return by('podcast');
-  if (/отключен|вод[аыуе]/.test(t)) return by('water');
   return null;
 }
 function pushBot(role, text, via, actions) {
