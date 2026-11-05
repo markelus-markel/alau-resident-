@@ -286,6 +286,11 @@
   .mk-prov { background:#f7f9fa; border-radius:10px; padding:10px 12px; margin-bottom:8px; }
   .mk-prov-name { font-size:14px; font-weight:700; }
   .mk-prov-desc { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .sit-photos { display:flex; gap:6px; margin:8px 0 2px; flex-wrap:wrap; }
+  .sit-photo { position:relative; width:64px; height:64px; border-radius:8px; overflow:hidden; background:#eee; }
+  .sit-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+  .sit-photo button { position:absolute; top:2px; right:2px; width:20px; height:20px; border:none; border-radius:50%; background:rgba(0,0,0,.6); color:#fff; font-size:13px; line-height:1; cursor:pointer; }
+  .tkt-btn.rec { background:#fdecea; border-color:#c62828; color:#c62828; }
   .sit-hint { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
   .sit-group { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin:12px 0 6px; }
   .sit-row { display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px; margin-bottom:6px; background:#fff; border:2px solid #eee; border-radius:12px; cursor:pointer; text-align:left; font-size:14px; }
@@ -1285,10 +1290,11 @@ function seedTickets() {
 }
 function allTickets() { return ticketBox().box.list.concat(seedTickets()).sort((a, b) => b.ts - a.ts); }
 function findTicket(id) { return allTickets().find(t => t.id === id); }
-function addTicket(flow, cat, text, prio) {
+function addTicket(flow, cat, text, prio, photos) {
   const { all, p, box } = ticketBox();
   box.cnt[flow] = (box.cnt[flow] || 0) + 1;
   const t = { id: FLOWS[flow].prefix + String(box.cnt[flow]).padStart(3, '0'), flow, ts: Date.now(), cat: catName(cat), text, prio: prio || 'normal' };
+  if (photos && photos.length) t.photos = photos;
   box.list.unshift(t); all[p] = box; lsSet(LS_TICKETS, all);
   return t;
 }
@@ -1367,6 +1373,7 @@ function renderTickets() {
       <div class="tkt-header"><div class="tkt-num">${id}</div><span class="tkt-status ${done ? 'status-done' : 'status-proc'}">${statusLabel(t)}</span></div>
       <div class="tkt-meta">${fmtDay(t.ts)} · ${fmtTime(t.ts)} · кв.${escHtml(APT)} · ${flow}${escHtml(t.cat)}${urgent}</div>
       <div class="tkt-text">${escHtml(t.text)}</div>
+      ${t.photos && t.photos.length ? '<div class="sit-photos">' + t.photos.map((d, i) => '<div class="sit-photo"><img src="' + d + '" alt="Фото ' + (i + 1) + '"></div>').join('') + '</div>' : ''}
       <div class="tkt-actions">
         <button data-id="${id}" onclick="openChecklist(this.dataset.id)" class="tkt-btn chk">☑ Чек-лист ${n}/${CHECK_STEPS.length}</button>
         <button data-id="${id}" onclick="ticketDownload(this.dataset.id)" class="tkt-btn">📥</button>
@@ -1391,7 +1398,7 @@ ${OSI} · ${CITY || '—'}
 
 ОПИСАНИЕ ПРОБЛЕМЫ:
 ${t.text}
-
+${t.photos && t.photos.length ? '\nФото: ' + t.photos.length + ' (хранятся в приложении, в файл не вкладываются)\n' : ''}
 ---
 AlauConcierge — ${OSI}
 ДЕМО-ДОКУМЕНТ: заявка создана в демонстрационной версии, никому не отправлена и не зарегистрирована.`;
@@ -1902,7 +1909,7 @@ function sendChatMsg(text, via) {
 let chatDictating = false, botListening = false;
 function stopAllMics() {
   vrCancel(); chatDictating = false; botListening = false;
-  ['chat-mic', 'bot-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
+  ['chat-mic', 'bot-mic', 'sit-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
 }
 function dictate(inp, btnId, onText) {
   if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
@@ -2035,7 +2042,7 @@ function botHandle(raw) {
   if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
   if (/что делать|как быть|как поступить|если |авари|помогите/.test(t)) {
     const sit = sitFind(t);
-    if (sit) return { text: sit.icon + ' ' + sit.title + '. Что делать сейчас:\n' + sit.now.map((x, i) => (i + 1) + '. ' + x).join('\n'), actions: [{ label: '📖 Подробно', do: 'sit', arg: sit.id }] };
+    if (sit) return sitBotReply(sit);
   }
   if (/(добав|скача|сохран|занес)[а-яё]*.*календар/.test(t) || /календар/.test(t) && /добав|скача/.test(t)) {
     const ev = botEventByWords(t) || upcoming()[0];
@@ -2057,6 +2064,15 @@ function botHandle(raw) {
     return { text: 'Ваших заявок: ' + mine.length + '. Создана: ' + n.new + ', в работе: ' + n.proc + ', выполнена: ' + n.done + '.\nПоследняя: ' + last.id + ' «' + last.text.slice(0, 60) + (last.text.length > 60 ? '…' : '') + '» — ' + statusLabel(last).replace(/^\S+\s/, '') + '.', actions: [{ label: '📋 Открыть заявки', do: 'go', arg: 'screen-tickets' }] };
   }
   return 'Не поняла команду. Скажите «что ты умеешь», чтобы увидеть список.';
+}
+function sitBotReply(sit) {
+  return { text: sit.icon + ' ' + sit.title + '. Что делать сейчас:\n' + sit.now.map((x, i) => (i + 1) + '. ' + x).join('\n') + '\nЕсли нужна заявка, скажите: «создай заявку: …».', actions: [{ label: '📖 Подробно', do: 'sit', arg: sit.id }] };
+}
+function botSituation(id) {
+  const sit = sitById(id); if (!sit) return;
+  pushBot('me', 'Что делать: ' + sit.title, 'text');
+  const r = sitBotReply(sit); pushBot('bot', r.text, 'text', r.actions);
+  renderBot();
 }
 function botEventByWords(t) {
   const evs = houseEvents(), by = id => evs.find(e => e.id === id);
@@ -2739,10 +2755,12 @@ function renderSituations() {
   const box = $('sit-inline'); if (!box) return;
   box.innerHTML = '<div class="sit-hint">Типичные ситуации в многоквартирном доме. Нажмите, чтобы открыть памятку.</div>' + sitListHtml('', true);
 }
-let sitCurrent = null;
+let sitCurrent = null, sitPhotos = [];
 function sitFilter(v) { $('sit-body').innerHTML = sitListHtml(v); }
 function openSituations(id) {
   const s = id ? sitById(id) : null;
+  if (!s || s.id !== sitCurrent) sitPhotos = [];
+  stopAllMics();
   sitCurrent = s ? s.id : null;
   const body = $('sit-body'), title = $('sit-title'), sub = $('sit-sub'), search = $('sit-search-wrap');
   if (!s) {
@@ -2758,14 +2776,78 @@ function openSituations(id) {
     h += '<div class="sit-h">Что делать сейчас</div><ol class="sit-ol">' + li(s.now) + '</ol>';
     h += '<div class="sit-h">Что дальше</div><ul class="sit-ul">' + li(s.next) + '</ul>';
     if (s.call.length) h += '<div class="sit-calls">' + s.call.map(c => '<a class="tkt-btn sit-call" href="tel:' + c[0] + '">📞 ' + c[0] + ' · ' + escHtml(c[1]) + '</a>').join('') + '</div>';
-    h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="sitMakeTicket()">' + (s.go ? '📋 Внести вопрос на повестку' : '🔧 Создать заявку') + '</button><button class="tkt-btn" onclick="openSituations()">← Все ситуации</button></div>';
+    h += '<div class="sit-calls"><button class="tkt-btn" id="sit-tts" onclick="sitSpeak()">🔊 Прочитать вслух</button><button class="tkt-btn" id="sit-ask" onclick="sitAsk()">🤖 Спросить помощника</button></div>';
+    if (s.go) h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="sitMakeTicket()">📋 Внести вопрос на повестку</button><button class="tkt-btn" onclick="openSituations()">← Все ситуации</button></div>';
+    else h += '<div class="sit-h">Сообщить об этом</div><textarea id="sit-text" class="modal-input" rows="3" placeholder="Опишите: где, что произошло, когда. Можно продиктовать голосом." style="resize:vertical;"></textarea>'
+      + '<div class="sit-calls"><button class="tkt-btn" id="sit-mic" onclick="sitMic()">🎙️ Голосом</button><label class="tkt-btn" style="text-align:center;cursor:pointer;">📷 Фото<input id="sit-file" type="file" accept="image/*" capture="environment" multiple hidden onchange="sitAddPhotos(this.files)"></label></div>'
+      + '<div class="sit-photos" id="sit-photos"></div>'
+      + '<div class="sit-calls"><button class="tkt-btn chk" onclick="sitSend()">📤 Отправить заявку</button><button class="tkt-btn" onclick="openSituations()">← Все ситуации</button></div>';
     h += '<div class="sit-note">Памятка носит справочный характер. Номера служб проверьте для вашего города.</div>';
     body.innerHTML = h;
   }
   $('sit-modal').classList.add('open');
   body.scrollTop = 0;
 }
-function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; }
+function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; sitPhotos = []; stopAllMics(); try { speechSynthesis.cancel(); } catch (e) {} }
+function sitMic() {
+  if (botListening) { vrStop(); return; }
+  const inp = $('sit-text'); if (!inp) return;
+  dictate(inp, 'sit-mic', txt => { inp.value = txt; inp.focus(); });
+}
+function sitSpeak() {
+  const s = sitById(sitCurrent); if (!s) return;
+  try {
+    if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
+  } catch (e) {}
+  speak(s.title + '. Что делать сейчас. ' + s.now.join(' ') + ' Что дальше. ' + s.next.join(' '));
+}
+function sitShrink(file) {
+  return new Promise(res => {
+    const rd = new FileReader();
+    rd.onerror = () => res(null);
+    rd.onload = () => {
+      const img = new Image();
+      img.onerror = () => res(null);
+      img.onload = () => {
+        const k = Math.min(1, 640 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        try { res(c.toDataURL('image/jpeg', 0.6)); } catch (e) { res(null); }
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(file);
+  });
+}
+async function sitAddPhotos(files) {
+  for (const f of Array.from(files || [])) {
+    if (sitPhotos.length >= 3) { toast('Можно приложить до 3 фото'); break; }
+    if (!/^image\//.test(f.type)) continue;
+    const d = await sitShrink(f);
+    if (d) sitPhotos.push(d); else toast('Не удалось прочитать фото');
+  }
+  const inp = $('sit-file'); if (inp) inp.value = '';
+  sitRenderPhotos();
+}
+function sitRenderPhotos() {
+  const box = $('sit-photos'); if (!box) return;
+  box.innerHTML = sitPhotos.map((d, i) => '<div class="sit-photo"><img src="' + d + '" alt="Фото ' + (i + 1) + '"><button data-i="' + i + '" onclick="sitDelPhoto(+this.dataset.i)" aria-label="Убрать фото">×</button></div>').join('');
+}
+function sitDelPhoto(i) { sitPhotos.splice(i, 1); sitRenderPhotos(); }
+function sitSend() {
+  const s = sitById(sitCurrent); if (!s) return;
+  const txt = ($('sit-text').value || '').trim();
+  const text = txt || ('Ситуация: ' + s.title + '.');
+  if (!txt && !sitPhotos.length) { toast('Опишите ситуацию голосом или текстом, либо приложите фото'); return; }
+  const prio = (s.level === 'emergency' || s.level === 'urgent') ? 'urgent' : 'normal';
+  const t = addTicket('m', mvCatMap[s.cat] || s.cat, (txt ? s.title + ': ' + txt : text), prio, sitPhotos.slice());
+  closeSituations(); renderTickets(); showScreen('screen-tickets');
+  toast('Заявка ' + t.id + ' создана (демо, на этом устройстве)');
+}
+function sitAsk() {
+  const s = sitById(sitCurrent); if (!s) return;
+  closeSituations(); showScreen('screen-chat'); switchChatTab('bot'); botSituation(s.id);
+}
 function sitMakeTicket() {
   const s = sitById(sitCurrent); if (!s) return;
   closeSituations();
