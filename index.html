@@ -1914,19 +1914,22 @@ let chatDictating = false, botListening = false;
 function stopAllMics() {
   vrCancel(); chatDictating = false; botListening = false;
   ['chat-mic', 'bot-mic', 'sit-mic', 'sit-vmic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
+  document.querySelectorAll('[data-ph]').forEach(i => { i.placeholder = i.dataset.ph; });
 }
 function dictate(inp, btnId, onText) {
   if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
   const btn = $(btnId), base = inp.value ? inp.value.trim() + ' ' : '';
+  if (!inp.dataset.ph) inp.dataset.ph = inp.placeholder;
+  const ph = inp.dataset.ph;
   stopAllMics();
   btn.classList.add('rec');
   const state = btnId === 'chat-mic' ? 'chat' : 'bot';
   if (state === 'chat') chatDictating = true; else botListening = true;
   vrStart({
     timer: { textContent: '' },
-    live: { set textContent(v) { inp.value = base + v; } },
+    live: { set textContent(v) { if (v === 'Слушаю…') { inp.placeholder = 'Слушаю…'; inp.value = base.trim(); } else inp.value = base + v; } },
     done: res => {
-      chatDictating = false; botListening = false; btn.classList.remove('rec');
+      chatDictating = false; botListening = false; btn.classList.remove('rec'); inp.placeholder = ph;
       if (res.text) onText(base + res.text); else { inp.value = base.trim(); const m = voiceErrText(res.err || 'no-speech'); if (m) toast(m); }
     }
   });
@@ -2000,7 +2003,7 @@ function stageTicket(desc) {
   return { text: 'Создать заявку «' + text + '»?\nКатегория: ' + cat + '. Скажите «да» или нажмите кнопку.', actions: [A_YES, A_NO] };
 }
 function botExecute(p) {
-  if (p.type === 'ticket') { const t = addTicket('v', p.cat, p.text, 'normal'); sitAutoPop(p.text); return { text: 'Готово: заявка ' + t.id + ' создана (демо, хранится на этом устройстве).', actions: [{ label: '📋 Мои заявки', do: 'go', arg: 'screen-tickets' }] }; }
+  if (p.type === 'ticket') { const t = addTicket('v', p.cat, p.text, p.prio || 'normal'); sitAutoPop(p.text); return { text: 'Готово: заявка ' + t.id + ' создана (демо, хранится на этом устройстве).', actions: [{ label: '📋 Мои заявки', do: 'go', arg: 'screen-tickets' }] }; }
   if (p.type === 'agenda') { addAgendaItem(p.text); return { text: 'Вопрос добавлен в повестку.', actions: [{ label: '💬 Открыть чат', do: 'go', arg: 'screen-chat' }] }; }
   if (p.type === 'post') { sendChatMsg(p.text, 'text'); return 'Сообщение отправлено в чат (демо: его видите только вы).'; }
   return 'Нечего выполнять.';
@@ -2016,18 +2019,21 @@ function botHandle(raw) {
       if (new RegExp('^(отмена|нет|стоп)' + NO_W).test(t)) return 'Хорошо, заявку не создаю.';
       return stageTicket(raw.trim());
     }
-    if (new RegExp('^(да|давай|подтверждаю|верно|ага|конечно|ок|окей|согласен|согласна)' + NO_W).test(t)) { botPending = null; return botExecute(p); }
-    if (new RegExp('^(нет|отмена|отменить|не надо|не нужно|стоп)' + NO_W).test(t)) { botPending = null; return 'Хорошо, отменила.'; }
+    const strong = ((sitRankScored(t)[0] || {}).sc || 0) >= 5 && t.split(/\s+/).length > 2;
+    if (!strong && new RegExp('^(да|давай|подтверждаю|верно|ага|конечно|ок|окей|согласен|согласна)' + NO_W).test(t)) { botPending = null; return botExecute(p); }
+    if (!strong && new RegExp('^(нет|отмена|отменить|не надо|не нужно|стоп)' + NO_W).test(t)) { botPending = null; return 'Хорошо, отменила.'; }
     botPending = null;
   } else if (new RegExp('^(да|нет)' + NO_W).test(t) && t.length < 12) {
     return 'Сейчас нечего подтверждать. Скажите «что ты умеешь», чтобы увидеть команды.';
   }
   let m;
-  if (/что (ты )?(умеешь|можешь)|помощь|команды/.test(t)) return BOT_INTRO;
+  if (/что (ты )?(умеешь|можешь)|команды/.test(t) || (/^помощь/.test(t) && t.length < 12)) return BOT_INTRO;
   if (/^(привет|здравствуй|добрый (день|вечер)|доброе утро)/.test(t)) return 'Здравствуйте! Чем помочь? Скажите «что ты умеешь», чтобы увидеть команды.';
   if ((m = t.match(/(созда|оформ|подай|сделай|завед|отправ)[а-яё]*\s+(?:нов[а-яё]+\s+)?заявк[а-яё]*\s*[:,—-]?\s*(.*)$/))) {
     const desc = raw.trim().slice(raw.trim().length - m[2].length).trim();
     if (desc.length >= 5) return stageTicket(desc);
+    const rawT = raw.trim(), before = rawT.slice(0, Math.max(0, t.indexOf(m[0]))).replace(/[\s,.;:—-]+$/, '');
+    if (before.length >= 5) return stageTicket(before);
     botPending = { type: 'ticket-text' };
     return 'Опишите проблему одним сообщением или голосом.';
   }
@@ -2044,10 +2050,8 @@ function botHandle(raw) {
     return { text: 'Отправить в чат: «' + desc + '»?', actions: [A_YES, A_NO] };
   }
   if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
-  if (/что делать|как быть|как поступить|если |авари|помогите/.test(t)) {
-    const sit = sitFind(t);
-    if (sit) return sitBotReply(sit);
-  }
+  const sc = sitRankScored(t);
+  if (sc.length && (sc[0].sc >= 5 || (sc[0].sc >= 2 && /что (мне )?делать|как быть|как поступить|помоги|подскаж|случилось|произошло|авари/.test(t)))) return sitBotReply(sc[0].s, raw.trim());
   if (/(добав|скача|сохран|занес)[а-яё]*.*календар/.test(t) || /календар/.test(t) && /добав|скача/.test(t)) {
     const ev = botEventByWords(t) || upcoming()[0];
     if (!ev) return 'В календаре дома пока нет событий, добавлять в календарь нечего.';
@@ -2067,10 +2071,24 @@ function botHandle(raw) {
     const last = mine[0];
     return { text: 'Ваших заявок: ' + mine.length + '. Создана: ' + n.new + ', в работе: ' + n.proc + ', выполнена: ' + n.done + '.\nПоследняя: ' + last.id + ' «' + last.text.slice(0, 60) + (last.text.length > 60 ? '…' : '') + '» — ' + statusLabel(last).replace(/^\S+\s/, '') + '.', actions: [{ label: '📋 Открыть заявки', do: 'go', arg: 'screen-tickets' }] };
   }
-  return 'Не поняла команду. Скажите «что ты умеешь», чтобы увидеть список.';
+  const weak = sc.slice(0, 3);
+  const acts = weak.map(x => ({ label: x.s.icon + ' ' + x.s.title, do: 'sit-ask', arg: x.s.id }));
+  acts.push({ label: '🚨 Реестр ситуаций', do: 'sit' });
+  return { text: 'Не поняла команду.' + (weak.length ? ' Возможно, вы имели в виду:' : ' Опишите, что случилось (например: «протекает кран», «застрял лифт», «пахнет газом»), или скажите «создай заявку: …». Список команд: «что ты умеешь».'), actions: acts };
 }
-function sitBotReply(sit) {
-  return { text: sit.icon + ' ' + sit.title + '. Что делать сейчас:\n' + sit.now.map((x, i) => (i + 1) + '. ' + x).join('\n') + '\nЕсли нужна заявка, скажите: «создай заявку: …».', actions: [{ label: '📖 Подробно', do: 'sit', arg: sit.id }] };
+function sitBotReply(sit, userText) {
+  let t = sit.icon + ' ' + sit.title + '.\n';
+  if (sit.level === 'emergency') t += '⚠️ Угроза безопасности: ' + (sit.call.length ? 'сначала позвоните ' + sit.call.map(c => c[0]).join(' или ') + '. ' : '') + 'Затем действуйте по шагам.\n';
+  t += 'Что делать сейчас:\n' + sit.now.map((x, i) => (i + 1) + '. ' + x).join('\n');
+  const acts = [];
+  if (userText && !sit.go && sit.level !== 'info') {
+    const label = (typeof mvCatMap !== 'undefined' && mvCatMap[sit.cat]) || sit.cat;
+    botPending = { type: 'ticket', text: userText.slice(0, 200), cat: label, prio: (sit.level === 'emergency' || sit.level === 'urgent') ? 'urgent' : 'normal' };
+    t += '\n\nСоздать заявку «' + userText.slice(0, 80) + (userText.length > 80 ? '…' : '') + '»? Категория: ' + label + '. Скажите «да» или нажмите кнопку.';
+    acts.push(A_YES, A_NO);
+  } else if (sit.go) t += '\n\nМожно внести вопрос на повестку: скажите «внеси вопрос на повестку: …».';
+  acts.push({ label: '📖 Подробно', do: 'sit', arg: sit.id });
+  return { text: t, actions: acts };
 }
 function botSituation(id) {
   const sit = sitById(id); if (!sit) return;
@@ -2109,6 +2127,7 @@ function botAction(mi, ai) {
   else if (a.do === 'ics') icsDownloadOne(a.arg);
   else if (a.do === 'go') showScreen(a.arg);
   else if (a.do === 'sit') openSituations(a.arg);
+  else if (a.do === 'sit-ask') botSituation(a.arg);
 }
 function renderBot() {
   const th = $('bot-thread'); if (!th) return;
@@ -2672,31 +2691,31 @@ const SIT_GROUPS = [
 ];
 const SIT_LEVELS = { emergency: ['Опасно', '#c62828', '#fdecea'], urgent: ['Срочно', '#e65100', '#fff3e0'], normal: ['Обычная', '#00695c', '#e0f2f1'], info: ['Справка', '#3949ab', '#e8eaf6'] };
 const SITUATIONS = [
-  { id: 'gas', grp: 'danger', icon: '⚠️', level: 'emergency', title: 'Запах газа', kw: '(?<![а-я])газ(?![а-я])|пахнет газом|утечка газа|газом', cat: 'safety',
+  { id: 'gas', grp: 'danger', icon: '⚠️', level: 'emergency', title: 'Запах газа', kw: '(?<![а-я])газ(а|у|е|ом|ы)?(?![а-я])|пахнет газ|запах газ|утечк[а-я]* газ', cat: 'safety',
     now: ['Не включайте и не выключайте свет и электроприборы, не курите, не зажигайте огонь.', 'Откройте окна и двери, перекройте кран газа, если это безопасно.', 'Выйдите из квартиры и предупредите соседей стуком, а не звонком в дверь.', 'Позвоните из безопасного места в газовую службу или на 112.'],
     next: ['Не возвращайтесь, пока не разрешит аварийная служба.', 'Сообщите председателю ОСИ: нужно проверить подъезд и подвал.'],
     call: [['104', 'Газовая служба'], ['112', 'Единая служба спасения']] },
-  { id: 'fire', grp: 'danger', icon: '🔥', level: 'emergency', title: 'Пожар или задымление', kw: 'пожар|(?<![а-я])дым|(?<!не )горит(?![а-я])|гарью|запах гари', cat: 'safety',
+  { id: 'fire', grp: 'danger', icon: '🔥', level: 'emergency', title: 'Пожар или задымление', kw: 'пожар|(?<!не )горит(?![а-я])|(?<![а-я])дым|задымлен|гарью|запах гари|возгоран|(?<![а-я])огонь', cat: 'safety',
     now: ['Позвоните на 101 или 112 и назовите адрес, подъезд, этаж.', 'Покиньте помещение, закройте за собой дверь, не пользуйтесь лифтом.', 'При сильном дыме пригнитесь, закройте нос и рот мокрой тканью.', 'Предупредите соседей, не возвращайтесь за вещами.'],
     next: ['Дождитесь пожарных на улице и сообщите, остался ли кто-то внутри.', 'Сообщите председателю ОСИ, чтобы проверили сети и общие зоны.'],
     call: [['101', 'Пожарная служба'], ['112', 'Единая служба спасения']] },
-  { id: 'safety', grp: 'danger', icon: '🛡️', level: 'urgent', title: 'Посторонние, взлом, вандализм', kw: 'посторонн|подозрител|взлом|вандал|кража|драка|хулиган', cat: 'safety',
+  { id: 'safety', grp: 'danger', icon: '🛡️', level: 'urgent', title: 'Посторонние, взлом, вандализм', kw: 'посторонн|чужие|взлом|ломятся|вандал|краж|драк|хулиган|подозрительн|грабител|воришк', cat: 'safety',
     now: ['Не вступайте в конфликт, держите дистанцию.', 'Если есть угроза людям или имуществу, позвоните в полицию.', 'Запомните приметы и время, сделайте фото или видео с безопасного расстояния.'],
     next: ['Сообщите председателю ОСИ и оставьте заявку: проверят замки и освещение.', 'Предложите вопрос видеонаблюдения на повестку собрания.'],
     call: [['102', 'Полиция'], ['112', 'Единая служба спасения']] },
-  { id: 'leak', grp: 'accident', icon: '💧', level: 'urgent', title: 'Протечка или залив соседей', kw: 'протеч|залив|затопил|затопля|течет с потолка|топят|капает с потолка', cat: 'water',
+  { id: 'leak', grp: 'accident', icon: '💧', level: 'urgent', title: 'Протечка или залив соседей', kw: 'протеч|залив|затопил|затопля|затопило|залило|течет с потолка|топят|капает с потолка|вода с потолка|мокр[а-я]* потолок|лужа|течет труба|течет кран|капает кран|протекает|потолок (капает|течет|мокр)|(капает|течет|мокнет) потолок|сосед[а-я]* сверху', cat: 'water',
     now: ['Перекройте вентили воды в своей квартире, если протечка у вас.', 'Если вода у розеток или проводки, отключите электричество в этой зоне.', 'Сообщите диспетчеру или в аварийную службу, предупредите соседей снизу.', 'Сфотографируйте и снимите на видео следы воды и повреждения.'],
     next: ['Составьте акт о заливе с представителем ОСИ и соседями.', 'Сохраните фото, чеки и оценку ущерба.', 'Оставьте заявку, чтобы проверили стояк и общедомовые сети.'],
     call: [] },
-  { id: 'nowater', grp: 'accident', icon: '🚰', level: 'urgent', title: 'Нет воды или прорыв трубы', kw: 'нет воды|без воды|прорыв|порвало труб|отключили воду|нет горячей|нет холодной', cat: 'water',
+  { id: 'nowater', grp: 'accident', icon: '🚰', level: 'urgent', title: 'Нет воды или прорыв трубы', kw: 'нет воды|без воды|прорыв|порвало труб|отключили воду|пропала вода|нет горячей|нет холодной|вода не идет|не идет вода|напор', cat: 'water',
     now: ['Узнайте у соседей и в чате дома, плановое ли это отключение.', 'При прорыве перекройте вентили на вводе в квартиру.', 'Сообщите диспетчеру или в аварийную службу, укажите подъезд и этаж.'],
     next: ['Запасите воду, если отключение затягивается.', 'Оставьте заявку и отметьте, пропала горячая вода, холодная или обе.'],
     call: [] },
-  { id: 'sewer', grp: 'accident', icon: '🚽', level: 'urgent', title: 'Засор канализации или запах', kw: 'засор|канализац|запах из|вонь|унитаз не|подтоп', cat: 'water',
+  { id: 'sewer', grp: 'accident', icon: '🚽', level: 'urgent', title: 'Засор канализации или запах', kw: 'засор|канализац|запах из (раковин|труб|унитаз)|вонь|не уходит вода|забил[а-я]* (раковин|унитаз|труб)|подтоп', cat: 'water',
     now: ['Не сливайте воду и не пользуйтесь санузлом, если канализация поднимается.', 'Предупредите соседей на нижних этажах.', 'Сообщите диспетчеру: общий засор стояка чистит обслуживающая организация.'],
     next: ['Оставьте заявку с описанием и временем начала проблемы.', 'Если засор только в вашей квартире, нужен сантехник.'],
     call: [] },
-  { id: 'power', grp: 'accident', icon: '💡', level: 'urgent', title: 'Нет света или проблемы с электричеством', kw: 'нет света|выбило|подъезд темн|не горит свет|электричеств|искрит|перегорел', cat: 'electric',
+  { id: 'power', grp: 'accident', icon: '💡', level: 'urgent', title: 'Нет света или проблемы с электричеством', kw: 'нет света|выбило|свет (погас|пропал)|подъезд темн|не горит свет|электричеств|искрит|перегорел|короткое замыкание|розетк', cat: 'electric',
     now: ['Проверьте автомат в квартирном щитке.', 'Если света нет во всём подъезде или доме, сообщите диспетчеру.', 'Не трогайте оголённые провода и не открывайте общий щиток.', 'Если искрит или пахнет гарью, звоните на 112 или 101.'],
     next: ['Оставьте заявку: что не работает, где именно, с какого времени.'],
     call: [['112', 'Единая служба спасения']] },
@@ -2704,15 +2723,15 @@ const SITUATIONS = [
     now: ['Если вы внутри, нажмите кнопку связи с диспетчером и сохраняйте спокойствие.', 'Не раздвигайте двери и не пытайтесь выбраться сами.', 'Если связи нет, позвоните диспетчеру или на 112.', 'Если лифт просто не вызывается, оставьте заявку.'],
     next: ['Сообщите председателю ОСИ, если лифт стоит больше суток.', 'Для маломобильных жильцов уточните сроки ремонта.'],
     call: [['112', 'Единая служба спасения']] },
-  { id: 'heat', grp: 'accident', icon: '🔥', level: 'urgent', title: 'Холодные батареи, нет отопления', kw: 'батаре|отоплен|холодно в|не греет|холодные', cat: 'heat',
+  { id: 'heat', grp: 'accident', icon: '🔥', level: 'urgent', title: 'Холодные батареи, нет отопления', kw: 'батаре|отоплен|холодно в|не греет|холодные|радиатор|холодно', cat: 'heat',
     now: ['Проверьте, горячие ли батареи у соседей.', 'Измерьте и запишите температуру в комнате.', 'Оставьте заявку или позвоните диспетчеру и назовите квартиру и этаж.'],
     next: ['Попросите зафиксировать акт о нарушении температуры.', 'Если отопление не работает во всём доме, вопрос идёт к председателю ОСИ.'],
     call: [] },
-  { id: 'roof', grp: 'accident', icon: '🏚️', level: 'normal', title: 'Течёт кровля, сырость и плесень', kw: 'кровл|крыша течет|сырост|плесен|мокрое пятно|трещин', cat: 'mkd',
+  { id: 'roof', grp: 'accident', icon: '🏚️', level: 'normal', title: 'Течёт кровля, сырость и плесень', kw: 'кровл|крыша течет|течет крыша|потекла крыша|сырост|плесен|мокрое пятно|трещин', cat: 'mkd',
     now: ['Сфотографируйте пятна и дату, повторите съёмку через несколько дней.', 'Уберите ценные вещи от стены или потолка, подставьте ёмкость.', 'Оставьте заявку и приложите фото.'],
     next: ['Попросите комиссионный осмотр и акт.', 'Если проблема повторяется, внесите вопрос о ремонте на повестку собрания.'],
     call: [] },
-  { id: 'common', grp: 'house', icon: '🚪', level: 'normal', title: 'Поломка в подъезде', kw: 'подъезд|лестниц|перил|дверь в подъезд|окно в подъезд|ступен|почтов', cat: 'mkd',
+  { id: 'common', grp: 'house', icon: '🚪', level: 'normal', title: 'Поломка в подъезде', kw: 'подъезд|лестниц|перил|дверь в подъезд|окно в подъезд|ступен|почтов|разбит[а-я]* (стекл|окно)', cat: 'mkd',
     now: ['Опишите, что сломано, и в каком подъезде, на каком этаже.', 'Если есть риск травмы, поставьте предупреждение и сообщите диспетчеру.', 'Оставьте заявку и приложите фото.'],
     next: ['Это общее имущество: ремонт организует ОСИ.', 'Если нужны деньги, вопрос выносится на собрание.'],
     call: [] },
@@ -2720,11 +2739,11 @@ const SITUATIONS = [
     now: ['Не оставляйте мешки у контейнеров и в подъезде.', 'Оставьте заявку с адресом площадки и фото.'],
     next: ['Если вывоз срывается, председатель ОСИ обращается к подрядчику.'],
     call: [] },
-  { id: 'parking', grp: 'house', icon: '🚗', level: 'normal', title: 'Парковка и перекрытый проезд', kw: 'парковк|перекрыл проезд|заблокир|двор.*машин|машина.*двор|шлагбаум', cat: 'other',
+  { id: 'parking', grp: 'house', icon: '🚗', level: 'normal', title: 'Парковка и перекрытый проезд', kw: 'парковк|перекрыл проезд|заблокир|двор.*машин|машина.*двор|шлагбаум|припарковал', cat: 'other',
     now: ['Если проезд для спецтранспорта перекрыт, сразу сообщите в полицию или на 112.', 'Сфотографируйте автомобиль и номер.', 'Оставьте заявку председателю ОСИ.'],
     next: ['Вопрос правил парковки во дворе вносится на повестку собрания.'],
     call: [['102', 'Полиция']] },
-  { id: 'noise', grp: 'house', icon: '🔊', level: 'normal', title: 'Шум от соседей', kw: 'шум|громко|музык|топают|ремонт ночью|орут', cat: 'other',
+  { id: 'noise', grp: 'house', icon: '🔊', level: 'normal', title: 'Шум от соседей', kw: 'шум|громко|музык|топают|ремонт ночью|орут|кричат|не дают спать|стучат|сверлят|перфоратор', cat: 'other',
     now: ['Спокойно поговорите с соседями, зачастую этого достаточно.', 'Запишите даты и время нарушений.', 'Если нарушение идёт в тихие часы, вызовите полицию.'],
     next: ['Оставьте письменное обращение председателю ОСИ.', 'Повторяющиеся нарушения фиксируйте актом.'],
     call: [['102', 'Полиция']] },
@@ -2732,7 +2751,7 @@ const SITUATIONS = [
     now: ['Вопрос можно внести на повестку собрания в чате дома, вкладка «Повестка».', 'Формулируйте вопрос так, чтобы на него можно было ответить «за» или «против».'],
     next: ['Дату и повестку объявляет председатель ОСИ.', 'Итоги голосования оформляются протоколом, а не сообщением в мессенджере.'],
     call: [] },
-  { id: 'bill', grp: 'org', icon: '🧾', level: 'info', title: 'Вопрос по квитанции или начислениям', kw: 'квитанци|начислен|тариф|платеж|переплат|задолженност', cat: 'other',
+  { id: 'bill', grp: 'org', icon: '🧾', level: 'info', title: 'Вопрос по квитанции или начислениям', kw: 'квитанци|начислен|тариф|платеж|переплат|задолженност|счетчик', cat: 'other',
     now: ['Сверьте показания счётчиков и тариф в квитанции.', 'Запросите расшифровку начислений у ОСИ или поставщика.'],
     next: ['Подайте письменное обращение с номером лицевого счёта.', 'Сохраните копии квитанций и платежей.'],
     call: [] },
@@ -2744,7 +2763,8 @@ function sitFind(text) {
 }
 function sitPill(level) { const l = SIT_LEVELS[level]; return '<span class="sit-pill" style="color:' + l[1] + ';background:' + l[2] + ';">' + l[0] + '</span>'; }
 const sitNorm = x => String(x || '').toLowerCase().replace(/ё/g, 'е').trim();
-function sitRank(q) {
+function sitRank(q) { return sitRankScored(q).map(o => o.s); }
+function sitRankScored(q) {
   const x = sitNorm(q); if (!x) return [];
   const toks = x.split(/[^а-яa-z0-9]+/).filter(w => w.length >= 3);
   return SITUATIONS.map(s => {
@@ -2753,7 +2773,7 @@ function sitRank(q) {
     if (title.includes(x)) sc += 3;
     toks.forEach(w => { const st = w.length > 5 ? w.slice(0, w.length - 2) : w; if (hay.includes(st)) sc += 1; });
     return { s, sc };
-  }).filter(o => o.sc > 0).sort((a, b) => b.sc - a.sc).map(o => o.s);
+  }).filter(o => o.sc > 0).sort((a, b) => b.sc - a.sc);
 }
 function sitRow(s) { return '<button class="sit-row" data-sit="' + s.id + '" onclick="openSituations(this.dataset.sit)"><span class="sit-icon">' + s.icon + '</span><span class="sit-title">' + escHtml(s.title) + '</span>' + sitPill(s.level) + '</button>'; }
 function sitListHtml(q, inline) {
