@@ -410,23 +410,13 @@
         </div>
 
         <!-- Module 3: Чат -->
-        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер {apt}. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','23 участника · 8 новых','Ахметова кв.12: «Предлагаю вынести на повестку...»','','')">
+        <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер {apt}. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','Обсуждения дома','Сообщение остаётся на вашем устройстве.','','')">
           <div class="amc-icon" style="background:#e8eaf6;">💬</div>
           <div class="amc-title">Общедомовой чат</div>
           <div class="amc-sub">Обсуждения дома</div>
           <div class="amc-text">Сообщения пока хранятся только на этом устройстве (демо)</div>
           <span class="amc-pill" style="background:#e8eaf6;color:#3949ab;">Войти в чат</span>
           <div class="amc-mic">🎙️ Написать голосом</div>
-        </div>
-
-        <!-- Module 4: Собрание -->
-        <div class="ann-card-module" onclick="openModuleVoice('meeting','📅 Собрание {d4}','Уважаемый житель квартиры номер {apt}. Вы можете заранее озвучить свои вопросы и предложения к собранию жильцов {d4}. В демо-версии запись не попадает в повестку собрания.','{d-3} · Председатель ОСИ','Ремонт кровли и бюджет Q2. 18:00, холл 1-го этажа.','pill-new','Новое')">
-          <div class="amc-icon" style="background:#eef6ff;">📅</div>
-          <div class="amc-title">Собрание <span data-rd="4"></span></div>
-          <div class="amc-sub"><span data-rd="-3"></span> · Председатель</div>
-          <div class="amc-text">Кровля и бюджет Q2</div>
-          <span class="amc-pill" style="background:#e8f5e9;color:#2e7d32;">Новое</span>
-          <div class="amc-mic">🎙️ На повестку</div>
         </div>
 
         <!-- Module 6: Заявка мастеру -->
@@ -443,7 +433,6 @@
       <!-- scroll dots -->
       <div style="display:flex;gap:5px;justify-content:center;padding-top:4px;" id="ann-dots">
         <div class="ann-dot-ind active"></div>
-        <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
       </div>
@@ -493,26 +482,10 @@
     <div class="ann-full-card" onclick="showScreen('screen-chat')">
       <div class="ann-full-header">
         <div class="ann-full-icon" style="background:#e8eaf6;">💬</div>
-        <div class="ann-full-body"><div class="ann-full-title">Общедомовой чат МКД</div><div class="ann-full-meta">Обсуждения · 23 участника</div></div>
+        <div class="ann-full-body"><div class="ann-full-title">Общедомовой чат МКД</div><div class="ann-full-meta">Обсуждения дома</div></div>
         <span class="ann-tag" style="background:#e8eaf6;color:#3949ab;">Открыть →</span>
       </div>
-      <div class="ann-full-text">Живое обсуждение вопросов дома. Вносите вопросы на повестку, голосуйте, смотрите итоги обсуждений. Каждый участник идентифицирован по номеру квартиры.</div>
-    </div>
-    <div class="ann-full-card">
-      <div class="ann-full-header">
-        <div class="ann-full-icon" style="background:#eef6ff;">📅</div>
-        <div class="ann-full-body"><div class="ann-full-title">Собрание жильцов <span data-rd="4"></span></div><div class="ann-full-meta"><span data-rd="-3"></span> · Председатель ОСИ</div></div>
-        <span class="ann-tag tag-new">Новое</span>
-      </div>
-      <div class="ann-full-text">Обсуждение ремонта кровли и бюджета Q2. 18:00, холл 1-го этажа. Ваш голос важен! Явка обязательна — будем принимать решение большинством.</div>
-    </div>
-    <div class="ann-full-card">
-      <div class="ann-full-header">
-        <div class="ann-full-icon" style="background:#edfaf3;">🔧</div>
-        <div class="ann-full-body"><div class="ann-full-title">Заявка #113 выполнена</div><div class="ann-full-meta"><span data-rd="-8"></span> · Технический отдел</div></div>
-        <span class="ann-tag tag-new" style="background:#edfaf3;color:#2e7d32;">Выполнено</span>
-      </div>
-      <div class="ann-full-text">Лифт №2 отремонтирован. Если проблема осталась — подайте повторную заявку через раздел «Заявки».</div>
+      <div class="ann-full-text">Обсуждение вопросов дома. Вносите вопросы на повестку и общайтесь с соседями. Каждый участник виден по номеру квартиры.</div>
     </div>
   </div>
   <nav class="bottom-nav">
@@ -562,7 +535,7 @@
     <!-- TAB: AGENDA -->
     <div id="chatpane-agenda" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;display:none;flex-direction:column;gap:10px;">
       <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
-        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Повестка · Собрание <span data-rd="4"></span></div>
+        <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Повестка собрания</div>
         <div id="agenda-list" style="display:flex;flex-direction:column;gap:10px;"></div>
         <button onclick="showAgendaModal()" style="width:100%;margin-top:14px;padding:11px;background:var(--teal-light);border:none;border-radius:10px;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;">+ Внести вопрос на повестку</button>
       </div>
@@ -1036,7 +1009,7 @@
     <button class="modal-submit" onclick="icsDownloadAll()">📥 Весь календарь дома (.ics)</button>
     <button class="modal-cancel" onclick="openCalendar()" style="margin-top:0;">↗ Открыть внешний общий календарь</button>
     <div style="background:var(--teal-light);border-radius:12px;padding:12px 14px;border-left:3px solid var(--teal);font-size:12px;color:#444;line-height:1.6;">
-      Демо: события ниже примерные и считаются от сегодняшней даты. Автоматическая синхронизация постов и подкастов из Telegram, Instagram и WhatsApp появится вместе с сервером и подключением каналов дома. Файл .ics можно открыть в Google, Apple или Outlook календаре.
+      События добавляет председатель ОСИ. Автоматическая синхронизация постов и подкастов из Telegram, Instagram и WhatsApp появится вместе с сервером и подключением каналов дома. Файл .ics можно открыть в Google, Apple или Outlook календаре.
     </div>
   </div>
   <nav class="bottom-nav">
@@ -1458,14 +1431,10 @@ function openChannel(k) {
 const CAL_TYPES = { meeting: 'Собрание', works: 'Работы', event: 'Событие', post: 'Пост', podcast: 'Подкаст' };
 const CAL_SRCS = { osi: 'ОСИ', telegram: 'Telegram', instagram: 'Instagram', whatsapp: 'WhatsApp' };
 const CAL_ICON = { meeting: '👥', works: '🔧', event: '🧹', post: '📝', podcast: '🎙️' };
+// События дома пока не заведены: их будет вести председатель ОСИ, а посты и подкасты подтягиваться из каналов.
+// Формат: { id, off (дней от сегодня), from, to ('чч:мм', необязательно), type, src, title, place, text }
 function houseEvents() {
-  return [
-    { id: 'photo', off: -2, type: 'post', src: 'instagram', title: 'Фотоотчёт по двору', place: 'Instagram дома', text: 'Пост с фотографиями двора.' },
-    { id: 'wa-note', off: 3, type: 'post', src: 'whatsapp', title: 'Напоминание о собрании', place: 'Чат дома', text: 'Сообщение в чате дома.' },
-    { id: 'meeting', off: 4, from: '18:00', to: '19:30', type: 'meeting', src: 'osi', title: 'Собрание жильцов', place: 'Холл 1-го этажа', text: 'Ремонт кровли и бюджет.' },
-    { id: 'podcast', off: 7, from: '20:00', to: '20:40', type: 'podcast', src: 'telegram', title: 'Подкаст: разговор с председателем', place: 'Канал в Telegram', text: 'Выпуск подкаста дома.' },
-    { id: 'clean', off: 10, from: '11:00', to: '13:00', type: 'event', src: 'telegram', title: 'Общая уборка двора', place: 'Двор', text: 'Субботник. Перчатки и мешки выдаёт председатель.' }
-  ];
+  return [];
 }
 function evDay(e) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + e.off); return d; }
 function evDayLabel(e) {
@@ -1496,9 +1465,9 @@ function renderCalendar() {
     return '<div class="tkt-card ' + (past ? '' : 'processing') + '" style="' + (past ? 'opacity:.6;' : '') + '">' +
       '<div class="tkt-header"><div class="tkt-num" style="font-size:14px;">' + CAL_ICON[e.type] + ' ' + escHtml(e.title) + '</div><span class="tkt-status status-proc">' + CAL_TYPES[e.type] + '</span></div>' +
       '<div class="tkt-meta">' + escHtml(evDayLabel(e)) + ' · ' + when + ' · ' + escHtml(e.place) + ' · ' + CAL_SRCS[e.src] + (past ? ' · прошло' : '') + '</div>' +
-      '<div class="tkt-text" style="margin-bottom:10px;">' + escHtml(e.text) + ' <i>(пример)</i></div>' +
+      '<div class="tkt-text" style="margin-bottom:10px;">' + escHtml(e.text) + '</div>' +
       '<div class="tkt-actions"><button class="tkt-btn chk" data-id="' + e.id + '" onclick="icsDownloadOne(this.dataset.id)">📥 В мой календарь (.ics)</button></div></div>';
-  }).join('') || '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:30px 10px;">Нет событий с такими фильтрами</div>';
+  }).join('') || '<div style="text-align:center;color:var(--text-muted);font-size:13px;line-height:1.6;padding:30px 10px;">' + (all.length ? 'Нет событий с такими фильтрами' : 'Событий пока нет.<br>Их добавляет председатель ОСИ, а посты и подкасты появятся после подключения каналов.') + '</div>';
 }
 
 // ----- выгрузка в .ics (RFC 5545): время «плавающее», то есть в часовом поясе календаря жителя -----
@@ -1516,7 +1485,7 @@ function icsEvent(e, stamp) {
   if (e.from) { L.push('DTSTART:' + icsDT(d, e.from), 'DTEND:' + icsDT(d, e.to)); }
   else { const n = new Date(d); n.setDate(n.getDate() + 1); L.push('DTSTART;VALUE=DATE:' + icsD(d), 'DTEND;VALUE=DATE:' + icsD(n)); }
   L.push('SUMMARY:' + icsEscape(e.title), 'LOCATION:' + icsEscape(e.place),
-    'DESCRIPTION:' + icsEscape(e.text + ' Источник: ' + CAL_SRCS[e.src] + '. Демо-пример AlauConcierge.'), 'END:VEVENT');
+    'DESCRIPTION:' + icsEscape(e.text + ' Источник: ' + CAL_SRCS[e.src] + '. AlauConcierge.'), 'END:VEVENT');
   return L;
 }
 function icsBuild(list) {
@@ -1531,7 +1500,7 @@ function icsSave(text, name) {
   const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
 }
 function icsDownloadOne(id) { const e = houseEvents().find(x => x.id === id); if (e) icsSave(icsBuild([e]), 'alau-' + id + '.ics'); }
-function icsDownloadAll() { icsSave(icsBuild(houseEvents()), 'alau-calendar-doma.ics'); }
+function icsDownloadAll() { if (!houseEvents().length) { toast('В календаре дома пока нет событий'); return; } icsSave(icsBuild(houseEvents()), 'alau-calendar-doma.ics'); }
 
 // ----- распознавание речи (Web Speech API, ru-RU); текст всегда можно ввести и поправить руками -----
 let vr = null;
@@ -2000,7 +1969,7 @@ function submitAgenda() {
 // ===== ПОМОЩНИК: локальные команды (не нейросеть), работают на этом устройстве =====
 let botPending = null;
 const BOT_CHIPS = ['Мои заявки', 'Ближайшие события', 'Что делать при протечке', 'Что ты умеешь?'];
-const BOT_INTRO = 'Я локальный помощник по командам, не нейросеть. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «когда собрание»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\nДействия, которые что-то создают, я сначала подтверждаю.';
+const BOT_INTRO = 'Я локальный помощник по командам, не нейросеть. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «ближайшие события»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\nДействия, которые что-то создают, я сначала подтверждаю.';
 const NO_W = '(?![а-я])';
 function botNorm(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').trim(); }
 function botCategory(t) {
@@ -2070,13 +2039,15 @@ function botHandle(raw) {
   }
   if (/(добав|скача|сохран|занес)[а-яё]*.*календар/.test(t) || /календар/.test(t) && /добав|скача/.test(t)) {
     const ev = botEventByWords(t) || upcoming()[0];
+    if (!ev) return 'В календаре дома пока нет событий, добавлять в календарь нечего.';
     return { text: 'Файл календаря для события «' + ev.title + '» (' + evLine(ev) + '). Нажмите кнопку, чтобы скачать.', actions: [{ label: '📥 В календарь (.ics)', do: 'ics', arg: ev.id }] };
   }
   const ev = botEventByWords(t);
-  if (ev) return { text: evLine(ev) + '. (Пример из демо-календаря дома.)', actions: [{ label: '📥 В календарь (.ics)', do: 'ics', arg: ev.id }, { label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
+  if (ev) return { text: evLine(ev) + '.', actions: [{ label: '📥 В календарь (.ics)', do: 'ics', arg: ev.id }, { label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
   if (/событ|календар|ближайш|на этой неделе|на неделе|расписан|что будет|когда/.test(t)) {
     const list = upcoming().slice(0, 4);
-    return { text: 'Ближайшие события:\n' + list.map(evLine).map(s => '• ' + s).join('\n') + '\n(Примеры из демо-календаря дома.)', actions: [{ label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
+    if (!list.length) return { text: 'В календаре дома пока нет событий. Их добавляет председатель ОСИ.', actions: [{ label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
+    return { text: 'Ближайшие события:\n' + list.map(evLine).map(s => '• ' + s).join('\n') + '', actions: [{ label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
   }
   if (/заявк|статус/.test(t)) {
     const mine = allTickets().filter(x => !x.example);
