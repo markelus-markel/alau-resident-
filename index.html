@@ -233,21 +233,10 @@
   .agenda-btn:active { transform: scale(0.97); }
 
   /* Poll result card */
-  .poll-result {
     background: #fff; border-radius: 14px; padding: 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06); align-self: stretch; margin: 2px 0;
   }
-  .poll-result-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
-  .poll-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
-  .poll-bar-label { font-size: 12px; font-weight: 600; width: 80px; flex-shrink: 0; }
-  .poll-bar-bg { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; }
-  .poll-bar-fill { height: 100%; border-radius: 5px; }
-  .poll-bar-pct { font-size: 12px; font-weight: 700; color: var(--text); width: 32px; text-align: right; }
   /* Donut chart */
-  .donut-wrap { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; }
-  .donut-legend { display: flex; flex-direction: column; gap: 6px; }
-  .donut-leg-row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-  .donut-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
   /* Chat input bar */
   .chat-input-bar { background: #fff; border-top: 1px solid #eee; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end; }
@@ -255,28 +244,11 @@
   .chat-input { flex: 1; border: none; background: none; font-size: 14px; outline: none; resize: none; font-family: inherit; }
   .chat-send-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--teal); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: transform 0.15s; }
   .chat-send-btn:active { transform: scale(0.92); }
+  .chat-mic-btn { width:38px; height:38px; border-radius:50%; background:#e8f5f2; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
+  .chat-mic-btn.rec { background:#e05a1e; animation:pulse-rec 1s ease-in-out infinite; }
   .chat-topic-btn { padding: 9px 12px; background: rgba(26,138,122,0.1); border: none; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--teal); cursor: pointer; white-space: nowrap; }
 
   /* VOTING */
-  .vote-screen { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
-  .vote-card { background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
-  .vote-q { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
-  .vote-status { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
-  .vote-bar-wrap { margin-bottom: 8px; }
-  .vote-opt-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
-  .vote-bar-bg { background: #f0f0f0; border-radius: 6px; height: 10px; overflow: hidden; }
-  .vote-bar-fill { height: 100%; border-radius: 6px; }
-  .bar-yes { background: linear-gradient(90deg, var(--teal), var(--teal-mid)); }
-  .bar-no { background: #ffb3b3; }
-  .vote-total { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
-  .vote-comment-section { margin-top: 14px; border-top: 1px solid #f0f0f0; padding-top: 14px; }
-  .vote-comment { display: flex; gap: 10px; margin-bottom: 12px; }
-  .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--teal-light); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-  .comment-body { flex: 1; }
-  .comment-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-  .comment-text { font-size: 13px; color: #444; line-height: 1.4; background: #f7f7f7; border-radius: 10px; padding: 8px 10px; }
-  .chair-comment { background: var(--teal-light); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.4; margin-bottom: 10px; }
-  .chair-label { font-size: 11px; font-weight: 700; color: var(--teal); margin-bottom: 4px; }
 
   /* CONTACTS */
   .contacts-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
@@ -337,6 +309,29 @@
   .tkt-actions { display:flex; gap:8px; }
   .tkt-btn { flex:1; padding:9px; border:2px solid #e0e0e0; border-radius:9px; background:#fff; font-size:12px; font-weight:600; cursor:pointer; }
   .tkt-btn.wa { border-color:#25d366; background:#f0fff4; color:#128c7e; }
+  .tkt-btn.chk { border-color:#3949ab; background:#eef0fb; color:#3949ab; }
+  .chip-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+  .sit-hint { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+  .sit-group { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin:12px 0 6px; }
+  .sit-row { display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px; margin-bottom:6px; background:#fff; border:2px solid #eee; border-radius:12px; cursor:pointer; text-align:left; font-size:14px; }
+  .sit-icon { font-size:20px; }
+  .sit-title { flex:1; font-weight:600; color:var(--text); }
+  .sit-pill { font-size:10px; font-weight:700; padding:3px 8px; border-radius:10px; white-space:nowrap; }
+  .sit-empty { font-size:13px; color:var(--text-muted); padding:16px 4px; }
+  .sit-alarm { background:#fdecea; color:#c62828; font-weight:700; font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:10px; }
+  .sit-h { font-size:13px; font-weight:800; color:var(--text); margin:10px 0 6px; }
+  .sit-ol, .sit-ul { margin:0; padding-left:20px; font-size:14px; line-height:1.5; color:var(--text); }
+  .sit-ol li, .sit-ul li { margin-bottom:5px; }
+  .sit-calls { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .sit-call { text-decoration:none; color:#c62828; border-color:#c62828; text-align:center; }
+  .sit-note { font-size:11px; color:var(--text-muted); margin-top:12px; line-height:1.4; }
+  .chip { padding:6px 11px; border:2px solid #e0e0e0; border-radius:16px; background:#fff; font-size:12px; font-weight:600; color:#555; cursor:pointer; }
+  .chip.active { background:var(--teal); border-color:var(--teal); color:#fff; }
+  .chip-label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin:2px 0 5px; }
+  .chk-row { display:flex; align-items:flex-start; gap:10px; padding:11px 4px; border-bottom:1px solid #f0f0f0; font-size:14px; color:var(--text); cursor:pointer; line-height:1.4; }
+  .chk-row input { width:20px; height:20px; margin-top:1px; accent-color:var(--teal); flex:0 0 auto; }
+  .chk-row.on span { color:var(--text-muted); text-decoration:line-through; }
+  .cal-card { display:flex; align-items:center; gap:12px; background:#fff; border-radius:16px; padding:14px 16px; box-shadow:var(--shadow); margin-bottom:16px; cursor:pointer; }
 
   /* ===== AUTH / PROFILE (demo) ===== */
   .auth-wrap { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -423,6 +418,13 @@
       <div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600;">Узнать →</div>
     </div>
 
+    <!-- Общий календарь (внешняя ссылка, см. CALENDAR_URL) -->
+    <div class="cal-card" id="cal-card" onclick="showScreen('screen-calendar')">
+      <div style="font-size:28px;">📅</div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:var(--text);">Календарь дома</div><div style="font-size:12px;color:var(--text-muted);line-height:1.4;">Собрания, работы, посты и подкасты</div></div>
+      <span style="font-size:18px;color:var(--teal);">›</span>
+    </div>
+
     <!-- ОБЪЯВЛЕНИЯ И ОБСУЖДЕНИЯ — горизонтальная карусель 6 модулей -->
     <div style="margin-bottom:16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px;margin-bottom:10px;">
@@ -442,14 +444,14 @@
           <div class="amc-mic">🎙️ Сообщить</div>
         </div>
 
-        <!-- Module 2: Голосование -->
-        <div class="ann-card-module" onclick="openModuleVoice('vote','🗳️ Новый домофон','Уважаемый житель квартиры номер {apt}. Пожалуйста, озвучьте своё мнение по вопросу установки нового домофона в подъезде номер 2. За или против — в демо-версии позиция показывается только на вашем экране и в итог голосования не засчитывается.',voteMeta(),'Установить новый домофон в подъезде №2? Стоимость ~977 ₸ с квартиры.','pill-action','Требует ответа')">
-          <div class="amc-icon" style="background:#f0f0ff;">🗳️</div>
-          <div class="amc-title">Голосование: домофон</div>
-          <div class="amc-sub" data-vote="meta">…</div>
-          <div class="amc-text" data-vote="mine-text">Ваш голос ещё не учтён</div>
-          <span class="amc-pill" data-vote="pill" style="background:#e8eaf6;color:#3949ab;">Требует ответа</span>
-          <div class="amc-mic">🎙️ Высказаться</div>
+        <!-- Module 2: Ситуации -->
+        <div class="ann-card-module" onclick="openSituations()">
+          <div class="amc-icon" style="background:#fdecea;">🚨</div>
+          <div class="amc-title">Если случилось…</div>
+          <div class="amc-sub">Реестр типичных ситуаций дома</div>
+          <div class="amc-text">Газ, протечка, лифт, отопление, шум: что делать сейчас и что дальше</div>
+          <span class="amc-pill" style="background:#fdecea;color:#c62828;">Памятки</span>
+          <div class="amc-mic">📖 Открыть</div>
         </div>
 
         <!-- Module 3: Чат -->
@@ -510,7 +512,7 @@
     </div>
     <div class="quick-grid">
       <button class="quick-btn" onclick="showScreen('screen-requests')"><span class="quick-icon">🔧</span><span class="quick-label">Заявка мастеру</span></button>
-      <button class="quick-btn" onclick="showScreen('screen-voting')"><span class="quick-icon">🗳️</span><span class="quick-label">Голосование</span></button>
+      <button class="quick-btn" onclick="openSituations()"><span class="quick-icon">🚨</span><span class="quick-label">Ситуации</span></button>
       <button class="quick-btn" onclick="showScreen('screen-chat')"><span class="quick-icon">💬</span><span class="quick-label">Чат жильцов</span></button>
       <button class="quick-btn" onclick="showScreen('screen-announcements')"><span class="quick-icon">📣</span><span class="quick-label">Объявления</span></button>
       <button class="quick-btn" onclick="showScreen('screen-market')"><span class="quick-icon">🛒</span><span class="quick-label">Маркетплейс</span></button>
@@ -545,13 +547,13 @@
       </div>
       <div class="ann-full-text">С 09:00 до 17:00 — плановые работы по замене труб на ул. Найманбаева. Рекомендуем запастись водой. Горячее водоснабжение не затронуто.</div>
     </div>
-    <div class="ann-full-card" onclick="showScreen('screen-voting')">
+    <div class="ann-full-card" onclick="openSituations()">
       <div class="ann-full-header">
-        <div class="ann-full-icon" style="background:#f0f0ff;">🗳️</div>
-        <div class="ann-full-body"><div class="ann-full-title">Голосование: новый домофон</div><div class="ann-full-meta" data-vote="meta">…</div></div>
-        <span class="ann-tag tag-action">Голосовать →</span>
+        <div class="ann-full-icon" style="background:#fdecea;">🚨</div>
+        <div class="ann-full-body"><div class="ann-full-title">Если случилось: типичные ситуации</div><div class="ann-full-meta">Реестр памяток дома</div></div>
+        <span class="ann-tag tag-action">Открыть →</span>
       </div>
-      <div class="ann-full-text">Предлагается установить новый домофон в подъезде №2. Стоимость: 85 000 ₸ = ~977 ₸ с квартиры. Нажмите для голосования.</div>
+      <div class="ann-full-text">Запах газа, протечка, лифт, нет отопления, шум: что делать сейчас, что дальше и куда звонить.</div>
     </div>
     <div class="ann-full-card" onclick="showScreen('screen-chat')">
       <div class="ann-full-header">
@@ -599,7 +601,7 @@
   <div class="topbar">
     <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
     <h1 style="color:#fff;font-size:17px;font-weight:700;">Чат жильцов</h1>
-    <div style="font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;">87 кв. · ОСИ №14</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;">ОСИ №14</div>
   </div>
 
   <div class="chat-screen">
@@ -608,12 +610,12 @@
       <div class="chat-hero-top">
         <div class="chat-hero-icon">🏢</div>
         <div class="chat-hero-info">
-          <div class="chat-hero-title">Общедомовой чат МКД №14</div>
-          <div class="chat-hero-sub">23 активных жильца из 87 квартир</div>
+          <div class="chat-hero-title">Общедомовой чат</div>
+          <div class="chat-hero-sub" id="chat-house">—</div>
         </div>
       </div>
       <div class="chat-invite-banner">
-        <strong>Приглашаем всех жильцов!</strong> Вносите вопросы на повестку, участвуйте в обсуждениях, голосуйте. Каждый участник виден по номеру квартиры — анонимность исключена, ответственность общая.
+        <strong>Демо-чат.</strong> Сообщения, повестка и подсказки хранятся только на этом устройстве, другие жильцы их не видят. Общий чат дома заработает вместе с сервером. Помощник по командам работает уже сейчас.
       </div>
     </div>
 
@@ -621,178 +623,39 @@
     <div class="chat-tabs">
       <div class="chat-tab active" id="tab-chat" onclick="switchChatTab('chat')">💬 Чат</div>
       <div class="chat-tab" id="tab-agenda" onclick="switchChatTab('agenda')">📋 Повестка</div>
-      <div class="chat-tab" id="tab-results" onclick="switchChatTab('results')">📊 Итоги</div>
+      <div class="chat-tab" id="tab-results" onclick="switchChatTab('results')">🚨 Ситуации</div>
+      <div class="chat-tab" id="tab-bot" onclick="switchChatTab('bot')">🤖 Помощник</div>
     </div>
 
     <!-- TAB: CHAT -->
-    <div id="chatpane-chat" class="chat-body" id="chat-messages">
-      <div class="chat-date-sep"><span data-rd="-1"></span></div>
-
-      <div class="chat-sys">Ахметова Г. (кв.12) присоединилась к чату</div>
-
-      <div class="chat-msg other">
-        <div class="chat-avatar">Н</div>
-        <div>
-          <div class="chat-sender">Нурмагамбетов А. · кв.3</div>
-          <div class="chat-bubble">Добрый день! Когда наконец починят освещение на 3-м этаже подъезда №1? Уже 2 недели темно.</div>
-          <div class="chat-time">09:14</div>
-        </div>
-      </div>
-
-      <div class="chat-msg other">
-        <div class="chat-avatar chair">П</div>
-        <div>
-          <div class="chat-sender">Председатель ОСИ</div>
-          <div class="chat-bubble" style="background:#fff3e0;color:#333;">Добрый день! Заявка подана, электрик приедет в пятницу. Приносим извинения за неудобства.</div>
-          <div class="chat-time">09:31</div>
-        </div>
-      </div>
-
-      <div class="chat-msg other">
-        <div class="chat-avatar">А</div>
-        <div>
-          <div class="chat-sender">Ахметова Г. · кв.12</div>
-          <div class="chat-bubble">Предлагаю вынести на повестку вопрос о видеонаблюдении у входа. Ключи от домофона теряются, чужие ходят.</div>
-          <div class="chat-time">10:05</div>
-        </div>
-      </div>
-
-      <!-- Agenda card in chat -->
-      <div class="agenda-card">
-        <div class="agenda-label">📋 Вопрос на повестку от кв.12</div>
-        <div class="agenda-text">Установить камеры видеонаблюдения у входных дверей подъездов №1 и №2</div>
-        <div class="agenda-actions">
-          <button class="agenda-btn yes" onclick="voteAgenda(this, 'yes')">👍 Поддержать</button>
-          <button class="agenda-btn no" onclick="voteAgenda(this, 'no')">👎 Против</button>
-        </div>
-        <div id="agenda-result-1" style="display:none;margin-top:8px;font-size:12px;color:var(--teal);font-weight:600;"></div>
-      </div>
-
-      <div class="chat-msg other">
-        <div class="chat-avatar">С</div>
-        <div>
-          <div class="chat-sender">Сейткали М. · кв.45</div>
-          <div class="chat-bubble">Поддерживаю идею! Месяц назад велосипед украли из подъезда.</div>
-          <div class="chat-time">10:22</div>
-        </div>
-      </div>
-
-      <div class="chat-msg mine">
-        <div class="chat-avatar" style="background:var(--teal);color:#fff;">23</div>
-        <div>
-          <div class="chat-sender" style="text-align:right;">Вы · кв.<span class="js-apt">—</span></div>
-          <div class="chat-bubble">Тоже за! И ещё хотелось бы обсудить уборку лестниц — грязновато.</div>
-          <div class="chat-time" style="text-align:right;">10:35</div>
-        </div>
-      </div>
-
-      <div class="chat-date-sep">Сегодня</div>
-
-      <!-- Poll result card -->
-      <div class="poll-result">
-        <div class="poll-result-title">📊 Голосование: домофон подъезда №2</div>
-        <div class="poll-bar-row">
-          <span class="poll-bar-label">👍 За</span>
-          <div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" data-vote="yes-bar" style="width:0%"></div></div>
-          <span class="poll-bar-pct" data-vote="yes-pct">0%</span>
-        </div>
-        <div class="poll-bar-row">
-          <span class="poll-bar-label">👎 Против</span>
-          <div class="poll-bar-bg"><div class="poll-bar-fill" data-vote="no-bar" style="width:0%;background:#ffb3b3;"></div></div>
-          <span class="poll-bar-pct" data-vote="no-pct">0%</span>
-        </div>
-        <div class="donut-wrap">
-          <svg width="70" height="70" viewBox="0 0 70 70">
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" data-vote="yes-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" data-vote="no-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a" data-vote="voted-n">0</text>
-          </svg>
-          <div class="donut-legend">
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span data-vote="yes-leg"></span></div>
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span data-vote="no-leg"></span></div>
-            <div class="donut-leg-row" style="color:#aaa;font-size:11px;"><span data-vote="rest-leg"></span></div>
-          </div>
-        </div>
-        <div data-vote="status-line" style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;"></div>
-      </div>
-
-
-      <div id="chat-new-messages"></div>
+    <div id="chatpane-chat" class="chat-body">
+      <div id="chat-feed" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
     <!-- TAB: AGENDA -->
     <div id="chatpane-agenda" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;display:none;flex-direction:column;gap:10px;">
       <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow);">
         <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Повестка · Собрание <span data-rd="4"></span></div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">1</div>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Ремонт кровли — смета 2 300 000 ₸</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Предложено: Председатель ОСИ · 14 поддержали</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">2</div>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Бюджет Q2 — распределение средств</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Предложено: Председатель ОСИ · 11 поддержали</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#e8eaf6;color:#3949ab;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">3</div>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);">Камеры видеонаблюдения у подъездов</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Предложено: кв.12 (Ахметова) · 8 поддержали</div>
-            </div>
-          </div>
-        </div>
+        <div id="agenda-list" style="display:flex;flex-direction:column;gap:10px;"></div>
         <button onclick="showAgendaModal()" style="width:100%;margin-top:14px;padding:11px;background:var(--teal-light);border:none;border-radius:10px;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;">+ Внести вопрос на повестку</button>
       </div>
     </div>
 
-    <!-- TAB: RESULTS -->
-    <div id="chatpane-results" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;flex-direction:column;gap:12px;">
-      <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
-        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Установка домофона — подъезд №2</div>
-        <div class="poll-bar-row"><span class="poll-bar-label">👍 За</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" data-vote="yes-bar" style="width:0%"></div></div><span class="poll-bar-pct" data-vote="yes-pct">0%</span></div>
-        <div class="poll-bar-row"><span class="poll-bar-label">👎 Против</span><div class="poll-bar-bg"><div class="poll-bar-fill" data-vote="no-bar" style="width:0%;background:#ffb3b3;"></div></div><span class="poll-bar-pct" data-vote="no-pct">0%</span></div>
-        <div class="donut-wrap">
-          <svg width="70" height="70" viewBox="0 0 70 70">
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" data-vote="yes-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" data-vote="no-arc" stroke-dasharray="0 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a" data-vote="voted-n">0</text>
-          </svg>
-          <div class="donut-legend">
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span data-vote="yes-leg"></span></div>
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span data-vote="no-leg"></span></div>
-            <div class="donut-leg-row" style="color:#aaa;font-size:11px;"><span data-vote="rest-leg"></span></div>
-          </div>
-        </div>
-        <div data-vote="status-line" style="font-size:12px;color:var(--teal);font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;"></div>
-      </div>
+    <!-- TAB: SITUATIONS -->
+    <div id="chatpane-results" style="display:none;flex:1;overflow-y:auto;padding:14px;background:#f5f7fa;flex-direction:column;gap:8px;">
+      <div id="sit-inline"></div>
+    </div>
 
-      <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);">
-        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📊 Уборка двора — <span data-rd="10"></span></div>
-        <div class="poll-bar-row"><span class="poll-bar-label">✅ Участвую</span><div class="poll-bar-bg"><div class="poll-bar-fill bar-yes" style="width:82%"></div></div><span class="poll-bar-pct">82%</span></div>
-        <div class="poll-bar-row"><span class="poll-bar-label">❌ Не смогу</span><div class="poll-bar-bg"><div class="poll-bar-fill" style="width:18%;background:#ffb3b3;"></div></div><span class="poll-bar-pct">18%</span></div>
-        <div class="donut-wrap">
-          <svg width="70" height="70" viewBox="0 0 70 70">
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#f0f0f0" stroke-width="12"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#1a8a7a" stroke-width="12" stroke-dasharray="144.2 175.9" stroke-dashoffset="44" stroke-linecap="round"/>
-            <circle cx="35" cy="35" r="28" fill="none" stroke="#ffb3b3" stroke-width="12" stroke-dasharray="31.7 175.9" stroke-dashoffset="-100.2" stroke-linecap="round"/>
-            <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1a2e1a">28</text>
-          </svg>
-          <div class="donut-legend">
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#1a8a7a;"></div><span>Участвую — 23 кв.</span></div>
-            <div class="donut-leg-row"><div class="donut-dot" style="background:#ffb3b3;"></div><span>Не смогу — 5 кв.</span></div>
-            <div class="donut-leg-row" style="color:#aaa;font-size:11px;">Ещё не ответили — 59 кв.</div>
-          </div>
-        </div>
-        <div style="font-size:12px;color:#e65100;font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;">⏳ Голосование открыто — осталось 6 дней</div>
+    <!-- TAB: ASSISTANT -->
+    <div id="chatpane-bot" style="display:none;flex:1;flex-direction:column;overflow:hidden;background:#f5f7fa;">
+      <div id="bot-thread" class="chat-body" style="flex:1;"></div>
+      <div id="bot-chips" class="chip-row" style="padding:8px 12px 0;margin:0;background:#fff;border-top:1px solid #eee;"></div>
+      <div class="chat-input-bar">
+        <div class="chat-input-wrap"><input class="chat-input" id="bot-text" placeholder="Напишите или скажите команду…" type="text" onkeydown="if(event.key==='Enter')botSend()"></div>
+        <button class="chat-mic-btn" id="bot-mic" onclick="botMic()" title="Сказать команду">🎙️</button>
+        <button class="chat-send-btn" onclick="botSend()">➤</button>
       </div>
+      <label style="background:#fff;padding:0 14px 10px;font-size:11px;color:var(--text-muted);display:flex;gap:6px;align-items:center;"><input type="checkbox" id="bot-tts" checked> Озвучивать ответы на голосовые команды</label>
     </div>
 
     <!-- Input bar -->
@@ -801,6 +664,7 @@
       <div class="chat-input-wrap">
         <input class="chat-input" id="chat-text" placeholder="Сообщение жильцам..." type="text" onkeydown="if(event.key==='Enter')sendChatMsg()">
       </div>
+      <button class="chat-mic-btn" id="chat-mic" onclick="chatMic()" title="Продиктовать сообщение">🎙️</button>
       <button class="chat-send-btn" onclick="sendChatMsg()">➤</button>
     </div>
   </div>
@@ -885,49 +749,6 @@
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
     <button class="nav-btn active" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
-  </nav>
-</div>
-
-<!-- =================== VOTING =================== -->
-<div class="screen" id="screen-voting">
-  <div class="topbar">
-    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
-    <h1 style="color:#fff;font-size:18px;font-weight:700;">Голосование</h1>
-    <div style="width:60px;"></div>
-  </div>
-  <div class="vote-screen">
-    <div class="vote-card">
-      <div class="vote-q">Установить новый домофон в подъезде №2?</div>
-      <div class="vote-status" data-vote="status-full">…</div>
-      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👍 Да</span><span data-vote="yes-pct">0%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" data-vote="yes-bar" style="width:0%"></div></div></div>
-      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>👎 Нет</span><span data-vote="no-pct">0%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" data-vote="no-bar" style="width:0%"></div></div></div>
-      <div class="vote-total"><span data-vote="voted-n">0</span> из <span data-vote="total-n">87</span> жильцов проголосовали · демонстрационные данные</div>
-      <div class="agenda-actions" style="margin-top:12px;">
-        <button class="agenda-btn yes" data-vote="btn-yes" onclick="castVote('yes')">👍 Да</button>
-        <button class="agenda-btn no" data-vote="btn-no" onclick="castVote('no')">👎 Нет</button>
-      </div>
-      <div data-vote="mine-note" style="font-size:12px;color:var(--text-muted);margin-top:8px;"></div>
-      <button class="agenda-btn" data-vote="btn-clear" onclick="castVote(null)" style="display:none;margin-top:8px;width:100%;background:#f0f0f0;color:#555;">Отозвать голос</button>
-      <div class="vote-comment-section">
-        <div class="chair-label">💬 Председатель ОСИ</div>
-        <div class="chair-comment">Стоимость: 85 000 ₸, делим на 87 квартир = ~977 ₸ с квартиры</div>
-        <div class="vote-comment"><div class="comment-avatar">Н</div><div class="comment-body"><div class="comment-name">Нурмагамбетов А. · кв.3</div><div class="comment-text">Домофон давно пора менять, старый постоянно ломается</div></div></div>
-        <div class="vote-comment"><div class="comment-avatar">А</div><div class="comment-body"><div class="comment-name">Ахметова Г. · кв.12</div><div class="comment-text">Согласна! И коды у всех одинаковые уже 3 года</div></div></div>
-      </div>
-    </div>
-    <div class="vote-card">
-      <div class="vote-q">Провести общую уборку двора <span data-rd="10"></span>?</div>
-      <div class="vote-status">Открыто · Осталось 6 дней · Проголосовали 28 из 87</div>
-      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>✅ Участвую!</span><span>82%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-yes" style="width:82%"></div></div></div>
-      <div class="vote-bar-wrap"><div class="vote-opt-label"><span>❌ Не смогу</span><span>18%</span></div><div class="vote-bar-bg"><div class="vote-bar-fill bar-no" style="width:18%"></div></div></div>
-      <div class="vote-total">28 из 87 жильцов проголосовали</div>
-    </div>
-  </div>
-  <nav class="bottom-nav">
-    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
   </nav>
 </div>
 
@@ -1308,6 +1129,73 @@
   </div>
 </div>
 
+<!-- =================== CALENDAR (HOUSE) =================== -->
+<div class="screen" id="screen-calendar">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">📅 Календарь дома</h1>
+    <div style="width:56px;"></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;">
+    <div style="background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">🏢 Ваш дом</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);" id="cal-house">—</div>
+      <div style="font-size:12px;color:var(--text-muted);margin:3px 0 10px;" id="cal-cad">—</div>
+      <button class="tkt-btn" style="width:100%;" onclick="editProfile()">✏️ Указать или изменить номер дома</button>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">📡 Каналы дома</div>
+      <div class="tkt-actions">
+        <button class="tkt-btn wa" onclick="openChannel('whatsapp')">💚 WhatsApp</button>
+        <button class="tkt-btn" style="border-color:#c13584;color:#c13584;background:#fdf0f7;" onclick="openChannel('instagram')">📷 Instagram</button>
+        <button class="tkt-btn" style="border-color:#229ed9;color:#229ed9;background:#eef8fd;" onclick="openChannel('telegram')">✈️ Telegram</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Ссылки на каналы дома задаёт председатель.</div>
+    </div>
+    <div>
+      <div class="chip-label">Тип</div><div class="chip-row" id="cal-types"></div>
+      <div class="chip-label">Источник</div><div class="chip-row" id="cal-srcs"></div>
+    </div>
+    <div id="cal-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <button class="modal-submit" onclick="icsDownloadAll()">📥 Весь календарь дома (.ics)</button>
+    <button class="modal-cancel" onclick="openCalendar()" style="margin-top:0;">↗ Открыть внешний общий календарь</button>
+    <div style="background:var(--teal-light);border-radius:12px;padding:12px 14px;border-left:3px solid var(--teal);font-size:12px;color:#444;line-height:1.6;">
+      Демо: события ниже примерные и считаются от сегодняшней даты. Автоматическая синхронизация постов и подкастов из Telegram, Instagram и WhatsApp появится вместе с сервером и подключением каналов дома. Файл .ics можно открыть в Google, Apple или Outlook календаре.
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-tickets')"><span class="nav-icon">📋</span><span class="nav-label">Заявки</span></button>
+  </nav>
+</div>
+
+<!-- =================== CHECKLIST MODAL =================== -->
+<div class="modal-overlay" id="check-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="check-title">☑ Чек-лист председателя</div>
+    <div class="modal-sub" id="check-sub"></div>
+    <div id="check-list"></div>
+    <div id="check-progress" style="font-size:13px;font-weight:700;color:var(--teal);margin:12px 0 4px;"></div>
+    <div style="font-size:11px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;">Демо: в настоящей версии шаги отмечает председатель ОСИ. Здесь вы отмечаете их сами, чтобы увидеть, как меняется статус заявки. Отметки хранятся только на этом устройстве.</div>
+    <button class="modal-submit" onclick="closeChecklist()">Готово</button>
+  </div>
+</div>
+
+<!-- =================== SITUATIONS MODAL =================== -->
+<div class="modal-overlay" id="sit-modal">
+  <div class="modal-sheet" style="max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="sit-title">🚨 Типичные ситуации</div>
+    <div class="modal-sub" id="sit-sub"></div>
+    <div id="sit-search-wrap" style="margin-bottom:8px;"><input id="sit-search" type="text" placeholder="Поиск: протечка, лифт, шум…" oninput="sitFilter(this.value)" style="width:100%;border:2px solid #e8e8e8;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;"></div>
+    <div id="sit-body" style="overflow-y:auto;flex:1;"></div>
+    <button class="modal-submit" style="margin-top:10px;" onclick="closeSituations()">Закрыть</button>
+  </div>
+</div>
+
 <!-- =================== AGENDA MODAL =================== -->
 <div class="modal-overlay" id="agenda-modal">
   <div class="modal-sheet">
@@ -1436,6 +1324,11 @@
         <div class="fld-row"><input id="reg-apt" list="dl-apts" inputmode="numeric" autocomplete="off" placeholder="Например, 23"><button class="mic-btn" type="button" onclick="fieldVoice('reg-apt','apt')" aria-label="Квартира голосом">🎙️</button></div>
         <div class="fld-err" id="err-reg-apt"></div></div>
 
+      <div class="fld"><label for="reg-cad">Кадастровый номер дома <span style="color:var(--text-muted);font-weight:500;">(необязательно)</span></label>
+        <div class="fld-row"><input id="reg-cad" inputmode="text" autocomplete="off" placeholder="Номер здания, не квартиры"></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5;">Нужен, чтобы подключить календарь вашего дома. Укажите номер здания: цифры, дефисы или двоеточия.</div>
+        <div class="fld-err" id="err-reg-cad"></div></div>
+
       <div class="fld"><label for="reg-phone">Номер телефона</label>
         <input id="reg-phone" readonly>
         <div class="fld-ok" style="display:block;">✅ Подтверждён по коду</div></div>
@@ -1463,6 +1356,7 @@
       <div class="prof-row"><span>Телефон</span><span id="pf-phone">—</span></div>
       <div class="prof-row"><span>Город</span><span id="pf-city">—</span></div>
       <div class="prof-row"><span>Адрес</span><span id="pf-addr">—</span></div>
+      <div class="prof-row"><span>Кадастровый номер дома</span><span id="pf-cad">—</span></div>
     </div>
     <div class="auth-card">
       <div class="auth-title" style="font-size:16px;">🗺 Мой дом на карте</div>
@@ -1536,8 +1430,8 @@ function ticketBox() {
 function agoTs(days, h, m) { const d = new Date(); d.setDate(d.getDate() - days); d.setHours(h, m, 0, 0); return d.getTime(); }
 function seedTickets() {
   return [
-    { id: '#113', example: true, ts: agoTs(8, 14, 22), cat: 'Лифт', status: 'done', text: 'Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.' },
-    { id: '#128', example: true, ts: agoTs(3, 9, 10), cat: 'Электрика', status: 'proc', text: 'В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.' }
+    { id: '#113', example: true, flow: 'ex', ts: agoTs(8, 14, 22), cat: 'Лифт', steps: [1, 1, 1, 1, 1], text: 'Лифт №2 периодически останавливается между этажами. Был дважды за последние 3 дня.' },
+    { id: '#128', example: true, flow: 'ex', ts: agoTs(3, 9, 10), cat: 'Электрика', steps: [1, 1, 0, 0, 0], text: 'В подъезде №1 на 3-м этаже не работает освещение уже 2 недели. Темно, небезопасно.' }
   ];
 }
 function allTickets() { return ticketBox().box.list.concat(seedTickets()).sort((a, b) => b.ts - a.ts); }
@@ -1545,30 +1439,96 @@ function findTicket(id) { return allTickets().find(t => t.id === id); }
 function addTicket(flow, cat, text, prio) {
   const { all, p, box } = ticketBox();
   box.cnt[flow] = (box.cnt[flow] || 0) + 1;
-  const t = { id: FLOWS[flow].prefix + String(box.cnt[flow]).padStart(3, '0'), flow, ts: Date.now(), cat: catName(cat), text, prio: prio || 'normal', status: 'proc' };
+  const t = { id: FLOWS[flow].prefix + String(box.cnt[flow]).padStart(3, '0'), flow, ts: Date.now(), cat: catName(cat), text, prio: prio || 'normal' };
   box.list.unshift(t); all[p] = box; lsSet(LS_TICKETS, all);
   return t;
 }
 function ticketMeta(t) { return fmtDay(t.ts) + ' · ' + fmtTime(t.ts) + ' · кв.' + APT + ' · ' + OSI; }
 
+// ----- чек-лист председателя по заявке: отметки определяют статус -----
+const CHECK_STEPS = [
+  'Заявка принята и прочитана',
+  'Связались с жильцом, уточнили детали',
+  'Назначен исполнитель или мастер',
+  'Работы выполнены',
+  'Жильца уведомили о результате'
+];
+function stepsOf(t) {
+  const saved = (ticketBox().box.steps || {})[t.id];
+  const src = saved || t.steps || [];
+  return CHECK_STEPS.map((_, i) => !!src[i]);
+}
+function statusOf(t) {
+  const n = stepsOf(t).filter(Boolean).length;
+  return n === 0 ? 'new' : n === CHECK_STEPS.length ? 'done' : 'proc';
+}
+function statusLabel(t) {
+  const st = statusOf(t), ex = t.example ? ' (пример)' : (st === 'new' ? ' (демо)' : '');
+  return (st === 'done' ? '✅ Выполнена' : st === 'proc' ? '⏳ В работе' : '🆕 Создана') + ex;
+}
+let chkId = null;
+function openChecklist(id) {
+  const t = findTicket(id); if (!t) return;
+  chkId = id;
+  $('check-title').textContent = '☑ Чек-лист · ' + t.id;
+  $('check-sub').textContent = catName(t.cat) + ' · ' + fmtDay(t.ts);
+  renderChecklist();
+  $('check-modal').classList.add('open');
+}
+function renderChecklist() {
+  const t = findTicket(chkId); if (!t) return;
+  const st = stepsOf(t);
+  $('check-list').innerHTML = CHECK_STEPS.map((label, i) =>
+    `<label class="chk-row ${st[i] ? 'on' : ''}"><input type="checkbox" ${st[i] ? 'checked' : ''} onchange="toggleStep(${i})"><span>${escHtml(label)}</span></label>`).join('');
+  $('check-progress').textContent = st.filter(Boolean).length + ' из ' + CHECK_STEPS.length + ' · ' + statusLabel(t).replace(/^\S+\s/, '');
+}
+function toggleStep(i) {
+  const t = findTicket(chkId); if (!t) return;
+  const { all, p, box } = ticketBox();
+  if (!box.steps) box.steps = {};
+  const st = stepsOf(t); st[i] = !st[i];
+  box.steps[t.id] = st.map(x => x ? 1 : 0);
+  all[p] = box; lsSet(LS_TICKETS, all);
+  renderChecklist(); renderTickets();
+}
+function closeChecklist() { $('check-modal').classList.remove('open'); chkId = null; renderTickets(); }
+
+// ----- история заявок: фильтры по статусу и потоку -----
+const tFilter = { status: 'all', flow: 'all' };
+const STATUS_CHIPS = [['all', 'Все'], ['new', 'Создана'], ['proc', 'В работе'], ['done', 'Выполнена']];
+const FLOW_CHIPS = [['all', 'Все'], ['v', 'Голосовые'], ['m', 'По объявлениям'], ['ex', 'Примеры']];
+function setTicketFilter(kind, val) { tFilter[kind] = val; renderTickets(); }
 function renderTickets() {
   const list = document.getElementById('tickets-list'); if (!list) return;
-  list.innerHTML = allTickets().map(t => {
-    const done = t.status === 'done';
-    const label = done ? '✅ Выполнена (пример)' : (t.example ? '⏳ В работе (пример)' : '⏳ Создана (демо)');
-    const flow = t.flow ? FLOWS[t.flow].name + ' · ' : '';
+  const all = allTickets();
+  const byFlow = t => tFilter.flow === 'all' || t.flow === tFilter.flow;
+  const byStatus = t => tFilter.status === 'all' || statusOf(t) === tFilter.status;
+  const chip = (kind, [val, label], count) =>
+    `<button class="chip ${tFilter[kind] === val ? 'active' : ''}" onclick="setTicketFilter('${kind}','${val}')">${label} (${count})</button>`;
+  const sCount = v => all.filter(t => byFlow(t) && (v === 'all' || statusOf(t) === v)).length;
+  const fCount = v => all.filter(t => byStatus(t) && (v === 'all' || t.flow === v)).length;
+  const shown = all.filter(t => byFlow(t) && byStatus(t));
+  const cards = shown.map(t => {
+    const st = statusOf(t), done = st === 'done';
+    const flow = (FLOWS[t.flow] ? FLOWS[t.flow].name : 'Пример') + ' · ';
     const urgent = t.prio === 'urgent' ? ' · 🔴 Срочная' : '';
+    const n = stepsOf(t).filter(Boolean).length;
     const id = escHtml(t.id);
     return `<div class="tkt-card ${done ? 'done' : 'processing'}">
-      <div class="tkt-header"><div class="tkt-num">${id}</div><span class="tkt-status ${done ? 'status-done' : 'status-proc'}">${label}</span></div>
+      <div class="tkt-header"><div class="tkt-num">${id}</div><span class="tkt-status ${done ? 'status-done' : 'status-proc'}">${statusLabel(t)}</span></div>
       <div class="tkt-meta">${fmtDay(t.ts)} · ${fmtTime(t.ts)} · кв.${escHtml(APT)} · ${flow}${escHtml(t.cat)}${urgent}</div>
       <div class="tkt-text">${escHtml(t.text)}</div>
       <div class="tkt-actions">
-        <button data-id="${id}" onclick="ticketDownload(this.dataset.id)" class="tkt-btn">📥 Скачать</button>
-        <button data-id="${id}" onclick="ticketShare(this.dataset.id)" class="tkt-btn wa">💚 WhatsApp</button>
+        <button data-id="${id}" onclick="openChecklist(this.dataset.id)" class="tkt-btn chk">☑ Чек-лист ${n}/${CHECK_STEPS.length}</button>
+        <button data-id="${id}" onclick="ticketDownload(this.dataset.id)" class="tkt-btn">📥</button>
+        <button data-id="${id}" onclick="ticketShare(this.dataset.id)" class="tkt-btn wa">💚</button>
       </div>
     </div>`;
   }).join('');
+  list.innerHTML =
+    `<div class="chip-label">Статус</div><div class="chip-row">${STATUS_CHIPS.map(c => chip('status', c, sCount(c[0]))).join('')}</div>` +
+    `<div class="chip-label">Поток</div><div class="chip-row">${FLOW_CHIPS.map(c => chip('flow', c, fCount(c[0]))).join('')}</div>` +
+    (cards || '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:30px 10px;">Нет заявок с такими фильтрами</div>');
 }
 
 function buildTicketText(t) {
@@ -1577,7 +1537,8 @@ ${OSI} · ${CITY || '—'}
 Заявитель: Жилец кв. №${APT}
 Дата: ${fmtDay(t.ts)} ${fmtTime(t.ts)}
 Категория: ${t.cat}
-Статус: создана в демо-режиме
+Статус: ${statusLabel(t).replace(/^\S+\s/, '')}
+Чек-лист: ${stepsOf(t).filter(Boolean).length} из ${CHECK_STEPS.length}
 
 ОПИСАНИЕ ПРОБЛЕМЫ:
 ${t.text}
@@ -1599,6 +1560,103 @@ function ticketShare(id) {
   const msg = encodeURIComponent(`📋 *Заявка ${t.id} · ${OSI}*\n🏠 Кв. №${APT} · ${CITY || ''}\n📅 ${fmtDay(t.ts)} ${fmtTime(t.ts)}\n\n${t.text}\n\n_Отправлено через AlauConcierge (демо-версия)_`);
   window.open('https://wa.me/?text=' + msg, '_blank');
 }
+
+// ----- общий календарь: внешняя ссылка (Google Calendar ОСИ и т.п.) -----
+// Вставьте сюда адрес общего календаря. Пока он пуст, кнопка сообщает об этом.
+const CALENDAR_URL = '';
+function openCalendar() {
+  if (!CALENDAR_URL) { toast('Ссылка на общий календарь ещё не задана'); return; }
+  window.open(CALENDAR_URL, '_blank', 'noopener');
+}
+
+// ----- календарь дома: события, посты и подкасты из каналов; выгрузка в .ics -----
+// Дом определяется кадастровым номером здания (из анкеты). В демо события примерные, в версии с сервером
+// их будет вести председатель, а посты и подкасты подтягиваться из подключённых каналов.
+const HOUSE_CHANNELS = { whatsapp: '', instagram: '', telegram: '' };
+const CHANNEL_NAMES = { whatsapp: 'WhatsApp', instagram: 'Instagram', telegram: 'Telegram' };
+function openChannel(k) {
+  const url = HOUSE_CHANNELS[k];
+  if (!url) { toast('Ссылка на ' + CHANNEL_NAMES[k] + ' дома ещё не задана'); return; }
+  window.open(url, '_blank', 'noopener');
+}
+const CAL_TYPES = { meeting: 'Собрание', works: 'Работы', event: 'Событие', post: 'Пост', podcast: 'Подкаст' };
+const CAL_SRCS = { osi: 'ОСИ', telegram: 'Telegram', instagram: 'Instagram', whatsapp: 'WhatsApp' };
+const CAL_ICON = { meeting: '👥', works: '🔧', event: '🧹', post: '📝', podcast: '🎙️' };
+function houseEvents() {
+  return [
+    { id: 'water', off: 0, from: '09:00', to: '17:00', type: 'works', src: 'osi', title: 'Плановое отключение воды', place: 'Весь дом', text: 'Плановые работы по замене труб. Запаситесь водой заранее.' },
+    { id: 'photo', off: -2, type: 'post', src: 'instagram', title: 'Фотоотчёт по двору', place: 'Instagram дома', text: 'Пост с фотографиями двора.' },
+    { id: 'wa-note', off: 3, type: 'post', src: 'whatsapp', title: 'Напоминание о собрании', place: 'Чат дома', text: 'Сообщение в чате дома.' },
+    { id: 'meeting', off: 4, from: '18:00', to: '19:30', type: 'meeting', src: 'osi', title: 'Собрание жильцов', place: 'Холл 1-го этажа', text: 'Ремонт кровли и бюджет.' },
+    { id: 'podcast', off: 7, from: '20:00', to: '20:40', type: 'podcast', src: 'telegram', title: 'Подкаст: разговор с председателем', place: 'Канал в Telegram', text: 'Выпуск подкаста дома.' },
+    { id: 'clean', off: 10, from: '11:00', to: '13:00', type: 'event', src: 'telegram', title: 'Общая уборка двора', place: 'Двор', text: 'Субботник. Перчатки и мешки выдаёт председатель.' }
+  ];
+}
+function evDay(e) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + e.off); return d; }
+function evDayLabel(e) {
+  const l = evDay(e).toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' });
+  return e.off === 0 ? 'Сегодня · ' + l : l;
+}
+const calFilter = { type: 'all', src: 'all' };
+function setCalFilter(k, v) { calFilter[k] = v; renderCalendar(); }
+function houseLabel() {
+  const u = currentProfile(); if (!u) return '—';
+  return u.city + ', ' + u.street + ', д. ' + u.house;
+}
+function renderCalendar() {
+  const el = $('cal-list'); if (!el) return;
+  const u = currentProfile();
+  $('cal-house').textContent = houseLabel();
+  $('cal-cad').textContent = u && u.cad ? 'Кадастровый номер: ' + u.cad : 'Кадастровый номер не указан. Дом определяется по адресу из анкеты.';
+  const all = houseEvents();
+  const byType = e => calFilter.type === 'all' || e.type === calFilter.type;
+  const bySrc = e => calFilter.src === 'all' || e.src === calFilter.src;
+  const chips = (kind, dict, count) => '<button class="chip ' + (calFilter[kind] === 'all' ? 'active' : '') + '" onclick="setCalFilter(\'' + kind + '\',\'all\')">Все (' + count('all') + ')</button>' +
+    Object.keys(dict).map(k => '<button class="chip ' + (calFilter[kind] === k ? 'active' : '') + '" onclick="setCalFilter(\'' + kind + '\',\'' + k + '\')">' + dict[k] + ' (' + count(k) + ')</button>').join('');
+  $('cal-types').innerHTML = chips('type', CAL_TYPES, v => all.filter(e => bySrc(e) && (v === 'all' || e.type === v)).length);
+  $('cal-srcs').innerHTML = chips('src', CAL_SRCS, v => all.filter(e => byType(e) && (v === 'all' || e.src === v)).length);
+  const shown = all.filter(e => byType(e) && bySrc(e)).sort((a, b) => a.off - b.off);
+  el.innerHTML = shown.map(e => {
+    const past = e.off < 0, when = e.from ? e.from + '–' + e.to : 'весь день';
+    return '<div class="tkt-card ' + (past ? '' : 'processing') + '" style="' + (past ? 'opacity:.6;' : '') + '">' +
+      '<div class="tkt-header"><div class="tkt-num" style="font-size:14px;">' + CAL_ICON[e.type] + ' ' + escHtml(e.title) + '</div><span class="tkt-status status-proc">' + CAL_TYPES[e.type] + '</span></div>' +
+      '<div class="tkt-meta">' + escHtml(evDayLabel(e)) + ' · ' + when + ' · ' + escHtml(e.place) + ' · ' + CAL_SRCS[e.src] + (past ? ' · прошло' : '') + '</div>' +
+      '<div class="tkt-text" style="margin-bottom:10px;">' + escHtml(e.text) + ' <i>(пример)</i></div>' +
+      '<div class="tkt-actions"><button class="tkt-btn chk" data-id="' + e.id + '" onclick="icsDownloadOne(this.dataset.id)">📥 В мой календарь (.ics)</button></div></div>';
+  }).join('') || '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:30px 10px;">Нет событий с такими фильтрами</div>';
+}
+
+// ----- выгрузка в .ics (RFC 5545): время «плавающее», то есть в часовом поясе календаря жителя -----
+function icsEscape(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+function icsFold(line) {
+  const out = []; let l = line;
+  while (l.length > 35) { out.push(l.slice(0, 35)); l = ' ' + l.slice(35); }
+  out.push(l); return out.join('\r\n');
+}
+function icsD(d) { return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()); }
+function icsDT(d, hhmm) { return icsD(d) + 'T' + hhmm.replace(':', '') + '00'; }
+function icsStamp() { const n = new Date(); return n.getUTCFullYear() + pad2(n.getUTCMonth() + 1) + pad2(n.getUTCDate()) + 'T' + pad2(n.getUTCHours()) + pad2(n.getUTCMinutes()) + pad2(n.getUTCSeconds()) + 'Z'; }
+function icsEvent(e, stamp) {
+  const d = evDay(e), L = ['BEGIN:VEVENT', 'UID:' + e.id + '-' + icsD(d) + '@alau-demo', 'DTSTAMP:' + stamp];
+  if (e.from) { L.push('DTSTART:' + icsDT(d, e.from), 'DTEND:' + icsDT(d, e.to)); }
+  else { const n = new Date(d); n.setDate(n.getDate() + 1); L.push('DTSTART;VALUE=DATE:' + icsD(d), 'DTEND;VALUE=DATE:' + icsD(n)); }
+  L.push('SUMMARY:' + icsEscape(e.title), 'LOCATION:' + icsEscape(e.place),
+    'DESCRIPTION:' + icsEscape(e.text + ' Источник: ' + CAL_SRCS[e.src] + '. Демо-пример AlauConcierge.'), 'END:VEVENT');
+  return L;
+}
+function icsBuild(list) {
+  const stamp = icsStamp();
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AlauConcierge//Demo//RU', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:' + icsEscape('Дом: ' + houseLabel())];
+  list.forEach(e => icsEvent(e, stamp).forEach(x => L.push(x)));
+  L.push('END:VCALENDAR');
+  return L.map(icsFold).join('\r\n') + '\r\n';
+}
+function icsSave(text, name) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
+}
+function icsDownloadOne(id) { const e = houseEvents().find(x => x.id === id); if (e) icsSave(icsBuild([e]), 'alau-' + id + '.ics'); }
+function icsDownloadAll() { icsSave(icsBuild(houseEvents()), 'alau-calendar-doma.ics'); }
 
 // ----- распознавание речи (Web Speech API, ru-RU); текст всегда можно ввести и поправить руками -----
 let vr = null;
@@ -1677,6 +1735,7 @@ function submitTicket() {
   $('ticket-card-preview').dataset.ticketId = t.id;
   renderTickets();
   voiceState('done');
+  sitAutoPop(text);
 }
 function resetVoice() {
   vrCancel();
@@ -1749,7 +1808,7 @@ function mvManual() {
 }
 
 const mvCatMap = {
-  urgent: '💧 Вода и трубы', vote: '🗳️ Голосование / мнение', chat: '💬 Предложение жильца',
+  urgent: '💧 Вода и трубы', safety: '🛡️ Безопасность', chat: '💬 Предложение жильца',
   meeting: '📅 Вопрос к собранию', promo: '💬 Предложение жильца', repair: '🔧 Ремонт и обслуживание',
   water: '💧 Вода и трубы', electric: '⚡ Электрика', lift: '🛗 Лифт',
   heat: '🔥 Отопление', mkd: '🏗️ Общедомовое имущество', other: '📋 Прочее',
@@ -1766,6 +1825,7 @@ function mvSubmit() {
   $('mv-done').dataset.id = t.id;
   renderTickets();
   mvState('done');
+  sitAutoPop(text);
 }
 function mvReset() {
   vrCancel();
@@ -1823,63 +1883,291 @@ vp.addEventListener('mouseup',e=>{if(!mD)return;mD=false;const dx=e.clientX-mSX;
 vp.addEventListener('mouseleave',()=>mD=false);
 initCarousel();
 
-// ===== CHAT TABS =====
+// ===== ЧАТ: сообщения, повестка и помощник =====
+// Демо: всё хранится на этом устройстве отдельно для каждого номера телефона. Другие жильцы сообщений не видят.
+const LS_CHAT = 'alauDemoChat';
+function chatBox() {
+  const all = lsGet(LS_CHAT, {}); const p = currentPhone() || 'anon';
+  const box = all[p] || {};
+  box.msgs = box.msgs || []; box.agenda = box.agenda || []; box.bot = box.bot || [];
+  return { all, p, box };
+}
+function chatSave(c) { c.all[c.p] = c.box; lsSet(LS_CHAT, c.all); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function dayLabel(ts) {
+  const d = new Date(ts), t = new Date(); d.setHours(0, 0, 0, 0); t.setHours(0, 0, 0, 0);
+  const diff = Math.round((t - d) / 86400000);
+  return diff === 0 ? 'Сегодня' : diff === 1 ? 'Вчера' : new Date(ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+}
+function scrollDown(el) { if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 30); }
+
 function switchChatTab(tab) {
-  ['chat','agenda','results'].forEach(t => {
-    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
-    const pane = document.getElementById('chatpane-'+t);
-    if (pane) pane.style.display = t===tab ? 'flex' : 'none';
+  ['chat', 'agenda', 'results', 'bot'].forEach(t => {
+    $('tab-' + t).classList.toggle('active', t === tab);
+    const pane = $('chatpane-' + t);
+    if (pane) pane.style.display = t === tab ? 'flex' : 'none';
   });
-  const inputBar = document.getElementById('chat-input-bar');
-  if (inputBar) inputBar.style.display = tab==='chat' ? 'flex' : 'none';
+  $('chat-input-bar').style.display = tab === 'chat' ? 'flex' : 'none';
+  stopAllMics();
+  if (tab === 'chat') renderChat();
+  if (tab === 'agenda') renderAgenda();
+  if (tab === 'results') renderSituations();
+  if (tab === 'bot') renderBot();
+}
+function renderChatScreen() {
+  if ($('chat-house')) $('chat-house').textContent = houseLabel();
+  renderChat(); renderAgenda(); renderBot();
 }
 
-// ===== CHAT SEND =====
-function sendChatMsg() {
-  const inp = document.getElementById('chat-text');
-  const text = inp.value.trim();
-  if (!text) return;
-  inp.value = '';
-  const container = document.getElementById('chatpane-chat');
-  const newMsgs = document.getElementById('chat-new-messages');
-  const now = new Date();
-  const time = now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
-  const div = document.createElement('div');
-  div.className = 'chat-msg mine';
-  div.innerHTML = `<div class="chat-avatar" style="background:var(--teal);color:#fff;">${APT}</div><div><div class="chat-sender" style="text-align:right;">Вы · кв.${APT}</div><div class="chat-bubble">${text.replace(/</g,'&lt;')}</div><div class="chat-time" style="text-align:right;">${time}</div></div>`;
-  newMsgs.before(div);
-  setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+// ----- лента чата -----
+function renderChat() {
+  const feed = $('chat-feed'); if (!feed) return;
+  const { box } = chatBox();
+  if (!box.msgs.length) {
+    feed.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;line-height:1.6;padding:34px 18px;">Сообщений пока нет.<br>Напишите сообщение или нажмите 🎙️ и продиктуйте его.<br>Вопрос для собрания можно внести кнопкой «+ На повестку».</div>';
+    return;
+  }
+  let last = '', html = '';
+  box.msgs.forEach(m => {
+    const dl = dayLabel(m.ts);
+    if (dl !== last) { html += '<div class="chat-date-sep">' + escHtml(dl) + '</div>'; last = dl; }
+    if (m.kind === 'agenda') {
+      html += '<div class="agenda-card"><div class="agenda-label">📋 Вопрос на повестку от кв.' + escHtml(APT) + '</div><div class="agenda-text">' + escHtml(m.text) + '</div><div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Добавлен в повестку (демо, только на этом устройстве)</div></div>';
+    } else {
+      html += '<div class="chat-msg mine"><div class="chat-avatar" style="background:var(--teal);color:#fff;">' + escHtml(APT) + '</div><div><div class="chat-sender" style="text-align:right;">Вы · кв.' + escHtml(APT) + (m.via === 'voice' ? ' · 🎙️' : '') + '</div><div class="chat-bubble" style="white-space:pre-wrap;">' + escHtml(m.text) + '</div><div class="chat-time" style="text-align:right;">' + fmtTime(m.ts) + '</div></div></div>';
+    }
+  });
+  html += '<div style="text-align:center;padding:6px 0 10px;"><button class="chip" id="chat-clear" onclick="chatClear()">🗑 Очистить чат</button></div>';
+  feed.innerHTML = html;
+  scrollDown($('chatpane-chat'));
+}
+let clearTimer = null;
+function chatClear() {
+  const b = $('chat-clear'); if (!b) return;
+  if (b.dataset.sure !== '1') {
+    b.dataset.sure = '1'; b.textContent = 'Нажмите ещё раз, чтобы очистить';
+    clearTimeout(clearTimer); clearTimer = setTimeout(() => { b.dataset.sure = ''; b.textContent = '🗑 Очистить чат'; }, 3500);
+    return;
+  }
+  const c = chatBox(); c.box.msgs = []; chatSave(c); renderChat();
+}
+function sendChatMsg(text, via) {
+  const inp = $('chat-text');
+  const t = (typeof text === 'string' ? text : inp.value).trim();
+  if (!t) return false;
+  stopAllMics();
+  const c = chatBox(); c.box.msgs.push({ id: uid(), ts: Date.now(), text: t, via: via || 'text' }); chatSave(c);
+  if (typeof text !== 'string') inp.value = '';
+  renderChat();
+  return true;
 }
 
-// ===== VOTE AGENDA =====
-function voteAgenda(btn, choice) {
-  const card = btn.closest('.agenda-card');
-  const actions = card.querySelector('.agenda-actions');
-  const result = card.querySelector('[id^=agenda-result]');
-  actions.innerHTML = choice==='yes'
-    ? '<span style="color:var(--teal);font-weight:700;font-size:13px;">✅ Вы поддержали этот вопрос</span>'
-    : '<span style="color:#c62828;font-weight:700;font-size:13px;">👎 Вы проголосовали против</span>';
-  if (result) { result.style.display='block'; result.textContent = '📊 12 жильцов поддержали · 3 против · будет вынесен на голосование'; }
+// ----- микрофоны: диктовка в чат и вопрос помощнику -----
+let chatDictating = false, botListening = false;
+function stopAllMics() {
+  vrCancel(); chatDictating = false; botListening = false;
+  ['chat-mic', 'bot-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
+}
+function dictate(inp, btnId, onText) {
+  if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
+  const btn = $(btnId), base = inp.value ? inp.value.trim() + ' ' : '';
+  stopAllMics();
+  btn.classList.add('rec');
+  const state = btnId === 'chat-mic' ? 'chat' : 'bot';
+  if (state === 'chat') chatDictating = true; else botListening = true;
+  vrStart({
+    timer: { textContent: '' },
+    live: { set textContent(v) { inp.value = base + v; } },
+    done: res => {
+      chatDictating = false; botListening = false; btn.classList.remove('rec');
+      if (res.text) onText(base + res.text); else { inp.value = base.trim(); const m = voiceErrText(res.err || 'no-speech'); if (m) toast(m); }
+    }
+  });
+}
+function chatMic() {
+  if (chatDictating) { vrStop(); return; }
+  const inp = $('chat-text');
+  dictate(inp, 'chat-mic', txt => { inp.value = txt; inp.focus(); });
+}
+function botMic() {
+  if (botListening) { vrStop(); return; }
+  const inp = $('bot-text');
+  dictate(inp, 'bot-mic', txt => { inp.value = ''; botAsk(txt, 'voice'); });
 }
 
-// ===== AGENDA MODAL =====
-function showAgendaModal() { document.getElementById('agenda-modal').classList.add('open'); }
-document.getElementById('agenda-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+// ----- повестка (вопросы жителя хранятся на этом устройстве) -----
+function showAgendaModal() { $('agenda-modal').classList.add('open'); }
+document.getElementById('check-modal').addEventListener('click', function (e) { if (e.target === this) closeChecklist(); });
+document.getElementById('sit-modal').addEventListener('click', function (e) { if (e.target === this) closeSituations(); });
+document.getElementById('agenda-modal').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('open'); });
+function addAgendaItem(text) {
+  const c = chatBox(), id = uid(), ts = Date.now();
+  c.box.agenda.push({ id, ts, text });
+  c.box.msgs.push({ id: uid(), ts, kind: 'agenda', text, aid: id });
+  chatSave(c); renderChat(); renderAgenda();
+  return id;
+}
+function deleteAgenda(id) {
+  const c = chatBox();
+  c.box.agenda = c.box.agenda.filter(a => a.id !== id);
+  c.box.msgs = c.box.msgs.filter(m => m.aid !== id);
+  chatSave(c); renderAgenda(); renderChat();
+}
+function renderAgenda() {
+  const el = $('agenda-list'); if (!el) return;
+  const { box } = chatBox();
+  if (!box.agenda.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Вопросов пока нет. Нажмите «+ Внести вопрос на повестку» или скажите помощнику: «внеси вопрос на повестку: …».</div>'; return; }
+  el.innerHTML = box.agenda.map((a, i) =>
+    '<div style="display:flex;gap:10px;align-items:flex-start;"><div style="min-width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;">' + (i + 1) + '</div>' +
+    '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">' + escHtml(a.text) + '</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">От кв.' + escHtml(APT) + ' (вы) · ' + fmtDay(a.ts) + '</div></div>' +
+    '<button class="chip" data-id="' + a.id + '" onclick="deleteAgenda(this.dataset.id)">Удалить</button></div>').join('');
+}
 function submitAgenda() {
-  const text = document.getElementById('agenda-input').value.trim();
+  const text = $('agenda-input').value.trim();
   if (!text) { toast('Введите текст вопроса'); return; }
-  document.getElementById('agenda-modal').classList.remove('open');
-  document.getElementById('agenda-input').value = '';
-  const chatBody = document.getElementById('chatpane-chat');
-  const newMsgs = document.getElementById('chat-new-messages');
-  const card = document.createElement('div');
-  card.className = 'agenda-card';
-  card.innerHTML = `<div class="agenda-label">📋 Вопрос на повестку от кв.${APT}</div><div class="agenda-text">${text.replace(/</g,'&lt;')}</div><div class="agenda-actions"><button class="agenda-btn yes">👍 Поддержать</button><button class="agenda-btn no">👎 Против</button></div>`;
-  card.querySelectorAll('.agenda-btn').forEach(b => b.onclick = function(){voteAgenda(this,this.classList.contains('yes')?'yes':'no');});
-  newMsgs.before(card);
-  showScreen('screen-chat');
-  switchChatTab('chat');
-  setTimeout(()=>chatBody.scrollTop=chatBody.scrollHeight,100);
+  $('agenda-modal').classList.remove('open'); $('agenda-input').value = '';
+  addAgendaItem(text);
+  showScreen('screen-chat'); switchChatTab('chat');
+}
+
+// ===== ПОМОЩНИК: локальные команды (не нейросеть), работают на этом устройстве =====
+let botPending = null;
+const BOT_CHIPS = ['Мои заявки', 'Ближайшие события', 'Что делать при протечке', 'Что ты умеешь?'];
+const BOT_INTRO = 'Я локальный помощник по командам, не нейросеть. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «когда собрание»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\nДействия, которые что-то создают, я сначала подтверждаю.';
+const NO_W = '(?![а-я])';
+function botNorm(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').trim(); }
+function botCategory(t) {
+  const x = botNorm(t);
+  if (/вод|кран|труб|протеч|течет|канализ|сантехн/.test(x)) return 'Вода и трубы';
+  if (/свет|электр|лампоч|освещ|розетк|проводк/.test(x)) return 'Электрика';
+  if (/лифт/.test(x)) return 'Лифт';
+  if (/отоплен|батаре|тепл|холодно/.test(x)) return 'Отопление';
+  if (/охран|краж|чужие|камер|взлом/.test(x)) return 'Безопасность';
+  if (/крыш|подъезд|двор|лестниц|дверь|мусор/.test(x)) return 'Общедомовое имущество';
+  return 'Прочее';
+}
+const A_YES = { label: '✅ Да', do: 'yes' }, A_NO = { label: '✖ Нет', do: 'no' };
+function stageTicket(desc) {
+  const text = desc.replace(/^["«]|["»]$/g, '').trim(), cat = botCategory(text);
+  botPending = { type: 'ticket', text, cat };
+  return { text: 'Создать заявку «' + text + '»?\nКатегория: ' + cat + '. Скажите «да» или нажмите кнопку.', actions: [A_YES, A_NO] };
+}
+function botExecute(p) {
+  if (p.type === 'ticket') { const t = addTicket('v', p.cat, p.text, 'normal'); sitAutoPop(p.text); return { text: 'Готово: заявка ' + t.id + ' создана (демо, хранится на этом устройстве).', actions: [{ label: '📋 Мои заявки', do: 'go', arg: 'screen-tickets' }] }; }
+  if (p.type === 'agenda') { addAgendaItem(p.text); return { text: 'Вопрос добавлен в повестку.', actions: [{ label: '💬 Открыть чат', do: 'go', arg: 'screen-chat' }] }; }
+  if (p.type === 'post') { sendChatMsg(p.text, 'text'); return 'Сообщение отправлено в чат (демо: его видите только вы).'; }
+  return 'Нечего выполнять.';
+}
+function upcoming() { return houseEvents().filter(e => e.off >= 0).sort((a, b) => a.off - b.off); }
+function evLine(e) { return evDayLabel(e) + (e.from ? ', ' + e.from + '–' + e.to : '') + ' — ' + e.title + (e.place ? ' (' + e.place + ')' : ''); }
+function botHandle(raw) {
+  const t = botNorm(raw);
+  if (botPending) {
+    const p = botPending;
+    if (p.type === 'ticket-text') {
+      botPending = null;
+      if (new RegExp('^(отмена|нет|стоп)' + NO_W).test(t)) return 'Хорошо, заявку не создаю.';
+      return stageTicket(raw.trim());
+    }
+    if (new RegExp('^(да|давай|подтверждаю|верно|ага|конечно|ок|окей|согласен|согласна)' + NO_W).test(t)) { botPending = null; return botExecute(p); }
+    if (new RegExp('^(нет|отмена|отменить|не надо|не нужно|стоп)' + NO_W).test(t)) { botPending = null; return 'Хорошо, отменила.'; }
+    botPending = null;
+  } else if (new RegExp('^(да|нет)' + NO_W).test(t) && t.length < 12) {
+    return 'Сейчас нечего подтверждать. Скажите «что ты умеешь», чтобы увидеть команды.';
+  }
+  let m;
+  if (/что (ты )?(умеешь|можешь)|помощь|команды/.test(t)) return BOT_INTRO;
+  if (/^(привет|здравствуй|добрый (день|вечер)|доброе утро)/.test(t)) return 'Здравствуйте! Чем помочь? Скажите «что ты умеешь», чтобы увидеть команды.';
+  if ((m = t.match(/(созда|оформ|подай|сделай|завед|отправ)[а-яё]*\s+(?:нов[а-яё]+\s+)?заявк[а-яё]*\s*[:,—-]?\s*(.*)$/))) {
+    const desc = raw.trim().slice(raw.trim().length - m[2].length).trim();
+    if (desc.length >= 5) return stageTicket(desc);
+    botPending = { type: 'ticket-text' };
+    return 'Опишите проблему одним сообщением или голосом.';
+  }
+  if ((m = t.match(/(внес|вынес|добав|предлож)[а-яё]*\s+(?:вопрос[а-яё]*\s+)?(?:на|в)\s+повестк[а-яё]*\s*[:,—-]?\s*(.*)$/))) {
+    const desc = raw.trim().slice(raw.trim().length - m[2].length).trim();
+    if (desc.length < 5) return 'Что внести на повестку? Скажите, например: «внеси вопрос на повестку: установить лавочки у подъезда».';
+    botPending = { type: 'agenda', text: desc };
+    return { text: 'Внести в повестку: «' + desc + '»?', actions: [A_YES, A_NO] };
+  }
+  if ((m = t.match(/(напиш|отправ|скаж|сообщ)[а-яё]*\s+(?:в\s+)?(?:общий\s+)?чат[а-яё]*\s*[:,—-]?\s*(.*)$/))) {
+    const desc = raw.trim().slice(raw.trim().length - m[2].length).trim();
+    if (desc.length < 2) return 'Что написать в чат?';
+    botPending = { type: 'post', text: desc };
+    return { text: 'Отправить в чат: «' + desc + '»?', actions: [A_YES, A_NO] };
+  }
+  if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
+  if (/что делать|как быть|как поступить|если |авари|помогите/.test(t)) {
+    const sit = sitFind(t);
+    if (sit) return { text: sit.icon + ' ' + sit.title + '. Что делать сейчас:\n' + sit.now.map((x, i) => (i + 1) + '. ' + x).join('\n'), actions: [{ label: '📖 Подробно', do: 'sit', arg: sit.id }] };
+  }
+  if (/(добав|скача|сохран|занес)[а-яё]*.*календар/.test(t) || /календар/.test(t) && /добав|скача/.test(t)) {
+    const ev = botEventByWords(t) || upcoming()[0];
+    return { text: 'Файл календаря для события «' + ev.title + '» (' + evLine(ev) + '). Нажмите кнопку, чтобы скачать.', actions: [{ label: '📥 В календарь (.ics)', do: 'ics', arg: ev.id }] };
+  }
+  const ev = botEventByWords(t);
+  if (ev) return { text: evLine(ev) + '. (Пример из демо-календаря дома.)', actions: [{ label: '📥 В календарь (.ics)', do: 'ics', arg: ev.id }, { label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
+  if (/событ|календар|ближайш|на этой неделе|на неделе|расписан|что будет|когда/.test(t)) {
+    const list = upcoming().slice(0, 4);
+    return { text: 'Ближайшие события:\n' + list.map(evLine).map(s => '• ' + s).join('\n') + '\n(Примеры из демо-календаря дома.)', actions: [{ label: '📅 Календарь дома', do: 'go', arg: 'screen-calendar' }] };
+  }
+  if (/заявк|статус/.test(t)) {
+    const mine = allTickets().filter(x => !x.example);
+    if (!mine.length) return 'У вас пока нет своих заявок. Скажите: «создай заявку: …».';
+    const n = { new: 0, proc: 0, done: 0 }; mine.forEach(x => { n[statusOf(x)]++; });
+    const last = mine[0];
+    return { text: 'Ваших заявок: ' + mine.length + '. Создана: ' + n.new + ', в работе: ' + n.proc + ', выполнена: ' + n.done + '.\nПоследняя: ' + last.id + ' «' + last.text.slice(0, 60) + (last.text.length > 60 ? '…' : '') + '» — ' + statusLabel(last).replace(/^\S+\s/, '') + '.', actions: [{ label: '📋 Открыть заявки', do: 'go', arg: 'screen-tickets' }] };
+  }
+  return 'Не поняла команду. Скажите «что ты умеешь», чтобы увидеть список.';
+}
+function botEventByWords(t) {
+  const evs = houseEvents(), by = id => evs.find(e => e.id === id);
+  if (/собран/.test(t)) return by('meeting');
+  if (/уборк|субботник/.test(t)) return by('clean');
+  if (/подкаст/.test(t)) return by('podcast');
+  if (/отключен|вод[аыуе]/.test(t)) return by('water');
+  return null;
+}
+function pushBot(role, text, via, actions) {
+  const c = chatBox();
+  c.box.bot.push({ role, text, via: via || 'text', ts: Date.now(), actions: actions || [] });
+  if (c.box.bot.length > 80) c.box.bot = c.box.bot.slice(-80);
+  chatSave(c);
+}
+function botAsk(raw, via) {
+  const text = String(raw || '').trim(); if (!text) return;
+  pushBot('me', text, via);
+  let r; try { r = botHandle(text); } catch (e) { r = 'Не получилось выполнить команду.'; }
+  if (typeof r === 'string') r = { text: r };
+  pushBot('bot', r.text, 'text', r.actions);
+  renderBot();
+  const tts = $('bot-tts');
+  if (via === 'voice' && tts && tts.checked) speak(r.text.replace(/\n/g, '. '));
+}
+function botSend() { const inp = $('bot-text'); const t = inp.value; inp.value = ''; stopAllMics(); botAsk(t, 'text'); }
+function botAction(mi, ai) {
+  const m = chatBox().box.bot[+mi]; const a = m && m.actions && m.actions[+ai]; if (!a) return;
+  if (a.do === 'yes') botAsk('да', 'text');
+  else if (a.do === 'no') botAsk('нет', 'text');
+  else if (a.do === 'ics') icsDownloadOne(a.arg);
+  else if (a.do === 'go') showScreen(a.arg);
+  else if (a.do === 'sit') openSituations(a.arg);
+}
+function renderBot() {
+  const th = $('bot-thread'); if (!th) return;
+  const { box } = chatBox();
+  const bub = (cls, who, text, time, extra) => '<div class="chat-msg ' + cls + '"><div class="chat-avatar' + (cls === 'other' ? ' chair' : '') + '"' + (cls === 'mine' ? ' style="background:var(--teal);color:#fff;"' : '') + '>' + (cls === 'other' ? '🤖' : escHtml(APT)) + '</div><div><div class="chat-sender"' + (cls === 'mine' ? ' style="text-align:right;"' : '') + '>' + who + '</div><div class="chat-bubble" style="white-space:pre-wrap;">' + escHtml(text) + '</div>' + (extra || '') + (time ? '<div class="chat-time"' + (cls === 'mine' ? ' style="text-align:right;"' : '') + '>' + time + '</div>' : '') + '</div></div>';
+  let html = bub('other', 'Помощник', BOT_INTRO, '', '');
+  box.bot.forEach((m, i) => {
+    if (m.role === 'me') html += bub('mine', 'Вы' + (m.via === 'voice' ? ' · 🎙️' : ''), m.text, fmtTime(m.ts), '');
+    else {
+      const acts = (m.actions || []).length ? '<div class="tkt-actions" style="margin-top:6px;">' + m.actions.map((a, j) => '<button class="tkt-btn chk" data-m="' + i + '" data-a="' + j + '" onclick="botAction(this.dataset.m,this.dataset.a)">' + escHtml(a.label) + '</button>').join('') + '</div>' : '';
+      html += bub('other', 'Помощник', m.text, fmtTime(m.ts), acts);
+    }
+  });
+  th.innerHTML = html;
+  $('bot-chips').innerHTML = BOT_CHIPS.map(c => '<button class="chip" onclick="botAsk(this.textContent,\'text\')">' + c + '</button>').join('');
+  scrollDown(th);
 }
 
 // ===== AUTH / PROFILE (DEMO): регистрация по SMS-коду, анкета, голосовой ввод =====
@@ -1909,6 +2197,8 @@ function toast(msg) {
 const NAME_RE = /^[A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүІіҺһ][A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүІіҺһ\-' ]{1,59}$/;
 const HOUSE_RE = /^\d{1,4}([А-Яа-яA-Za-z]|\/\d{1,3})?$/;
 const APT_RE = /^\d{1,4}$/;
+// Формат кадастрового номера здания не подтверждён: проверяем мягко, чтобы не отказывать верным номерам.
+const CAD_RE = /^\d[\d:\-]{5,29}$/;
 function digitsOf(s) { return String(s || '').replace(/\D/g, ''); }
 function phone10(raw) {
   let d = digitsOf(raw);
@@ -1983,9 +2273,11 @@ function alauGuard(id) {
   return 'screen-auth';
 }
 function alauOnShow(id) {
-  renderVote();
   fillRelDates(); fillApt();
   if (id === 'screen-tickets') renderTickets();
+  if (id === 'screen-calendar') renderCalendar();
+  if (id === 'screen-chat') renderChatScreen();
+  else if (chatDictating || botListening) stopAllMics();
   if (id === 'screen-profile') renderProfile();
 }
 
@@ -2073,12 +2365,12 @@ function openRegister(editing) {
   $('reg-iin').value = u.iin || '';
   sel.value = u.city || 'Семей';
   onCityChange();
-  $('reg-street').value = u.street || ''; $('reg-house').value = u.house || ''; $('reg-apt').value = u.apt || '';
+  $('reg-street').value = u.street || ''; $('reg-house').value = u.house || ''; $('reg-apt').value = u.apt || ''; $('reg-cad').value = u.cad || '';
   const ph = currentPhone() || '';
   $('reg-phone').value = ph ? fmtFull(ph.slice(1)) : '';
   $('reg-back').style.display = editing ? 'block' : 'none';
   $('reg-title').textContent = editing ? 'Изменить анкету' : 'Анкета жильца';
-  ['reg-last','reg-first','reg-mid','reg-iin','reg-city','reg-street','reg-house','reg-apt'].forEach(f => markBad(f, ''));
+  ['reg-last','reg-first','reg-mid','reg-iin','reg-city','reg-street','reg-house','reg-apt','reg-cad'].forEach(f => markBad(f, ''));
   geoFix = null; $('geo-save').checked = (u.lat != null); setGeoStatus('');
   onIinInput();
 }
@@ -2105,7 +2397,8 @@ function saveProfile() {
   const v = {
     last: cleanName($('reg-last').value), first: cleanName($('reg-first').value), mid: cleanName($('reg-mid').value),
     iin: digitsOf($('reg-iin').value), city: $('reg-city').value,
-    street: $('reg-street').value.trim(), house: $('reg-house').value.trim().replace(/\s+/g, ''), apt: $('reg-apt').value.trim()
+    street: $('reg-street').value.trim(), house: $('reg-house').value.trim().replace(/\s+/g, ''), apt: $('reg-apt').value.trim(),
+    cad: $('reg-cad').value.trim().replace(/\s+/g, '')
   };
   let ok = true;
   const chk = (id, cond, msg) => { markBad(id, cond ? '' : msg); if (!cond) ok = false; };
@@ -2117,6 +2410,7 @@ function saveProfile() {
   chk('reg-street', v.street.length >= 2, 'Укажите улицу');
   chk('reg-house', HOUSE_RE.test(v.house), 'Укажите номер дома, например 12, 12А или 12/1');
   chk('reg-apt', APT_RE.test(v.apt), 'Укажите номер квартиры (цифры)');
+  chk('reg-cad', !v.cad || CAD_RE.test(v.cad), 'Кадастровый номер: цифры, дефисы или двоеточия (6–30 символов)');
   if (!ok) { toast('Проверьте выделенные поля'); const bad = document.querySelector('#screen-register .bad'); if (bad) bad.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   const phone = currentPhone();
   if (!phone) { showScreen('screen-auth'); return; }
@@ -2156,6 +2450,7 @@ function renderProfile() {
   $('pf-phone').textContent = fmtFull(u.phone.slice(1));
   $('pf-city').textContent = u.city;
   $('pf-addr').textContent = u.street + ', д. ' + u.house + ', кв. ' + u.apt;
+  $('pf-cad').textContent = u.cad || 'не указан';
   renderHomeMap(u);
 }
 
@@ -2408,53 +2703,143 @@ function homeClear() {
 }
 
 
-// ===== ГОЛОСОВАНИЕ: домофон (один объект — все экраны рисуются из него) =====
-const LS_VOTES = 'alauDemoVotes';
-const VOTE = { id: 'intercom', status: 'open', base: { yes: 34, no: 20 }, total: 87, endsInDays: 3 };
+// ===== РЕЕСТР ТИПИЧНЫХ СИТУАЦИЙ МКД: список + всплывающее окно с памяткой =====
+// Справочные памятки общего характера, не юридическая консультация. Телефоны служб проверьте для своего города.
+const SIT_GROUPS = [
+  ['danger', '🚨 Опасные ситуации'],
+  ['accident', '💧 Аварии и сбои'],
+  ['house', '🏢 Дом и двор'],
+  ['org', '📄 Организационные вопросы'],
+];
+const SIT_LEVELS = { emergency: ['Опасно', '#c62828', '#fdecea'], urgent: ['Срочно', '#e65100', '#fff3e0'], normal: ['Обычная', '#00695c', '#e0f2f1'], info: ['Справка', '#3949ab', '#e8eaf6'] };
+const SITUATIONS = [
+  { id: 'gas', grp: 'danger', icon: '⚠️', level: 'emergency', title: 'Запах газа', kw: '(?<![а-я])газ(?![а-я])|пахнет газом|утечка газа|газом', cat: 'safety',
+    now: ['Не включайте и не выключайте свет и электроприборы, не курите, не зажигайте огонь.', 'Откройте окна и двери, перекройте кран газа, если это безопасно.', 'Выйдите из квартиры и предупредите соседей стуком, а не звонком в дверь.', 'Позвоните из безопасного места в газовую службу или на 112.'],
+    next: ['Не возвращайтесь, пока не разрешит аварийная служба.', 'Сообщите председателю ОСИ: нужно проверить подъезд и подвал.'],
+    call: [['104', 'Газовая служба'], ['112', 'Единая служба спасения']] },
+  { id: 'fire', grp: 'danger', icon: '🔥', level: 'emergency', title: 'Пожар или задымление', kw: 'пожар|(?<![а-я])дым|(?<!не )горит(?![а-я])|гарью|запах гари', cat: 'safety',
+    now: ['Позвоните на 101 или 112 и назовите адрес, подъезд, этаж.', 'Покиньте помещение, закройте за собой дверь, не пользуйтесь лифтом.', 'При сильном дыме пригнитесь, закройте нос и рот мокрой тканью.', 'Предупредите соседей, не возвращайтесь за вещами.'],
+    next: ['Дождитесь пожарных на улице и сообщите, остался ли кто-то внутри.', 'Сообщите председателю ОСИ, чтобы проверили сети и общие зоны.'],
+    call: [['101', 'Пожарная служба'], ['112', 'Единая служба спасения']] },
+  { id: 'safety', grp: 'danger', icon: '🛡️', level: 'urgent', title: 'Посторонние, взлом, вандализм', kw: 'посторонн|подозрител|взлом|вандал|кража|драка|хулиган', cat: 'safety',
+    now: ['Не вступайте в конфликт, держите дистанцию.', 'Если есть угроза людям или имуществу, позвоните в полицию.', 'Запомните приметы и время, сделайте фото или видео с безопасного расстояния.'],
+    next: ['Сообщите председателю ОСИ и оставьте заявку: проверят замки и освещение.', 'Предложите вопрос видеонаблюдения на повестку собрания.'],
+    call: [['102', 'Полиция'], ['112', 'Единая служба спасения']] },
+  { id: 'leak', grp: 'accident', icon: '💧', level: 'urgent', title: 'Протечка или залив соседей', kw: 'протеч|залив|затопил|затопля|течет с потолка|топят|капает с потолка', cat: 'water',
+    now: ['Перекройте вентили воды в своей квартире, если протечка у вас.', 'Если вода у розеток или проводки, отключите электричество в этой зоне.', 'Сообщите диспетчеру или в аварийную службу, предупредите соседей снизу.', 'Сфотографируйте и снимите на видео следы воды и повреждения.'],
+    next: ['Составьте акт о заливе с представителем ОСИ и соседями.', 'Сохраните фото, чеки и оценку ущерба.', 'Оставьте заявку, чтобы проверили стояк и общедомовые сети.'],
+    call: [] },
+  { id: 'nowater', grp: 'accident', icon: '🚰', level: 'urgent', title: 'Нет воды или прорыв трубы', kw: 'нет воды|без воды|прорыв|порвало труб|отключили воду|нет горячей|нет холодной', cat: 'water',
+    now: ['Узнайте у соседей и в чате дома, плановое ли это отключение.', 'При прорыве перекройте вентили на вводе в квартиру.', 'Сообщите диспетчеру или в аварийную службу, укажите подъезд и этаж.'],
+    next: ['Запасите воду, если отключение затягивается.', 'Оставьте заявку и отметьте, пропала горячая вода, холодная или обе.'],
+    call: [] },
+  { id: 'sewer', grp: 'accident', icon: '🚽', level: 'urgent', title: 'Засор канализации или запах', kw: 'засор|канализац|запах из|вонь|унитаз не|подтоп', cat: 'water',
+    now: ['Не сливайте воду и не пользуйтесь санузлом, если канализация поднимается.', 'Предупредите соседей на нижних этажах.', 'Сообщите диспетчеру: общий засор стояка чистит обслуживающая организация.'],
+    next: ['Оставьте заявку с описанием и временем начала проблемы.', 'Если засор только в вашей квартире, нужен сантехник.'],
+    call: [] },
+  { id: 'power', grp: 'accident', icon: '💡', level: 'urgent', title: 'Нет света или проблемы с электричеством', kw: 'нет света|выбило|подъезд темн|не горит свет|электричеств|искрит|перегорел', cat: 'electric',
+    now: ['Проверьте автомат в квартирном щитке.', 'Если света нет во всём подъезде или доме, сообщите диспетчеру.', 'Не трогайте оголённые провода и не открывайте общий щиток.', 'Если искрит или пахнет гарью, звоните на 112 или 101.'],
+    next: ['Оставьте заявку: что не работает, где именно, с какого времени.'],
+    call: [['112', 'Единая служба спасения']] },
+  { id: 'lift', grp: 'accident', icon: '🛗', level: 'urgent', title: 'Лифт застрял или не работает', kw: 'лифт', cat: 'lift',
+    now: ['Если вы внутри, нажмите кнопку связи с диспетчером и сохраняйте спокойствие.', 'Не раздвигайте двери и не пытайтесь выбраться сами.', 'Если связи нет, позвоните диспетчеру или на 112.', 'Если лифт просто не вызывается, оставьте заявку.'],
+    next: ['Сообщите председателю ОСИ, если лифт стоит больше суток.', 'Для маломобильных жильцов уточните сроки ремонта.'],
+    call: [['112', 'Единая служба спасения']] },
+  { id: 'heat', grp: 'accident', icon: '🔥', level: 'urgent', title: 'Холодные батареи, нет отопления', kw: 'батаре|отоплен|холодно в|не греет|холодные', cat: 'heat',
+    now: ['Проверьте, горячие ли батареи у соседей.', 'Измерьте и запишите температуру в комнате.', 'Оставьте заявку или позвоните диспетчеру и назовите квартиру и этаж.'],
+    next: ['Попросите зафиксировать акт о нарушении температуры.', 'Если отопление не работает во всём доме, вопрос идёт к председателю ОСИ.'],
+    call: [] },
+  { id: 'roof', grp: 'accident', icon: '🏚️', level: 'normal', title: 'Течёт кровля, сырость и плесень', kw: 'кровл|крыша течет|сырост|плесен|мокрое пятно|трещин', cat: 'mkd',
+    now: ['Сфотографируйте пятна и дату, повторите съёмку через несколько дней.', 'Уберите ценные вещи от стены или потолка, подставьте ёмкость.', 'Оставьте заявку и приложите фото.'],
+    next: ['Попросите комиссионный осмотр и акт.', 'Если проблема повторяется, внесите вопрос о ремонте на повестку собрания.'],
+    call: [] },
+  { id: 'common', grp: 'house', icon: '🚪', level: 'normal', title: 'Поломка в подъезде', kw: 'подъезд|лестниц|перил|дверь в подъезд|окно в подъезд|ступен|почтов', cat: 'mkd',
+    now: ['Опишите, что сломано, и в каком подъезде, на каком этаже.', 'Если есть риск травмы, поставьте предупреждение и сообщите диспетчеру.', 'Оставьте заявку и приложите фото.'],
+    next: ['Это общее имущество: ремонт организует ОСИ.', 'Если нужны деньги, вопрос выносится на собрание.'],
+    call: [] },
+  { id: 'trash', grp: 'house', icon: '🗑️', level: 'normal', title: 'Мусор: контейнеры и мусоропровод', kw: 'мусор|контейнер|мусоропровод|свалка|вывоз', cat: 'mkd',
+    now: ['Не оставляйте мешки у контейнеров и в подъезде.', 'Оставьте заявку с адресом площадки и фото.'],
+    next: ['Если вывоз срывается, председатель ОСИ обращается к подрядчику.'],
+    call: [] },
+  { id: 'parking', grp: 'house', icon: '🚗', level: 'normal', title: 'Парковка и перекрытый проезд', kw: 'парковк|перекрыл проезд|заблокир|двор.*машин|машина.*двор|шлагбаум', cat: 'other',
+    now: ['Если проезд для спецтранспорта перекрыт, сразу сообщите в полицию или на 112.', 'Сфотографируйте автомобиль и номер.', 'Оставьте заявку председателю ОСИ.'],
+    next: ['Вопрос правил парковки во дворе вносится на повестку собрания.'],
+    call: [['102', 'Полиция']] },
+  { id: 'noise', grp: 'house', icon: '🔊', level: 'normal', title: 'Шум от соседей', kw: 'шум|громко|музык|топают|ремонт ночью|орут', cat: 'other',
+    now: ['Спокойно поговорите с соседями, зачастую этого достаточно.', 'Запишите даты и время нарушений.', 'Если нарушение идёт в тихие часы, вызовите полицию.'],
+    next: ['Оставьте письменное обращение председателю ОСИ.', 'Повторяющиеся нарушения фиксируйте актом.'],
+    call: [['102', 'Полиция']] },
+  { id: 'meeting', grp: 'org', icon: '👥', level: 'info', title: 'Общее собрание и голосование по вопросам дома', kw: 'голосован|повестк|собрание собственников|кворум', cat: 'meeting', go: 'agenda',
+    now: ['Вопрос можно внести на повестку собрания в чате дома, вкладка «Повестка».', 'Формулируйте вопрос так, чтобы на него можно было ответить «за» или «против».'],
+    next: ['Дату и повестку объявляет председатель ОСИ.', 'Итоги голосования оформляются протоколом, а не сообщением в мессенджере.'],
+    call: [] },
+  { id: 'bill', grp: 'org', icon: '🧾', level: 'info', title: 'Вопрос по квитанции или начислениям', kw: 'квитанци|начислен|тариф|платеж|переплат|задолженност', cat: 'other',
+    now: ['Сверьте показания счётчиков и тариф в квитанции.', 'Запросите расшифровку начислений у ОСИ или поставщика.'],
+    next: ['Подайте письменное обращение с номером лицевого счёта.', 'Сохраните копии квитанций и платежей.'],
+    call: [] },
+];
+function sitById(id) { return SITUATIONS.find(s => s.id === id); }
+function sitFind(text) {
+  const x = String(text || '').toLowerCase().replace(/ё/g, 'е');
+  return SITUATIONS.find(s => new RegExp(s.kw).test(x)) || null;
+}
+function sitPill(level) { const l = SIT_LEVELS[level]; return '<span class="sit-pill" style="color:' + l[1] + ';background:' + l[2] + ';">' + l[0] + '</span>'; }
+function sitListHtml(q, inline) {
+  const x = String(q || '').toLowerCase().replace(/ё/g, 'е').trim();
+  let html = '', n = 0;
+  SIT_GROUPS.forEach(([g, label]) => {
+    const rows = SITUATIONS.filter(s => s.grp === g && (!x || s.title.toLowerCase().replace(/ё/g, 'е').includes(x) || new RegExp(s.kw).test(x)));
+    if (!rows.length) return;
+    n += rows.length;
+    html += '<div class="sit-group">' + label + '</div>' + rows.map(s => '<button class="sit-row" data-sit="' + s.id + '" onclick="openSituations(this.dataset.sit)"><span class="sit-icon">' + s.icon + '</span><span class="sit-title">' + escHtml(s.title) + '</span>' + sitPill(s.level) + '</button>').join('');
+  });
+  if (!n) html = '<div class="sit-empty">Ничего не найдено. Опишите ситуацию заявкой или спросите помощника.</div>';
+  return html;
+}
+function renderSituations() {
+  const box = $('sit-inline'); if (!box) return;
+  box.innerHTML = '<div class="sit-hint">Типичные ситуации в многоквартирном доме. Нажмите, чтобы открыть памятку.</div>' + sitListHtml('', true);
+}
+let sitCurrent = null;
+function sitFilter(v) { $('sit-body').innerHTML = sitListHtml(v); }
+function openSituations(id) {
+  const s = id ? sitById(id) : null;
+  sitCurrent = s ? s.id : null;
+  const body = $('sit-body'), title = $('sit-title'), sub = $('sit-sub'), search = $('sit-search-wrap');
+  if (!s) {
+    title.textContent = '🚨 Типичные ситуации'; sub.textContent = 'Реестр памяток: что делать сейчас и что дальше.';
+    search.style.display = 'block'; $('sit-search').value = '';
+    body.innerHTML = sitListHtml('');
+  } else {
+    title.textContent = s.icon + ' ' + s.title; sub.innerHTML = sitPill(s.level);
+    search.style.display = 'none';
+    const li = a => a.map(t => '<li>' + escHtml(t) + '</li>').join('');
+    let h = '';
+    if (s.level === 'emergency') h += '<div class="sit-alarm">При угрозе жизни сначала звоните 112, потом читайте дальше.</div>';
+    h += '<div class="sit-h">Что делать сейчас</div><ol class="sit-ol">' + li(s.now) + '</ol>';
+    h += '<div class="sit-h">Что дальше</div><ul class="sit-ul">' + li(s.next) + '</ul>';
+    if (s.call.length) h += '<div class="sit-calls">' + s.call.map(c => '<a class="tkt-btn sit-call" href="tel:' + c[0] + '">📞 ' + c[0] + ' · ' + escHtml(c[1]) + '</a>').join('') + '</div>';
+    h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="sitMakeTicket()">' + (s.go ? '📋 Внести вопрос на повестку' : '🔧 Создать заявку') + '</button><button class="tkt-btn" onclick="openSituations()">← Все ситуации</button></div>';
+    h += '<div class="sit-note">Памятка носит справочный характер. Номера служб проверьте для вашего города.</div>';
+    body.innerHTML = h;
+  }
+  $('sit-modal').classList.add('open');
+  body.scrollTop = 0;
+}
+function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; }
+function sitMakeTicket() {
+  const s = sitById(sitCurrent); if (!s) return;
+  closeSituations();
+  if (s.go === 'agenda') { showScreen('screen-chat'); switchChatTab('agenda'); showAgendaModal(); return; }
+  openModuleVoice(s.cat, s.icon + ' ' + s.title, 'Уважаемый житель квартиры номер {apt}. Опишите ситуацию: где именно, что произошло и когда.', 'Реестр ситуаций', 'Ситуация: ' + s.title + '.');
+}
+// Опасные ситуации всплывают сами, когда о них написано в заявке или сказано помощнику.
+function sitAutoPop(text) {
+  const s = sitFind(text);
+  if (s && s.level === 'emergency') { openSituations(s.id); return true; }
+  return false;
+}
 function ruPlural(n, a, b, c) { n = Math.abs(n) % 100; const k = n % 10; return (n > 10 && n < 20) ? c : k === 1 ? a : (k >= 2 && k <= 4) ? b : c; }
-function voteMine() { const p = currentPhone(); if (!p) return null; return (lsGet(LS_VOTES, {})[p] || {})[VOTE.id] || null; }
-function voteTally() {
-  const mine = voteMine();
-  const yes = VOTE.base.yes + (mine === 'yes' ? 1 : 0), no = VOTE.base.no + (mine === 'no' ? 1 : 0);
-  return { yes, no, voted: yes + no, rest: VOTE.total - yes - no, mine };
-}
-function voteMeta() {
-  const d = new Date(Date.now() + VOTE.endsInDays * 864e5);
-  const dm = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
-  return 'до ' + dm + ' · осталось ' + VOTE.endsInDays + ' ' + ruPlural(VOTE.endsInDays, 'день', 'дня', 'дней');
-}
-function castVote(choice) {
-  const p = currentPhone(); if (!p) return;
-  const all = lsGet(LS_VOTES, {}); all[p] = all[p] || {};
-  if (choice) all[p][VOTE.id] = choice; else delete all[p][VOTE.id];
-  lsSet(LS_VOTES, all);
-  renderVote();
-  toast(choice ? 'Голос записан только в этом браузере (демо)' : 'Голос отозван');
-}
-function renderVote() {
-  const t = voteTally(), pct = n => t.voted ? Math.round(n * 100 / t.voted) : 0;
-  const yp = pct(t.yes), np = t.voted ? 100 - yp : 0, C = 175.9;
-  const set = (k, fn) => document.querySelectorAll('[data-vote="' + k + '"]').forEach(fn);
-  const txt = (k, v) => set(k, e => { e.textContent = v; });
-  txt('meta', voteMeta());
-  txt('yes-pct', yp + '%'); txt('no-pct', np + '%');
-  set('yes-bar', e => { e.style.width = yp + '%'; }); set('no-bar', e => { e.style.width = np + '%'; });
-  const yl = C * yp / 100, nl = C * np / 100;
-  set('yes-arc', e => { e.setAttribute('stroke-dasharray', yl.toFixed(1) + ' ' + C); e.setAttribute('stroke-dashoffset', '44'); });
-  set('no-arc', e => { e.setAttribute('stroke-dasharray', nl.toFixed(1) + ' ' + C); e.setAttribute('stroke-dashoffset', String(44 - yl)); });
-  txt('voted-n', t.voted); txt('total-n', VOTE.total);
-  txt('yes-leg', 'За — ' + t.yes + ' кв. (' + yp + '%)'); txt('no-leg', 'Против — ' + t.no + ' кв. (' + np + '%)');
-  txt('rest-leg', 'Не голосовали — ' + t.rest + ' кв.');
-  txt('status-full', 'Открыто · ' + voteMeta().replace('до ', 'до ') + ' · проголосовали ' + t.voted + ' из ' + VOTE.total);
-  const label = t.mine === 'yes' ? 'За' : t.mine === 'no' ? 'Против' : '';
-  txt('status-line', '⏳ Голосование открыто — ' + voteMeta() + ' (демонстрационные данные)');
-  txt('mine-text', t.mine ? 'Ваш голос: ' + label + ' (демо)' : 'Ваш голос ещё не учтён');
-  set('pill', e => { e.textContent = t.mine ? 'Вы ответили' : 'Требует ответа'; e.style.background = t.mine ? '#e0f2f1' : '#e8eaf6'; e.style.color = t.mine ? '#1a8a7a' : '#3949ab'; });
-  set('btn-yes', e => { e.style.outline = t.mine === 'yes' ? '2px solid var(--teal)' : 'none'; });
-  set('btn-no', e => { e.style.outline = t.mine === 'no' ? '2px solid #c62828' : 'none'; });
-  set('btn-clear', e => { e.style.display = t.mine ? 'block' : 'none'; });
-  txt('mine-note', t.mine ? 'Ваш голос: ' + label + '. Он сохранён только в этом браузере и никуда не отправлен.' : 'Демо: ваш голос будет виден только на этом устройстве.');
-}
 
 // ----- запуск -----
 (function alauInit() {
