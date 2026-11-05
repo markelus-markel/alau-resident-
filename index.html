@@ -291,6 +291,7 @@
   .sit-photo img { width:100%; height:100%; object-fit:cover; display:block; }
   .sit-photo button { position:absolute; top:2px; right:2px; width:20px; height:20px; border:none; border-radius:50%; background:rgba(0,0,0,.6); color:#fff; font-size:13px; line-height:1; cursor:pointer; }
   .tkt-btn.rec { background:#fdecea; border-color:#c62828; color:#c62828; }
+  .sit-ask-hint { font-size:12px; color:var(--text-muted); margin-bottom:6px; line-height:1.4; }
   .sit-hint { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
   .sit-group { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin:12px 0 6px; }
   .sit-row { display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px; margin-bottom:6px; background:#fff; border:2px solid #eee; border-radius:12px; cursor:pointer; text-align:left; font-size:14px; }
@@ -1044,7 +1045,10 @@
     <div class="modal-handle"></div>
     <div class="modal-title" id="sit-title">🚨 Типичные ситуации</div>
     <div class="modal-sub" id="sit-sub"></div>
-    <div id="sit-search-wrap" style="margin-bottom:8px;"><input id="sit-search" type="text" placeholder="Поиск: протечка, лифт, шум…" oninput="sitFilter(this.value)" style="width:100%;border:2px solid #e8e8e8;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;"></div>
+    <div id="sit-search-wrap" style="margin-bottom:8px;">
+      <div class="sit-ask-hint">Что случилось? Наберите пару слов: появятся подсказки из реестра. Или спросите голосом.</div>
+      <div style="display:flex;gap:8px;"><input id="sit-search" type="text" placeholder="Например: капает с потолка, застрял лифт…" oninput="sitFilter(this.value)" style="flex:1;min-width:0;border:2px solid #e8e8e8;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;"><button class="tkt-btn" id="sit-vmic" onclick="sitVoice()" style="flex:none;width:52px;font-size:18px;" aria-label="Спросить голосом">🎙️</button></div>
+    </div>
     <div id="sit-body" style="overflow-y:auto;flex:1;"></div>
     <button class="modal-submit" style="margin-top:10px;" onclick="closeSituations()">Закрыть</button>
   </div>
@@ -1909,7 +1913,7 @@ function sendChatMsg(text, via) {
 let chatDictating = false, botListening = false;
 function stopAllMics() {
   vrCancel(); chatDictating = false; botListening = false;
-  ['chat-mic', 'bot-mic', 'sit-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
+  ['chat-mic', 'bot-mic', 'sit-mic', 'sit-vmic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
 }
 function dictate(inp, btnId, onText) {
   if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
@@ -2739,16 +2743,31 @@ function sitFind(text) {
   return SITUATIONS.find(s => new RegExp(s.kw).test(x)) || null;
 }
 function sitPill(level) { const l = SIT_LEVELS[level]; return '<span class="sit-pill" style="color:' + l[1] + ';background:' + l[2] + ';">' + l[0] + '</span>'; }
+const sitNorm = x => String(x || '').toLowerCase().replace(/ё/g, 'е').trim();
+function sitRank(q) {
+  const x = sitNorm(q); if (!x) return [];
+  const toks = x.split(/[^а-яa-z0-9]+/).filter(w => w.length >= 3);
+  return SITUATIONS.map(s => {
+    let sc = 0; const title = sitNorm(s.title), hay = title + ' ' + s.kw;
+    try { if (new RegExp(s.kw).test(x)) sc += 5; } catch (e) {}
+    if (title.includes(x)) sc += 3;
+    toks.forEach(w => { const st = w.length > 5 ? w.slice(0, w.length - 2) : w; if (hay.includes(st)) sc += 1; });
+    return { s, sc };
+  }).filter(o => o.sc > 0).sort((a, b) => b.sc - a.sc).map(o => o.s);
+}
+function sitRow(s) { return '<button class="sit-row" data-sit="' + s.id + '" onclick="openSituations(this.dataset.sit)"><span class="sit-icon">' + s.icon + '</span><span class="sit-title">' + escHtml(s.title) + '</span>' + sitPill(s.level) + '</button>'; }
 function sitListHtml(q, inline) {
-  const x = String(q || '').toLowerCase().replace(/ё/g, 'е').trim();
-  let html = '', n = 0;
+  const x = sitNorm(q);
+  if (x) {
+    const rows = sitRank(x);
+    if (!rows.length) return '<div class="sit-empty">В реестре ничего не нашлось.' + (inline ? '' : '<br><button class="tkt-btn chk" style="margin-top:10px;" onclick="sitAskFree()">🤖 Спросить помощника</button>') + '</div>';
+    return '<div class="sit-group">Подсказки из реестра · ' + rows.length + '</div>' + rows.map(sitRow).join('');
+  }
+  let html = '';
   SIT_GROUPS.forEach(([g, label]) => {
-    const rows = SITUATIONS.filter(s => s.grp === g && (!x || s.title.toLowerCase().replace(/ё/g, 'е').includes(x) || new RegExp(s.kw).test(x)));
-    if (!rows.length) return;
-    n += rows.length;
-    html += '<div class="sit-group">' + label + '</div>' + rows.map(s => '<button class="sit-row" data-sit="' + s.id + '" onclick="openSituations(this.dataset.sit)"><span class="sit-icon">' + s.icon + '</span><span class="sit-title">' + escHtml(s.title) + '</span>' + sitPill(s.level) + '</button>').join('');
+    const rows = SITUATIONS.filter(s => s.grp === g);
+    if (rows.length) html += '<div class="sit-group">' + label + '</div>' + rows.map(sitRow).join('');
   });
-  if (!n) html = '<div class="sit-empty">Ничего не найдено. Опишите ситуацию заявкой или спросите помощника.</div>';
   return html;
 }
 function renderSituations() {
@@ -2789,6 +2808,24 @@ function openSituations(id) {
   body.scrollTop = 0;
 }
 function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; sitPhotos = []; stopAllMics(); try { speechSynthesis.cancel(); } catch (e) {} }
+function sitVoice() {
+  if (botListening) { vrStop(); return; }
+  const inp = $('sit-search'); if (!inp) return;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  dictate(inp, 'sit-vmic', txt => { inp.value = txt; sitFilter(txt); sitVoiceAnswer(txt); });
+}
+function sitVoiceAnswer(txt) {
+  const rows = sitRank(txt);
+  if (rows.length) {
+    const s = rows[0];
+    speak('Похоже, речь о ситуации: ' + s.title + '. Что делать сейчас. ' + s.now.join(' ') + ' Откройте памятку, чтобы отправить заявку.');
+  } else speak('В реестре не нашлось. Нажмите «Спросить помощника», и я отвечу в чате.');
+}
+function sitAskFree() {
+  const q = ($('sit-search') && $('sit-search').value || '').trim();
+  closeSituations(); showScreen('screen-chat'); switchChatTab('bot');
+  botAsk(q || 'что ты умеешь', 'text');
+}
 function sitMic() {
   if (botListening) { vrStop(); return; }
   const inp = $('sit-text'); if (!inp) return;
