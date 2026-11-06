@@ -9,6 +9,8 @@
 
 ## Проверки (запускай сам, без вопросов)
 - `python3 tests/run-all.py` запускает все e2e-тесты (Playwright, headless Chrome) и печатает итог.
+- `python3 tests/validate-registry.py` проверяет `registry/situations.json`; после правки `SITUATIONS` в `index.html` запусти `node tools/export-registry.js`.
+- `python3 tests/golden/run-golden.py` замеряет точность определения ситуации по золотому набору (пороги: top-1 ≥ 90 %, top-3 ≥ 98 %, опасные 100 %).
 - Отдельный тест: `python3 tests/e2e/e2e_sit.py <папка_скриншотов>`.
 - Не пиши «готово/PASS» без реального запуска и вывода. Не удаляй и не ослабляй тесты ради зелёного результата.
 - Новая функция — новая проверка в `tests/e2e/`. Удалённый функционал — убрать его проверки.
