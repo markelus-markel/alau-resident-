@@ -305,6 +305,17 @@
   .sit-ol li, .sit-ul li { margin-bottom:5px; }
   .sit-calls { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
   .sit-call { text-decoration:none; color:#c62828; border-color:#c62828; text-align:center; }
+  .bl-card { background:#fff; border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px; }
+  .bl-row { display:flex; align-items:center; gap:10px; }
+  .bl-sum { font-size:17px; font-weight:800; margin-left:auto; white-space:nowrap; }
+  .bl-row { flex-wrap:wrap; }
+  .bl-badge { font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; background:#eef0fb; color:#3949ab; }
+  .bl-badge.paid { background:#e6f6ec; color:#1b7f3b; }
+  .bl-badge.late { background:#fdeaea; color:#c0392b; }
+  .bl-auto { border-color:#f0b400 !important; background:#fffbe6; }
+  .bl-miss { border-color:#e0a0a0 !important; background:#fff5f5; }
+  .bl-banner { font-size:13px; line-height:1.4; border-radius:10px; padding:10px 12px; margin-bottom:12px; background:#eef0fb; color:#27308a; display:none; }
+  .bl-total { background:var(--gray-card); border-radius:var(--radius); padding:12px 16px; font-size:14px; font-weight:700; }
   .sit-note { font-size:11px; color:var(--text-muted); margin-top:12px; line-height:1.4; }
   .chip { padding:6px 11px; border:2px solid #e0e0e0; border-radius:16px; background:#fff; font-size:12px; font-weight:600; color:#555; cursor:pointer; }
   .chip.active { background:var(--teal); border-color:var(--teal); color:#fff; }
@@ -457,6 +468,7 @@
       <button class="quick-btn" onclick="showScreen('screen-voice')"><span class="quick-icon">🎙️</span><span class="quick-label">Голос. помощник</span></button>
       <button class="quick-btn" onclick="showScreen('screen-tickets')"><span class="quick-icon">📋</span><span class="quick-label">Мои заявки</span></button>
       <button class="quick-btn" onclick="showScreen('screen-contacts')"><span class="quick-icon">📞</span><span class="quick-label">Контакты</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-bills')"><span class="quick-icon">🧾</span><span class="quick-label">Счета</span></button>
       <button class="quick-btn" onclick="showScreen('screen-profile')"><span class="quick-icon">👤</span><span class="quick-label">Мой профиль</span></button>
     </div>
 
@@ -594,6 +606,27 @@
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
     <button class="nav-btn active" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+  </nav>
+</div>
+
+<!-- =================== BILLS =================== -->
+<div class="screen" id="screen-bills">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Счета</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="contacts-content">
+    <button class="modal-submit" id="bl-add" onclick="blOpen(null)">＋ Добавить счёт</button>
+    <div class="bl-total" id="bl-total" style="margin-top:12px;"></div>
+    <div id="bl-list" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
+    <div class="sit-note">Счета, фото и суммы хранятся только на этом устройстве. Поля счёта распознаются с фото на вашем устройстве (фото никуда не отправляется), вы проверяете и подтверждаете. Приложение не проводит платёж и не видит его: оплата выполняется в Kaspi.kz, отметку «оплачен» ставите вы.</div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
   </nav>
 </div>
 
@@ -955,6 +988,48 @@
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- =================== BILL MODALS =================== -->
+<div class="modal-overlay" id="bl-modal">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="bl-title">Счёт</div>
+    <div class="modal-sub">Сфотографируйте счёт: поля заполнятся сами, останется проверить и подтвердить.</div>
+    <div class="bl-banner" id="bl-banner"></div>
+    <div class="modal-field"><label>Фото счёта</label>
+      <div class="sit-photos" id="bl-photo-box"></div>
+      <label class="tkt-btn" style="display:block;text-align:center;cursor:pointer;">📷 Сфотографировать или выбрать<input id="bl-file" type="file" accept="image/*" capture="environment" hidden onchange="blAddPhoto(this.files)"></label>
+    </div>
+    <div class="modal-field"><label>Вид услуги</label><select class="modal-input" id="bl-kind"></select></div>
+    <div class="modal-field"><label>Период</label><input class="modal-input" id="bl-period" type="month"></div>
+    <div class="modal-field"><label>Сумма, ₸</label><input class="modal-input" id="bl-amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="По счёту"></div>
+    <div class="modal-field"><label>Оплатить до</label><input class="modal-input" id="bl-due" type="date"></div>
+    <div class="modal-field"><label>Лицевой счёт (необязательно)</label><input class="modal-input" id="bl-account" type="text" inputmode="numeric" placeholder="Номер из счёта"></div>
+    <button class="modal-submit" onclick="blSave()">Всё верно, сохранить</button>
+    <button class="modal-cancel" id="bl-del" onclick="blDelete()">Удалить счёт</button>
+    <button class="modal-cancel" onclick="blClose()">Отмена</button>
+  </div>
+</div>
+<div class="modal-overlay" id="bl-pay">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Оплата в Kaspi.kz</div>
+    <div class="modal-sub" id="bl-pay-sub"></div>
+    <ol style="font-size:14px;line-height:1.5;padding-left:20px;margin:6px 0 12px;">
+      <li>Откройте приложение Kaspi.kz, раздел «Платежи».</li>
+      <li>Найдите поставщика услуги по виду и вашему городу.</li>
+      <li>Введите лицевой счёт и сумму из счёта.</li>
+      <li>Вернитесь сюда и нажмите «Отметить оплаченным».</li>
+    </ol>
+    <div class="sit-note" style="margin:0 0 12px;">Приложение не проводит платёж и не получает подтверждения от Kaspi: отметку ставите вы.</div>
+    <div class="sit-calls" style="display:flex;gap:8px;margin-bottom:10px;">
+      <button class="tkt-btn" id="bl-copy-acc" onclick="blCopy('acc')">Копировать лицевой счёт</button>
+      <button class="tkt-btn" onclick="blCopy('sum')">Копировать сумму</button>
+    </div>
+    <button class="modal-submit" onclick="blMarkPaid()">Отметить оплаченным</button>
+    <button class="modal-cancel" onclick="blPayClose()">Закрыть</button>
   </div>
 </div>
 
@@ -1736,6 +1811,180 @@ function ctSave() {
 function ctClear() { const id = ctCurrent; ctStore(o => { delete o[id]; }); ctClose(); }
 document.getElementById('ct-modal').addEventListener('click', function (e) { if (e.target === this) ctClose(); });
 
+// ===== СЧЕТА: фото и учёт на устройстве, оплата в Kaspi.kz вручную (D-26) =====
+const LS_BILLS = 'alauDemoBills';
+const BILL_KINDS = [['elec', '⚡ Электричество'], ['water', '💧 Вода и водоотведение'], ['heat', '🔥 Отопление'], ['gas', '🔵 Газ'], ['trash', '🗑️ Вывоз мусора'], ['osi', '🏢 Взносы ОСИ'], ['net', '🌐 Связь и интернет'], ['other', '🧾 Другое']];
+let blCurrent = null, blPhoto = null, blPayId = null;
+function blAll() { const p = currentPhone(); return p ? (lsGet(LS_BILLS, {})[p] || []) : []; }
+function blStore(fn) { const p = currentPhone(); if (!p) return; const all = lsGet(LS_BILLS, {}); all[p] = all[p] || []; fn(all[p]); lsSet(LS_BILLS, all); renderBills(); }
+function blKindName(k) { const x = BILL_KINDS.find(a => a[0] === k); return x ? x[1] : BILL_KINDS[BILL_KINDS.length - 1][1]; }
+function blTodayIso() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function blMoney(n) { return Number(n).toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ₸'; }
+function renderBills() {
+  const list = blAll().slice().sort((a, b) => (a.paid - b.paid) || String(a.due || '9999').localeCompare(String(b.due || '9999')));
+  const today = blTodayIso();
+  const open = list.filter(b => !b.paid);
+  $('bl-total').textContent = list.length ? ('К оплате: ' + open.length + ' ' + (open.length === 1 ? 'счёт' : 'счетов') + (open.length ? ' на ' + blMoney(open.reduce((s, b) => s + (b.amount || 0), 0)) : '')) : 'Счетов пока нет';
+  if (!list.length) { $('bl-list').innerHTML = '<div class="sit-note" style="margin:0;">Добавьте первый счёт: сфотографируйте его и введите сумму и срок оплаты.</div>'; return; }
+  $('bl-list').innerHTML = list.map(b => {
+    const late = !b.paid && b.due && b.due < today;
+    const badge = b.paid ? '<span class="bl-badge paid">оплачен</span>' : late ? '<span class="bl-badge late">просрочен</span>' : '<span class="bl-badge">не оплачен</span>';
+    return '<div class="bl-card" data-id="' + escHtml(b.id) + '"><div class="bl-row" onclick="blOpen(this.parentNode.dataset.id)" style="cursor:pointer;"><span style="font-weight:700;">' + escHtml(blKindName(b.kind)) + '</span>' + badge + '<span class="bl-sum">' + (b.amount ? blMoney(b.amount) : 'сумма не указана') + '</span></div>'
+      + '<div style="font-size:12px;color:var(--text-muted);">' + (b.period ? 'Период: ' + escHtml(b.period) : '') + (b.due ? ' · до ' + escHtml(b.due) : '') + (b.account ? ' · л/с ' + escHtml(b.account) : '') + '</div>'
+      + (b.photo ? '<div class="sit-photos"><div class="sit-photo"><img src="' + b.photo + '" alt="Фото счёта"></div></div>' : '')
+      + (b.paid ? '' : '<div class="bl-row"><button class="tkt-btn chk" data-id="' + escHtml(b.id) + '" onclick="blPayOpen(this.dataset.id)">💳 Оплатить в Kaspi.kz</button></div>') + '</div>';
+  }).join('');
+}
+function blOpen(id) {
+  const b = id ? blAll().find(x => x.id === id) : null;
+  blCurrent = b ? b.id : null; blPhoto = b ? (b.photo || null) : null;
+  $('bl-title').textContent = b ? 'Счёт' : 'Новый счёт';
+  $('bl-kind').innerHTML = BILL_KINDS.map(k => '<option value="' + k[0] + '">' + k[1] + '</option>').join('');
+  $('bl-kind').value = b ? b.kind : 'elec';
+  const now = blTodayIso();
+  $('bl-period').value = b ? (b.period || '') : now.slice(0, 7);
+  $('bl-amount').value = b && b.amount ? b.amount : '';
+  $('bl-due').value = b ? (b.due || '') : '';
+  $('bl-account').value = b ? (b.account || '') : '';
+  $('bl-del').style.display = b ? 'block' : 'none';
+  blOcrSeq++; blBanner(''); blMarks(null);
+  blRenderPhoto(); $('bl-modal').classList.add('open');
+}
+function blClose() { $('bl-modal').classList.remove('open'); blCurrent = null; blPhoto = null; }
+function blRenderPhoto() {
+  $('bl-photo-box').innerHTML = blPhoto ? '<div class="sit-photo" style="width:96px;height:96px;"><img src="' + blPhoto + '" alt="Фото счёта"><button onclick="blDelPhoto()" aria-label="Убрать фото">×</button></div>' : '';
+}
+// Разбор текста счёта: возвращает только найденные поля. Ничего не угадывает.
+const BL_MONTHS = [['январ', 1], ['феврал', 2], ['март', 3], ['апрел', 4], ['ма[йя]', 5], ['июн', 6], ['июл', 7], ['август', 8], ['сентябр', 9], ['октябр', 10], ['ноябр', 11], ['декабр', 12]];
+const BL_KIND_RX = [['elec', /электр|квт\s*[·.\-]?\s*ч/i], ['water', /водоснабж|водоотвед|(холодн|горяч)\w*\s+вод|водоканал/i], ['heat', /отоплен|теплоснабж|тепловая|гкал/i], ['gas', /газоснабж|(^|[^а-яё])газ([^а-яё]|$)/i], ['trash', /вывоз|(^|[^а-яё])тбо([^а-яё]|$)|бытов\w*\s+отход|мусор/i], ['osi', /взнос|(^|[^а-яё])оси([^а-яё]|$)|(^|[^а-яё])кск([^а-яё]|$)|содержани\w+\s+общ/i], ['net', /интернет|телефон|связь/i]];
+function blNum(str) {
+  const m = String(str).match(/\d{1,3}(?:[ \u00a0]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?/);
+  if (!m) return null;
+  const v = Number(m[0].replace(/[ \u00a0]/g, '').replace(',', '.'));
+  return isFinite(v) && v > 0 ? v : null;
+}
+function blParse(text) {
+  const out = {}; const t = String(text || '').replace(/\u00a0/g, ' '); const lines = t.split(/\r?\n/);
+  // вид услуги: берётся ключевое слово, встретившееся раньше всех (заголовок счёта)
+  let best = null;
+  BL_KIND_RX.forEach(k => { const m = t.match(k[1]); if (m && (best === null || m.index < best.i)) best = { k: k[0], i: m.index }; });
+  if (best) out.kind = best.k;
+  // сумма: после «к оплате», затем после «итого»; число из той же или следующей строки
+  for (const rx of [/(?:итого\s*)?к\s*оплате/i, /итого/i]) {
+    for (let i = 0; i < lines.length && out.amount === undefined; i++) {
+      const m = lines[i].match(rx); if (!m) continue;
+      const v = blNum(lines[i].slice(m.index + m[0].length)) || blNum(lines[i + 1] || '');
+      if (v) out.amount = v;
+    }
+    if (out.amount !== undefined) break;
+  }
+  // срок оплаты
+  const d = t.match(/(?:оплатить|оплата|оплачивать|срок\s*оплаты|не\s*позднее)\s*(?:до)?\s*[:\-]?\s*(\d{2})[.\/](\d{2})[.\/](20\d{2})/i);
+  if (d && +d[1] >= 1 && +d[1] <= 31 && +d[2] >= 1 && +d[2] <= 12) out.due = d[3] + '-' + d[2] + '-' + d[1];
+  // лицевой счёт
+  const a = t.match(/(?:лицевой\s*сч[её]т|л\s*[\/.]\s*с|(?:^|\s)лс)\s*[:№#]?\s*(\d[\d ]{3,18}\d)/i);
+  if (a) out.account = a[1].replace(/ /g, '');
+  // период
+  const pm = t.match(new RegExp('(' + BL_MONTHS.map(x => x[0]).join('|') + ')[а-яё]*\\s*(20\\d{2})', 'i'));
+  if (pm) { const mo = BL_MONTHS.find(x => new RegExp('^' + x[0], 'i').test(pm[1])); if (mo) out.period = pm[2] + '-' + String(mo[1]).padStart(2, '0'); }
+  else { const q = t.match(/(?:период|за)\s*:?\s*(0[1-9]|1[0-2])[.\/](20\d{2})/i); if (q) out.period = q[2] + '-' + q[1]; }
+  return out;
+}
+// Распознавание на устройстве (Tesseract.js, русский). Фото не покидает телефон; с CDN грузятся только программа и словарь (около 6 МБ).
+const BL_TESS_SRC = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+const BL_TESS_SRI = 'sha384-GJqSu7vueQ9qN0E9yLPb3Wtpd7OrgK8KmYzC8T1IysG1bcvxvIO4qtYR/D3A991F';
+let blTessP = null;
+function blLoadTess() {
+  if (window.Tesseract) return Promise.resolve(window.Tesseract);
+  if (!blTessP) blTessP = new Promise((res, rej) => {
+    const sc = document.createElement('script'); sc.src = BL_TESS_SRC; sc.integrity = BL_TESS_SRI; sc.crossOrigin = 'anonymous';
+    sc.onload = () => window.Tesseract ? res(window.Tesseract) : rej(new Error('no lib')); sc.onerror = () => { blTessP = null; rej(new Error('load')); };
+    document.head.appendChild(sc);
+  });
+  return blTessP;
+}
+async function blOcrDefault(dataUrl) {
+  const T = await blLoadTess();
+  const w = await T.createWorker('rus', 1, { langPath: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/rus/4.0.0_best_int' });
+  try { const r = await Promise.race([w.recognize(dataUrl), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 120000))]); return r.data.text || ''; }
+  finally { try { await w.terminate(); } catch (e) {} }
+}
+function blBanner(msg) { const b = $('bl-banner'); b.textContent = msg || ''; b.style.display = msg ? 'block' : 'none'; }
+const BL_FIELDS = { kind: 'bl-kind', period: 'bl-period', amount: 'bl-amount', due: 'bl-due', account: 'bl-account' };
+function blMarks(found) {
+  Object.keys(BL_FIELDS).forEach(k => { const el = $(BL_FIELDS[k]); el.classList.remove('bl-auto', 'bl-miss'); if (found) el.classList.add(k in found ? 'bl-auto' : 'bl-miss'); });
+}
+Object.values(BL_FIELDS).forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', () => el.classList.remove('bl-auto', 'bl-miss')); });
+function blShrinkBig(file) {
+  return new Promise(res => {
+    const rd = new FileReader(); rd.onerror = () => res(null);
+    rd.onload = () => { const img = new Image(); img.onerror = () => res(null); img.onload = () => {
+      const k = Math.min(1, 1800 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      try { res(c.toDataURL('image/jpeg', 0.85)); } catch (e) { res(null); }
+    }; img.src = rd.result; };
+    rd.readAsDataURL(file);
+  });
+}
+let blOcrSeq = 0;
+async function blAutofill(file) {
+  const my = ++blOcrSeq; blMarks(null); blBanner('Распознаю счёт на устройстве, подождите…');
+  let text = '';
+  try {
+    const big = await blShrinkBig(file); if (!big) throw new Error('read');
+    text = await (window.BL_OCR || blOcrDefault)(big);
+  } catch (e) { if (my === blOcrSeq) { blBanner('Распознать не удалось (нет сети или программа не загрузилась). Введите данные вручную по счёту.'); blMarks({}); } return; }
+  if (my !== blOcrSeq || !$('bl-modal').classList.contains('open')) return;
+  const f = blParse(text); const n = Object.keys(f).length;
+  if (f.kind) $('bl-kind').value = f.kind;
+  if (f.period) $('bl-period').value = f.period;
+  if (f.amount !== undefined) $('bl-amount').value = f.amount;
+  if (f.due) $('bl-due').value = f.due;
+  if (f.account) $('bl-account').value = f.account;
+  blMarks(f);
+  blBanner(n ? 'Распознано полей: ' + n + ' из 5 (жёлтые). Проверьте, исправьте при необходимости и нажмите «Всё верно, сохранить». Красные поля не распознаны: заполните их по счёту.' : 'Данные на фото не распознаны. Введите их вручную по счёту.');
+}
+async function blAddPhoto(files) {
+  const f = (files || [])[0]; const inp = $('bl-file');
+  if (f && /^image\//.test(f.type)) { const d = await sitShrink(f); if (d) { blPhoto = d; blRenderPhoto(); blAutofill(f); } else toast('Не удалось прочитать фото'); }
+  if (inp) inp.value = ''; blRenderPhoto();
+}
+function blDelPhoto() { blPhoto = null; blRenderPhoto(); }
+function blSave() {
+  const raw = $('bl-amount').value.trim();
+  const amount = raw === '' ? 0 : Number(raw.replace(',', '.'));
+  if (!isFinite(amount) || amount < 0) { toast('Проверьте сумму'); return; }
+  if (!amount && !blPhoto) { toast('Укажите сумму или приложите фото счёта'); return; }
+  const rec = { kind: $('bl-kind').value, period: $('bl-period').value, amount, due: $('bl-due').value, account: $('bl-account').value.trim(), photo: blPhoto || null };
+  const id = blCurrent;
+  blStore(a => {
+    const i = id ? a.findIndex(x => x.id === id) : -1;
+    if (i >= 0) a[i] = Object.assign(a[i], rec); else a.push(Object.assign({ id: 'S-' + Date.now().toString(36), paid: false, created: new Date().toISOString() }, rec));
+  });
+  blClose(); toast('Счёт сохранён на этом устройстве');
+}
+function blDelete() { const id = blCurrent; blStore(a => { const i = a.findIndex(x => x.id === id); if (i >= 0) a.splice(i, 1); }); blClose(); }
+function blPayOpen(id) {
+  const b = blAll().find(x => x.id === id); if (!b) return;
+  blPayId = id;
+  $('bl-pay-sub').textContent = blKindName(b.kind) + (b.amount ? ' · ' + blMoney(b.amount) : '') + (b.account ? ' · л/с ' + b.account : '');
+  $('bl-copy-acc').style.display = b.account ? 'block' : 'none';
+  $('bl-pay').classList.add('open');
+}
+function blPayClose() { $('bl-pay').classList.remove('open'); blPayId = null; }
+function blCopy(what) {
+  const b = blAll().find(x => x.id === blPayId); if (!b) return;
+  const v = what === 'acc' ? b.account : (b.amount ? String(b.amount) : '');
+  if (!v) { toast('Нечего копировать'); return; }
+  try { navigator.clipboard.writeText(v).then(() => toast('Скопировано'), () => toast('Не удалось скопировать: ' + v)); } catch (e) { toast('Не удалось скопировать: ' + v); }
+}
+function blMarkPaid() {
+  const id = blPayId; blStore(a => { const b = a.find(x => x.id === id); if (b) { b.paid = true; b.paidAt = new Date().toISOString(); } });
+  blPayClose(); toast('Отмечено как оплаченный (вами)');
+}
+['bl-modal', 'bl-pay'].forEach(k => document.getElementById(k).addEventListener('click', function (e) { if (e.target === this) (k === 'bl-modal' ? blClose : blPayClose)(); }));
+
 // ===== МАРКЕТПЛЕЙС: реестр категорий и поиск поставщиков =====
 // Реестр расширяется: добавляйте категории в MARKET_CATS, проверенных поставщиков в MARKET_PROVIDERS.
 const MK_GROUPS = [['mat', '🧱 Материалы'], ['srv', '🛠️ Услуги']];
@@ -2389,6 +2638,7 @@ function alauOnShow(id) {
   if (id === 'screen-tickets') renderTickets();
   if (id === 'screen-market') renderMarket();
   if (id === 'screen-contacts') renderContacts();
+  if (id === 'screen-bills') renderBills();
   if (id === 'screen-calendar') renderCalendar();
   if (id === 'screen-chat') renderChatScreen();
   else if (chatDictating || botListening) stopAllMics();
