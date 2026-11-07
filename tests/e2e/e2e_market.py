@@ -44,7 +44,7 @@ with sync_playwright() as p:
     g("showScreen('screen-market')")
     ok('badge counter on category', g("document.querySelector('.mk-cat[data-cat=\"s-clean\"] .mk-cnt').textContent")=='1')
     # extensibility: provider added to registry appears
-    g("MARKET_PROVIDERS.push({id:'t1',cats:['s-legal'],name:'ТестЮр',phone:'+77010000000',desc:'тест'}); renderMarket()")
+    g("MARKET_PROVIDERS.push({id:'t1',acc:'a1',cats:['s-legal'],name:'ТестЮр',phone:'+77010000000',desc:'тест'}); renderMarket()")
     pg.fill('#mk-search','тестюр'); ok('provider search finds category', g("document.querySelectorAll('#mk-body .mk-cat').length")==1)
     pg.click('.mk-cat'); ok('provider card with tel link', 'ТестЮр' in g("document.getElementById('mk-body2').textContent") and g("!!document.querySelector('#mk-body2 a[href^=\"tel:\"]')"))
     g("mkClose()")

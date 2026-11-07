@@ -1,0 +1,275 @@
+{
+ "about": "Список для приглашения на платформу (D-20 п.5). НЕ показывается жильцам: в выдаче только поставщики с аккаунтом. Источник: OpenStreetMap, выгрузка 07.11.2026, tools/fetch_osm_suppliers.py. Статус всех записей: не проверено. Телефоны из OSM сознательно не берутся.",
+ "source": "OpenStreetMap",
+ "status": "не проверено",
+ "items": [
+  {
+   "id": "osm-node-11443129404",
+   "cats": [
+    "m-finish",
+    "m-plumb",
+    "m-hardware"
+   ],
+   "name": "Almatherm",
+   "address": "",
+   "lat": 50.422888,
+   "lon": 80.246474
+  },
+  {
+   "id": "osm-node-1433617060",
+   "cats": [
+    "m-furniture"
+   ],
+   "name": "Galaxy",
+   "address": "",
+   "lat": 50.39387,
+   "lon": 80.228722
+  },
+  {
+   "id": "osm-node-11379486772",
+   "cats": [
+    "m-finish"
+   ],
+   "name": "Kerama Marazzi",
+   "address": "",
+   "lat": 50.412119,
+   "lon": 80.250849
+  },
+  {
+   "id": "osm-node-1433617554",
+   "cats": [
+    "m-finish",
+    "m-plumb",
+    "m-hardware"
+   ],
+   "name": "Nomad",
+   "address": "",
+   "lat": 50.41167,
+   "lon": 80.2728
+  },
+  {
+   "id": "osm-node-4600284889",
+   "cats": [
+    "m-furniture"
+   ],
+   "name": "А-Элита",
+   "address": "улица Гёте, 25",
+   "lat": 50.417324,
+   "lon": 80.23337
+  },
+  {
+   "id": "osm-node-1433616790",
+   "cats": [
+    "s-realty"
+   ],
+   "name": "Агентство Жил сервис",
+   "address": "",
+   "lat": 50.381131,
+   "lon": 80.241707
+  },
+  {
+   "id": "osm-node-1562635628",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "Ампер",
+   "address": "",
+   "lat": 50.421001,
+   "lon": 80.249459
+  },
+  {
+   "id": "osm-node-10280252409",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "Белый кит",
+   "address": "",
+   "lat": 50.409287,
+   "lon": 80.271645
+  },
+  {
+   "id": "osm-way-47883904",
+   "cats": [
+    "m-furniture"
+   ],
+   "name": "Дизайн Мебель",
+   "address": "улица Спартака, 8А",
+   "lat": 50.402236,
+   "lon": 80.206156
+  },
+  {
+   "id": "osm-node-4311496589",
+   "cats": [
+    "m-furniture"
+   ],
+   "name": "ЕвроМебель",
+   "address": "",
+   "lat": 50.431698,
+   "lon": 80.246767
+  },
+  {
+   "id": "osm-node-1433617061",
+   "cats": [
+    "m-textile"
+   ],
+   "name": "Евротекстиль",
+   "address": "",
+   "lat": 50.393766,
+   "lon": 80.228991
+  },
+  {
+   "id": "osm-node-6798139276",
+   "cats": [
+    "m-finish",
+    "m-plumb",
+    "m-hardware"
+   ],
+   "name": "Любимый дом",
+   "address": "",
+   "lat": 50.446017,
+   "lon": 80.283894
+  },
+  {
+   "id": "osm-node-4311460493",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "Мегастрой",
+   "address": "",
+   "lat": 50.430604,
+   "lon": 80.246073
+  },
+  {
+   "id": "osm-node-1433617084",
+   "cats": [
+    "s-legal"
+   ],
+   "name": "Нотариус",
+   "address": "",
+   "lat": 50.38352,
+   "lon": 80.24084
+  },
+  {
+   "id": "osm-node-1433617086",
+   "cats": [
+    "s-legal"
+   ],
+   "name": "Нотариус",
+   "address": "",
+   "lat": 50.38772,
+   "lon": 80.2364
+  },
+  {
+   "id": "osm-node-1433617088",
+   "cats": [
+    "s-legal"
+   ],
+   "name": "Нотариус",
+   "address": "",
+   "lat": 50.39187,
+   "lon": 80.23354
+  },
+  {
+   "id": "osm-node-1433617091",
+   "cats": [
+    "s-legal"
+   ],
+   "name": "Нотариус",
+   "address": "",
+   "lat": 50.393452,
+   "lon": 80.231891
+  },
+  {
+   "id": "osm-node-4104888719",
+   "cats": [
+    "s-legal"
+   ],
+   "name": "Нотариус",
+   "address": "",
+   "lat": 50.397566,
+   "lon": 80.214596
+  },
+  {
+   "id": "osm-node-4443366689",
+   "cats": [
+    "s-legal"
+   ],
+   "name": "Нотариус",
+   "address": "",
+   "lat": 50.384255,
+   "lon": 80.236801
+  },
+  {
+   "id": "osm-node-4569898192",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "СтройМарт",
+   "address": "",
+   "lat": 50.416604,
+   "lon": 80.253806
+  },
+  {
+   "id": "osm-node-1433617330",
+   "cats": [
+    "m-textile"
+   ],
+   "name": "Ткани Лидер",
+   "address": "",
+   "lat": 50.38372,
+   "lon": 80.2401
+  },
+  {
+   "id": "osm-node-1784384531",
+   "cats": [
+    "m-finish",
+    "m-plumb",
+    "m-hardware"
+   ],
+   "name": "ТЦ 12 месяцев",
+   "address": "проспект Шакарима, 81А",
+   "lat": 50.417755,
+   "lon": 80.25726
+  },
+  {
+   "id": "osm-node-7183860096",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "ХозТовары",
+   "address": "улица глинки, 36",
+   "lat": 50.398834,
+   "lon": 80.205255
+  },
+  {
+   "id": "osm-way-47883874",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "Хозтовары",
+   "address": "улица Цементная, 23",
+   "lat": 50.399897,
+   "lon": 80.204282
+  },
+  {
+   "id": "osm-node-6872905185",
+   "cats": [
+    "m-hardware"
+   ],
+   "name": "Центр Кровли",
+   "address": "Шакарима Пр., 38Б",
+   "lat": 50.413206,
+   "lon": 80.25126
+  },
+  {
+   "id": "osm-node-1433617378",
+   "cats": [
+    "m-textile"
+   ],
+   "name": "Шторы Ай-дана",
+   "address": "",
+   "lat": 50.39442,
+   "lon": 80.22953
+  }
+ ]
+}

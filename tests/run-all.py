@@ -25,5 +25,8 @@ for f in sorted((root / 'tests' / 'e2e').glob('e2e*.py')):
 v = subprocess.run([sys.executable, str(root / 'tests' / 'validate-registry.py')], capture_output=True, text=True)
 print(('OK  ' if v.returncode == 0 else 'FAIL') + ' validate-registry.py')
 if v.returncode: bad.append('validate-registry.py'); print(v.stdout)
+v2 = subprocess.run([sys.executable, str(root / 'tests' / 'validate-onboarding.py')], capture_output=True, text=True)
+print(('OK  ' if v2.returncode == 0 else 'FAIL') + ' validate-onboarding.py')
+if v2.returncode: bad.append('validate-onboarding.py'); print(v2.stdout)
 print(f'ИТОГО: {total} проверок, упало {failed}; скриншоты: {shots}')
 sys.exit(1 if bad else 0)
