@@ -1771,29 +1771,64 @@ const MARKET_CATS = [
 // Проверенные поставщики: { id, cats: ['s-clean'], name, phone, desc, address, lat, lon }. Адрес и координаты нужны для карты Семея (lat 50.3–50.55, lon 80.1–80.45).
 // Пока список пуст, реальные поставщики появятся после проверки.
 const MARKET_PROVIDERS = [];
+// Кандидаты из OpenStreetMap (выгрузка 07.11.2026, tools/fetch_osm_suppliers.py), отсеяны явно не по теме. НЕ проверены: показываются отдельным блоком.
+// Телефоны из OSM сознательно не берём: могут быть личными. В MARKET_PROVIDERS запись переносится только после проверки владельцем.
+const MARKET_CANDIDATES = [
+  { id: 'osm-node-11443129404', cats: ['m-finish', 'm-plumb', 'm-hardware'], name: 'Almatherm', address: '', lat: 50.422888, lon: 80.246474 },
+  { id: 'osm-node-1433617060', cats: ['m-furniture'], name: 'Galaxy', address: '', lat: 50.39387, lon: 80.228722 },
+  { id: 'osm-node-11379486772', cats: ['m-finish'], name: 'Kerama Marazzi', address: '', lat: 50.412119, lon: 80.250849 },
+  { id: 'osm-node-1433617554', cats: ['m-finish', 'm-plumb', 'm-hardware'], name: 'Nomad', address: '', lat: 50.41167, lon: 80.2728 },
+  { id: 'osm-node-4600284889', cats: ['m-furniture'], name: 'А-Элита', address: 'улица Гёте, 25', lat: 50.417324, lon: 80.23337 },
+  { id: 'osm-node-1433616790', cats: ['s-realty'], name: 'Агентство Жил сервис', address: '', lat: 50.381131, lon: 80.241707 },
+  { id: 'osm-node-1562635628', cats: ['m-hardware'], name: 'Ампер', address: '', lat: 50.421001, lon: 80.249459 },
+  { id: 'osm-node-10280252409', cats: ['m-hardware'], name: 'Белый кит', address: '', lat: 50.409287, lon: 80.271645 },
+  { id: 'osm-way-47883904', cats: ['m-furniture'], name: 'Дизайн Мебель', address: 'улица Спартака, 8А', lat: 50.402236, lon: 80.206156 },
+  { id: 'osm-node-4311496589', cats: ['m-furniture'], name: 'ЕвроМебель', address: '', lat: 50.431698, lon: 80.246767 },
+  { id: 'osm-node-1433617061', cats: ['m-textile'], name: 'Евротекстиль', address: '', lat: 50.393766, lon: 80.228991 },
+  { id: 'osm-node-6798139276', cats: ['m-finish', 'm-plumb', 'm-hardware'], name: 'Любимый дом', address: '', lat: 50.446017, lon: 80.283894 },
+  { id: 'osm-node-4311460493', cats: ['m-hardware'], name: 'Мегастрой', address: '', lat: 50.430604, lon: 80.246073 },
+  { id: 'osm-node-1433617084', cats: ['s-legal'], name: 'Нотариус', address: '', lat: 50.38352, lon: 80.24084 },
+  { id: 'osm-node-1433617086', cats: ['s-legal'], name: 'Нотариус', address: '', lat: 50.38772, lon: 80.2364 },
+  { id: 'osm-node-1433617088', cats: ['s-legal'], name: 'Нотариус', address: '', lat: 50.39187, lon: 80.23354 },
+  { id: 'osm-node-1433617091', cats: ['s-legal'], name: 'Нотариус', address: '', lat: 50.393452, lon: 80.231891 },
+  { id: 'osm-node-4104888719', cats: ['s-legal'], name: 'Нотариус', address: '', lat: 50.397566, lon: 80.214596 },
+  { id: 'osm-node-4443366689', cats: ['s-legal'], name: 'Нотариус', address: '', lat: 50.384255, lon: 80.236801 },
+  { id: 'osm-node-4569898192', cats: ['m-hardware'], name: 'СтройМарт', address: '', lat: 50.416604, lon: 80.253806 },
+  { id: 'osm-node-1433617330', cats: ['m-textile'], name: 'Ткани Лидер', address: '', lat: 50.38372, lon: 80.2401 },
+  { id: 'osm-node-1784384531', cats: ['m-finish', 'm-plumb', 'm-hardware'], name: 'ТЦ 12 месяцев', address: 'проспект Шакарима, 81А', lat: 50.417755, lon: 80.25726 },
+  { id: 'osm-node-7183860096', cats: ['m-hardware'], name: 'ХозТовары', address: 'улица глинки, 36', lat: 50.398834, lon: 80.205255 },
+  { id: 'osm-way-47883874', cats: ['m-hardware'], name: 'Хозтовары', address: 'улица Цементная, 23', lat: 50.399897, lon: 80.204282 },
+  { id: 'osm-node-6872905185', cats: ['m-hardware'], name: 'Центр Кровли', address: 'Шакарима Пр., 38Б', lat: 50.413206, lon: 80.25126 },
+  { id: 'osm-node-1433617378', cats: ['m-textile'], name: 'Шторы Ай-дана', address: '', lat: 50.39442, lon: 80.22953 },
+];
 const LS_RECS = 'alauDemoRecs';
 let mkTab = 'all', mkCurrent = null;
 const mkNorm = s => String(s || '').toLowerCase().replace(/ё/g, 'е').trim();
 function mkRecs(catId) { const p = currentPhone(); if (!p) return []; return ((lsGet(LS_RECS, {})[p]) || []).filter(r => r.cat === catId); }
+function mkCandidates(catId) { return MARKET_CANDIDATES.filter(p => p.cats.includes(catId)); }
 function mkProviders(catId) { return MARKET_PROVIDERS.filter(p => p.cats.includes(catId)); }
 function mkCount(catId) { return mkProviders(catId).length + mkRecs(catId).length; }
 const MK_CITY = { name: 'Семей', lat: 50.4233, lon: 80.2667 };
 function mkTabsHtml() { return [['all', 'Все'], ['mat', 'Материалы'], ['srv', 'Услуги'], ['map', '🗺️ Карта']].map(([k, l]) => '<button class="chip' + (mkTab === k ? ' active' : '') + '" onclick="mkSetTab(\'' + k + '\')">' + l + '</button>').join(''); }
-function mkGeoProviders(q) { return MARKET_PROVIDERS.filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon) && (!q || mkNorm(p.name + ' ' + (p.desc || '') + ' ' + (p.address || '')).includes(q))); }
+function mkGeoProviders(q, src) { return (src || MARKET_PROVIDERS).filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon) && (!q || mkNorm(p.name + ' ' + (p.desc || '') + ' ' + (p.address || '')).includes(q))); }
 function mkMapHtml(q) {
   const list = mkGeoProviders(q);
   let h = '<div class="sit-h">Карта поставщиков: ' + MK_CITY.name + '</div>'
     + '<iframe class="map-frame" id="mk-frame" title="Карта поставщиков Семея" loading="lazy" style="display:none;"></iframe>'
     + '<button class="tkt-btn" style="margin:10px 0;" onclick="mkMapShow()">🗺️ Показать Семей на карте</button>'
     + '<div class="sit-note" style="margin:0 0 8px;">Карта открывается только по вашему нажатию и загружается с openstreetmap.org.</div>';
-  if (!list.length) return h + '<div class="sit-empty">Точек поставщиков на карте пока нет. Они появятся после проверки адресов.</div>';
-  return h + list.map(p => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">'
+  const card = (p, cls) => '<div class="mk-prov' + cls + '"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">'
     + escHtml(p.cats.map(id => { const c = MARKET_CATS.find(x => x.id === id); return c ? c.name : ''; }).filter(Boolean).join(', ')) + (p.address ? ' · ' + escHtml(p.address) : '') + '</div>'
-    + '<div class="sit-calls"><button class="tkt-btn" data-pid="' + escHtml(p.id) + '" onclick="mkMapShow(this.dataset.pid)">📍 На карте</button></div></div>').join('');
+    + '<div class="sit-calls"><button class="tkt-btn" data-pid="' + escHtml(p.id) + '" onclick="mkMapShow(this.dataset.pid)">📍 На карте</button></div></div>';
+  if (!list.length) h += '<div class="sit-empty">Проверенных поставщиков на карте пока нет. Они появятся после проверки адресов.</div>';
+  else h += '<div class="sit-h">Проверенные поставщики</div>' + list.map(p => card(p, '')).join('');
+  const cands = mkGeoProviders(q, MARKET_CANDIDATES);
+  if (cands.length) h += '<div class="sit-h">Из OpenStreetMap, не проверены · ' + cands.length + '</div>' + cands.map(p => card(p, ' mk-cand')).join('');
+  return h;
 }
 function mkMapShow(pid) {
   const f = $('mk-frame'); if (!f) return;
-  const p = pid ? MARKET_PROVIDERS.find(x => x.id === pid) : null;
+  const p = pid ? (MARKET_PROVIDERS.find(x => x.id === pid) || MARKET_CANDIDATES.find(x => x.id === pid)) : null;
   const lat = p ? p.lat : MK_CITY.lat, lon = p ? p.lon : MK_CITY.lon, d = p ? 0.004 : 0.09;
   const bbox = [lon - d * 1.5, lat - d, lon + d * 1.5, lat + d].map(x => x.toFixed(5)).join('%2C');
   f.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik' + (p ? '&marker=' + lat + '%2C' + lon : '');
@@ -1862,6 +1897,8 @@ function mkOpen(catId) {
   let h = '';
   if (provs.length) h += '<div class="sit-h">Проверенные поставщики</div>' + provs.map(p => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">' + escHtml(p.desc || '') + '</div>' + (p.phone ? '<a class="tkt-btn sit-call" style="display:block;margin-top:6px;" href="tel:' + escHtml(p.phone) + '">📞 ' + escHtml(p.phone) + '</a>' : '') + '</div>').join('');
   if (recs.length) h += '<div class="sit-h">Ваши рекомендации (не проверены)</div>' + recs.map(r => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(r.name) + '</div><div class="mk-prov-desc">' + escHtml(r.note || '') + (r.phone ? ' · ' + escHtml(r.phone) : '') + '</div></div>').join('');
+  const cands = mkCandidates(c.id);
+  if (cands.length) h += '<div class="sit-h">Из OpenStreetMap, не проверены</div>' + cands.map(p => '<div class="mk-prov mk-cand"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">' + (p.address ? escHtml(p.address) : 'адрес не указан') + '</div></div>').join('');
   if (!provs.length && !recs.length) h += '<div class="sit-empty">Проверенных поставщиков в этой категории пока нет. Реестр пополняется после проверки.</div>';
   h += '<div class="sit-calls"><button class="tkt-btn" onclick="mkNearby()">📍 Рядом со мной</button></div><div id="mk-near"></div>';
   h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="mkRequest()">🔧 Оставить запрос в ОСИ</button><button class="tkt-btn" onclick="mkRecForm()">➕ Рекомендовать поставщика</button></div>';
@@ -1920,9 +1957,13 @@ function mkPickReply(kind) {
   acts.push({ label: '🛒 Все категории', do: 'go', arg: 'screen-market' });
   return { text: 'Какая категория нужна для поиска ' + what + '? Нажмите кнопку или напишите словами, например «плитка» или «уборка».', actions: acts };
 }
+function mkCandLine(c) {
+  const cands = mkCandidates(c.id);
+  return cands.length ? '\nИз OpenStreetMap (не проверены): ' + cands.slice(0, 5).map(p => p.name).join(', ') + (cands.length > 5 ? ' и ещё ' + (cands.length - 5) : '') + '.' : '';
+}
 function mkCatReply(c) {
   const syn = c.kw.split(' ').slice(0, 8).join(', ');
-  return { text: c.icon + ' ' + c.name + '. В категории: ' + syn + '. Что сделать дальше?', actions: [
+  return { text: c.icon + ' ' + c.name + '. В категории: ' + syn + '.' + mkCandLine(c) + ' Что сделать дальше?', actions: [
     { label: '🏪 Найти поставщика', do: 'mk-cat', arg: 'prov:' + c.id },
     { label: '📍 Рядом со мной', do: 'mk-near', arg: c.id },
     { label: '🔧 Запрос в ОСИ', do: 'mk-req', arg: c.id },
@@ -1935,6 +1976,7 @@ function mkProvReply(c) {
   if (provs.length) t += 'Проверенные ' + who + ':\n' + provs.map(p => '• ' + p.name + (p.desc ? ', ' + p.desc : '') + (p.phone ? ', ' + p.phone : '')).join('\n');
   else t += 'Проверенных ' + who + ' в этой категории пока нет. Реестр пополняется после проверки.';
   if (recs.length) t += '\nВаши рекомендации (не проверены):\n' + recs.map(r => '• ' + r.name + (r.phone ? ', ' + r.phone : '')).join('\n');
+  t += mkCandLine(c);
   t += '\nМогу открыть форму запроса в ОСИ: вы проверите текст и подтвердите сами.';
   return { text: t, actions: [
     { label: '📍 Рядом со мной', do: 'mk-near', arg: c.id },
