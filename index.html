@@ -1740,35 +1740,36 @@ document.getElementById('ct-modal').addEventListener('click', function (e) { if 
 // Реестр расширяется: добавляйте категории в MARKET_CATS, проверенных поставщиков в MARKET_PROVIDERS.
 const MK_GROUPS = [['mat', '🧱 Материалы'], ['srv', '🛠️ Услуги']];
 const MARKET_CATS = [
-  { id: 'm-build', grp: 'mat', icon: '🧱', name: 'Строительные материалы', kw: 'кирпич цемент бетон блок смесь арматура пиломатериал доска' },
-  { id: 'm-finish', grp: 'mat', icon: '🏗️', name: 'Отделочные материалы', kw: 'плитка обои ламинат гипсокартон штукатурка потолок' },
-  { id: 'm-paint', grp: 'mat', icon: '🎨', name: 'Лакокрасочные материалы', kw: 'краска лак грунтовка эмаль' },
-  { id: 'm-plumb', grp: 'mat', icon: '🚰', name: 'Сантехнические материалы', kw: 'труба кран смеситель сантехника унитаз ванна радиатор' },
-  { id: 'm-electro', grp: 'mat', icon: '⚡', name: 'Электрика', kw: 'кабель провод розетка выключатель автомат лампа светильник' },
+  { id: 'm-build', grp: 'mat', icon: '🧱', name: 'Строительные материалы', kw: 'кирпич цемент бетон блок смесь арматура пиломатериал доска', osm: [['shop','building_materials']] },
+  { id: 'm-finish', grp: 'mat', icon: '🏗️', name: 'Отделочные материалы', kw: 'плитка обои ламинат гипсокартон штукатурка потолок', osm: [['shop','doityourself|tiles|flooring|wallpaper|building_materials']] },
+  { id: 'm-paint', grp: 'mat', icon: '🎨', name: 'Лакокрасочные материалы', kw: 'краска лак грунтовка эмаль', osm: [['shop','paint']] },
+  { id: 'm-plumb', grp: 'mat', icon: '🚰', name: 'Сантехнические материалы', kw: 'труба кран смеситель сантехника унитаз ванна радиатор', osm: [['shop','doityourself|bathroom_furnishing|plumbing']] },
+  { id: 'm-electro', grp: 'mat', icon: '⚡', name: 'Электрика', kw: 'кабель провод розетка выключатель автомат лампа светильник', osm: [['shop','electrical']] },
   { id: 'm-telemetry', grp: 'mat', icon: '📟', name: 'Системы телеметрии', kw: 'счетчик датчик учет диспетчеризация' },
-  { id: 'm-security', grp: 'mat', icon: '📹', name: 'Системы охраны и наблюдения', kw: 'камера видеонаблюдение сигнализация охрана замок' },
-  { id: 'm-furniture', grp: 'mat', icon: '🛋️', name: 'Мебель', kw: 'шкаф диван кровать стол кухня' },
-  { id: 'm-hardware', grp: 'mat', icon: '🔩', name: 'Фурнитура', kw: 'ручки петли замок доводчик крепеж' },
-  { id: 'm-glazing', grp: 'mat', icon: '🪟', name: 'Остекление', kw: 'окно стеклопакет балкон лоджия витраж' },
-  { id: 'm-textile', grp: 'mat', icon: '🧵', name: 'Текстиль', kw: 'шторы занавески ткань ковер постельное' },
-  { id: 's-design-project', grp: 'srv', icon: '📐', name: 'Проектирование', kw: 'проект чертеж планировка перепланировка согласование' },
+  { id: 'm-security', grp: 'mat', icon: '📹', name: 'Системы охраны и наблюдения', kw: 'камера видеонаблюдение сигнализация охрана замок', osm: [['shop','security']] },
+  { id: 'm-furniture', grp: 'mat', icon: '🛋️', name: 'Мебель', kw: 'шкаф диван кровать стол кухня', osm: [['shop','furniture|kitchen|bed']] },
+  { id: 'm-hardware', grp: 'mat', icon: '🔩', name: 'Фурнитура', kw: 'ручки петли замок доводчик крепеж', osm: [['shop','hardware|doityourself']] },
+  { id: 'm-glazing', grp: 'mat', icon: '🪟', name: 'Остекление', kw: 'окно стеклопакет балкон лоджия витраж', osm: [['craft','glaziery']] },
+  { id: 'm-textile', grp: 'mat', icon: '🧵', name: 'Текстиль', kw: 'шторы занавески ткань ковер постельное', osm: [['shop','curtain|fabric|textile|carpet']] },
+  { id: 's-design-project', grp: 'srv', icon: '📐', name: 'Проектирование', kw: 'проект чертеж планировка перепланировка согласование', osm: [['office','architect']] },
   { id: 's-design', grp: 'srv', icon: '🖼️', name: 'Дизайн', kw: 'интерьер дизайнер дизайн-проект' },
-  { id: 's-build', grp: 'srv', icon: '👷', name: 'Общестроительные работы', kw: 'строительство кладка стяжка фундамент демонтаж' },
-  { id: 's-plumb', grp: 'srv', icon: '🔧', name: 'Сантехнические работы', kw: 'сантехник установка смесителя замена труб засор' },
-  { id: 's-finish', grp: 'srv', icon: '🖌️', name: 'Отделочные работы', kw: 'покраска поклейка обоев укладка плитки шпаклевка' },
-  { id: 's-electro', grp: 'srv', icon: '🔌', name: 'Электромонтаж', kw: 'электрик проводка щиток розетки освещение' },
+  { id: 's-build', grp: 'srv', icon: '👷', name: 'Общестроительные работы', kw: 'строительство кладка стяжка фундамент демонтаж', osm: [['craft','builder|construction']] },
+  { id: 's-plumb', grp: 'srv', icon: '🔧', name: 'Сантехнические работы', kw: 'сантехник установка смесителя замена труб засор', osm: [['craft','plumber']] },
+  { id: 's-finish', grp: 'srv', icon: '🖌️', name: 'Отделочные работы', kw: 'покраска поклейка обоев укладка плитки шпаклевка', osm: [['craft','painter|plasterer|tiler|carpenter']] },
+  { id: 's-electro', grp: 'srv', icon: '🔌', name: 'Электромонтаж', kw: 'электрик проводка щиток розетки освещение', osm: [['craft','electrician']] },
   { id: 's-alarm', grp: 'srv', icon: '🚨', name: 'Сигнализация и связь', kw: 'сигнализация домофон интернет телевидение видеонаблюдение связь' },
   { id: 's-repair', grp: 'srv', icon: '🛠️', name: 'Ремонт', kw: 'ремонт квартиры под ключ косметический капитальный мастер' },
-  { id: 's-furnmove', grp: 'srv', icon: '🚚', name: 'Перевозка мебели', kw: 'грузчики газель доставка мебели' },
+  { id: 's-furnmove', grp: 'srv', icon: '🚚', name: 'Перевозка мебели', kw: 'грузчики газель перевезти перевозка доставка мебели' },
   { id: 's-move', grp: 'srv', icon: '📦', name: 'Переезд из квартиры', kw: 'переезд грузчики упаковка вещей' },
-  { id: 's-clean', grp: 'srv', icon: '🧹', name: 'Клининг', kw: 'уборка мойка окон химчистка' },
+  { id: 's-clean', grp: 'srv', icon: '🧹', name: 'Клининг', kw: 'уборка мойка окон химчистка', osm: [['shop','dry_cleaning|laundry'],['office','cleaning']] },
   { id: 's-fumig', grp: 'srv', icon: '🪲', name: 'Фумигация', kw: 'тараканы клопы дезинсекция насекомые грызуны' },
   { id: 's-sanit', grp: 'srv', icon: '🧼', name: 'Санитария', kw: 'дезинфекция санитарная обработка дератизация' },
   { id: 's-consult', grp: 'srv', icon: '🏠', name: 'Жилищный консалтинг', kw: 'консультация жилищные вопросы оси кск управление домом' },
-  { id: 's-realty', grp: 'srv', icon: '🔑', name: 'Риэлтерские услуги', kw: 'купля продажа аренда квартиры недвижимость' },
-  { id: 's-legal', grp: 'srv', icon: '⚖️', name: 'Юридические услуги', kw: 'юрист договор иск суд приватизация наследство' },
+  { id: 's-realty', grp: 'srv', icon: '🔑', name: 'Риэлтерские услуги', kw: 'купля продажа аренда квартиры недвижимость', osm: [['office','estate_agent']] },
+  { id: 's-legal', grp: 'srv', icon: '⚖️', name: 'Юридические услуги', kw: 'юрист договор иск суд приватизация наследство', osm: [['office','lawyer|notary']] },
 ];
-// Проверенные поставщики: { id, cats: ['s-clean'], name, phone, desc }. Пока список пуст, реальные поставщики появятся после проверки.
+// Проверенные поставщики: { id, cats: ['s-clean'], name, phone, desc, address, lat, lon }. Адрес и координаты нужны для карты Семея (lat 50.3–50.55, lon 80.1–80.45).
+// Пока список пуст, реальные поставщики появятся после проверки.
 const MARKET_PROVIDERS = [];
 const LS_RECS = 'alauDemoRecs';
 let mkTab = 'all', mkCurrent = null;
@@ -1776,11 +1777,67 @@ const mkNorm = s => String(s || '').toLowerCase().replace(/ё/g, 'е').trim();
 function mkRecs(catId) { const p = currentPhone(); if (!p) return []; return ((lsGet(LS_RECS, {})[p]) || []).filter(r => r.cat === catId); }
 function mkProviders(catId) { return MARKET_PROVIDERS.filter(p => p.cats.includes(catId)); }
 function mkCount(catId) { return mkProviders(catId).length + mkRecs(catId).length; }
+const MK_CITY = { name: 'Семей', lat: 50.4233, lon: 80.2667 };
+function mkTabsHtml() { return [['all', 'Все'], ['mat', 'Материалы'], ['srv', 'Услуги'], ['map', '🗺️ Карта']].map(([k, l]) => '<button class="chip' + (mkTab === k ? ' active' : '') + '" onclick="mkSetTab(\'' + k + '\')">' + l + '</button>').join(''); }
+function mkGeoProviders(q) { return MARKET_PROVIDERS.filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon) && (!q || mkNorm(p.name + ' ' + (p.desc || '') + ' ' + (p.address || '')).includes(q))); }
+function mkMapHtml(q) {
+  const list = mkGeoProviders(q);
+  let h = '<div class="sit-h">Карта поставщиков: ' + MK_CITY.name + '</div>'
+    + '<iframe class="map-frame" id="mk-frame" title="Карта поставщиков Семея" loading="lazy" style="display:none;"></iframe>'
+    + '<button class="tkt-btn" style="margin:10px 0;" onclick="mkMapShow()">🗺️ Показать Семей на карте</button>'
+    + '<div class="sit-note" style="margin:0 0 8px;">Карта открывается только по вашему нажатию и загружается с openstreetmap.org.</div>';
+  if (!list.length) return h + '<div class="sit-empty">Точек поставщиков на карте пока нет. Они появятся после проверки адресов.</div>';
+  return h + list.map(p => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">'
+    + escHtml(p.cats.map(id => { const c = MARKET_CATS.find(x => x.id === id); return c ? c.name : ''; }).filter(Boolean).join(', ')) + (p.address ? ' · ' + escHtml(p.address) : '') + '</div>'
+    + '<div class="sit-calls"><button class="tkt-btn" data-pid="' + escHtml(p.id) + '" onclick="mkMapShow(this.dataset.pid)">📍 На карте</button></div></div>').join('');
+}
+function mkMapShow(pid) {
+  const f = $('mk-frame'); if (!f) return;
+  const p = pid ? MARKET_PROVIDERS.find(x => x.id === pid) : null;
+  const lat = p ? p.lat : MK_CITY.lat, lon = p ? p.lon : MK_CITY.lon, d = p ? 0.004 : 0.09;
+  const bbox = [lon - d * 1.5, lat - d, lon + d * 1.5, lat + d].map(x => x.toFixed(5)).join('%2C');
+  f.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik' + (p ? '&marker=' + lat + '%2C' + lon : '');
+  f.style.display = 'block';
+}
+// ----- поиск рядом: OpenStreetMap (Overpass). Запрос уходит только по нажатию «Рядом со мной», данные не проверены -----
+const MK_OVERPASS = 'https://overpass-api.de/api/interpreter', MK_NEAR_R = 3000;
+function mkDist(a, b, c, d) { const R = 6371000, r = x => x * Math.PI / 180, dl = r(c - a), dn = r(d - b), h = Math.sin(dl / 2) ** 2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); }
+function mkNearOrigin() { const u = currentProfile(); return u && u.lat != null ? { lat: u.lat, lon: u.lon, home: true } : { lat: MK_CITY.lat, lon: MK_CITY.lon, home: false }; }
+function mkOverpassQuery(c, o) { return '[out:json][timeout:20];(' + c.osm.map(t => 'nwr["' + t[0] + '"~"^(' + t[1] + ')$"](around:' + MK_NEAR_R + ',' + o.lat + ',' + o.lon + ');').join('') + ');out center 60;'; }
+function mkNearParse(json, o) {
+  return ((json && json.elements) || []).map(e => {
+    const t = e.tags || {}, lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
+    if (!t.name || lat == null || lon == null) return null;
+    const addr = [t['addr:street'], t['addr:housenumber']].filter(Boolean).join(', ');
+    return { name: t.name, addr, phone: t.phone || t['contact:phone'] || '', lat, lon, dist: Math.round(mkDist(o.lat, o.lon, lat, lon)) };
+  }).filter(Boolean).sort((a, b) => a.dist - b.dist).slice(0, 15);
+}
+async function mkNearby(catId) {
+  const c = MARKET_CATS.find(x => x.id === (catId || mkCurrent)); if (!c) return;
+  const box = $('mk-near'); if (!box) return;
+  if (!c.osm) { box.innerHTML = '<div class="sit-empty">Для категории «' + escHtml(c.name) + '» в OpenStreetMap нет подходящих меток. Оставьте запрос в ОСИ.</div>'; return; }
+  const o = mkNearOrigin();
+  box.innerHTML = '<div class="sit-note">Ищу рядом…</div>';
+  try {
+    const r = await fetch(MK_OVERPASS, { method: 'POST', body: 'data=' + encodeURIComponent(mkOverpassQuery(c, o)) });
+    if (!r.ok) throw new Error('http ' + r.status);
+    const list = mkNearParse(await r.json(), o);
+    mkNearList = list;
+    let h = '<div class="sit-h">Рядом (до ' + (MK_NEAR_R / 1000) + ' км) · данные OpenStreetMap, не проверены</div>';
+    if (!o.home) h += '<div class="sit-note" style="margin:0 0 8px;">Точка дома не задана, ищу от центра Семея.</div>';
+    h += list.length ? list.map((p, i) => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">' + (p.dist < 1000 ? p.dist + ' м' : (p.dist / 1000).toFixed(1) + ' км') + (p.addr ? ' · ' + escHtml(p.addr) : '') + (p.phone ? ' · ' + escHtml(p.phone) : '') + '</div><div class="sit-calls"><button class="tkt-btn" onclick="mkNearOpen(' + i + ')">📍 На карте</button></div></div>').join('')
+      : '<div class="sit-empty">В OpenStreetMap рядом ничего не найдено. Данные карты могут быть неполными: оставьте запрос в ОСИ.</div>';
+    box.innerHTML = h;
+  } catch (e) { box.innerHTML = '<div class="sit-empty">Не удалось получить данные карты. Проверьте интернет и повторите.</div>'; }
+}
+let mkNearList = [];
+function mkNearOpen(i) { const p = mkNearList[i]; if (p) window.open('https://www.openstreetmap.org/?mlat=' + p.lat + '&mlon=' + p.lon + '#map=18/' + p.lat + '/' + p.lon, '_blank', 'noopener'); }
 function mkSetTab(t) { mkTab = t; renderMarket(); }
 function renderMarket() {
   const body = $('mk-body'); if (!body) return;
   const q = mkNorm($('mk-search').value);
-  $('mk-tabs').innerHTML = [['all', 'Все'], ['mat', 'Материалы'], ['srv', 'Услуги']].map(([k, l]) => '<button class="chip' + (mkTab === k ? ' active' : '') + '" onclick="mkSetTab(\'' + k + '\')">' + l + '</button>').join('');
+  if (mkTab === 'map') { $('mk-tabs').innerHTML = mkTabsHtml(); body.innerHTML = mkMapHtml(q); return; }
+  $('mk-tabs').innerHTML = mkTabsHtml();
   const provHit = c => MARKET_PROVIDERS.some(p => p.cats.includes(c.id) && mkNorm(p.name + ' ' + p.desc).includes(q));
   let html = '', n = 0;
   MK_GROUPS.forEach(([g, label]) => {
@@ -1806,6 +1863,7 @@ function mkOpen(catId) {
   if (provs.length) h += '<div class="sit-h">Проверенные поставщики</div>' + provs.map(p => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(p.name) + '</div><div class="mk-prov-desc">' + escHtml(p.desc || '') + '</div>' + (p.phone ? '<a class="tkt-btn sit-call" style="display:block;margin-top:6px;" href="tel:' + escHtml(p.phone) + '">📞 ' + escHtml(p.phone) + '</a>' : '') + '</div>').join('');
   if (recs.length) h += '<div class="sit-h">Ваши рекомендации (не проверены)</div>' + recs.map(r => '<div class="mk-prov"><div class="mk-prov-name">' + escHtml(r.name) + '</div><div class="mk-prov-desc">' + escHtml(r.note || '') + (r.phone ? ' · ' + escHtml(r.phone) : '') + '</div></div>').join('');
   if (!provs.length && !recs.length) h += '<div class="sit-empty">Проверенных поставщиков в этой категории пока нет. Реестр пополняется после проверки.</div>';
+  h += '<div class="sit-calls"><button class="tkt-btn" onclick="mkNearby()">📍 Рядом со мной</button></div><div id="mk-near"></div>';
   h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="mkRequest()">🔧 Оставить запрос в ОСИ</button><button class="tkt-btn" onclick="mkRecForm()">➕ Рекомендовать поставщика</button></div>';
   $('mk-body2').innerHTML = h;
   $('mk-modal').classList.add('open');
@@ -1866,6 +1924,7 @@ function mkCatReply(c) {
   const syn = c.kw.split(' ').slice(0, 8).join(', ');
   return { text: c.icon + ' ' + c.name + '. В категории: ' + syn + '. Что сделать дальше?', actions: [
     { label: '🏪 Найти поставщика', do: 'mk-cat', arg: 'prov:' + c.id },
+    { label: '📍 Рядом со мной', do: 'mk-near', arg: c.id },
     { label: '🔧 Запрос в ОСИ', do: 'mk-req', arg: c.id },
     { label: '🛒 Открыть категорию', do: 'mk-open', arg: c.id }] };
 }
@@ -1878,6 +1937,7 @@ function mkProvReply(c) {
   if (recs.length) t += '\nВаши рекомендации (не проверены):\n' + recs.map(r => '• ' + r.name + (r.phone ? ', ' + r.phone : '')).join('\n');
   t += '\nМогу открыть форму запроса в ОСИ: вы проверите текст и подтвердите сами.';
   return { text: t, actions: [
+    { label: '📍 Рядом со мной', do: 'mk-near', arg: c.id },
     { label: '🔧 Запрос в ОСИ', do: 'mk-req', arg: c.id },
     { label: '➕ Рекомендовать', do: 'mk-rec', arg: c.id },
     { label: '🛒 Открыть категорию', do: 'mk-open', arg: c.id }] };
@@ -2196,6 +2256,7 @@ function botAction(mi, ai) {
   else if (a.do === 'mk-cat') { const k = String(a.arg).split(':'), c = MARKET_CATS.find(x => x.id === k[1]); if (c) botSay(a.label, k[0] === 'mat' ? mkCatReply(c) : mkProvReply(c)); }
   else if (a.do === 'mk-req') mkRequestFor(a.arg);
   else if (a.do === 'mk-open') { showScreen('screen-market'); mkOpen(a.arg); }
+  else if (a.do === 'mk-near') { showScreen('screen-market'); mkOpen(a.arg); mkNearby(a.arg); }
   else if (a.do === 'mk-rec') { showScreen('screen-market'); mkOpen(a.arg); mkRecForm(); }
 }
 function renderBot() {

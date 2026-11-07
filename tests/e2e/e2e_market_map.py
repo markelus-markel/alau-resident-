@@ -1,0 +1,42 @@
+import os
+import sys
+from playwright.sync_api import sync_playwright
+S = sys.argv[1]; res = []
+def ok(n, c, x=''):
+    res.append(c); print(('PASS ' if c else 'FAIL ') + n + (' | ' + str(x)[:300] if not c else ''))
+SEED = """()=>{const u={};u['77011234567']={phone:'77011234567',last:'Иванов',first:'Тест',middle:'',iin:makeTestIIN(),city:'Семей',street:'ул. Найманбаева',house:'12',apt:'23'};lsSet(LS_USERS,u);lsSet(LS_SESSION,'77011234567');}"""
+with sync_playwright() as p:
+    b = p.chromium.launch(executable_path='/usr/bin/google-chrome', headless=True, args=['--no-sandbox'])
+    pg = b.new_context(viewport={'width': 390, 'height': 844}).new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
+    pg.goto('file://' + os.environ.get('ALAU_INDEX', '/home/claude/alau-resident-/index.html')); pg.evaluate(SEED); pg.reload(); g = lambda js: pg.evaluate(js)
+    g("showScreen('screen-market')")
+    ok('вкладка «Карта» есть', pg.locator('#mk-tabs .chip:has-text("Карта")').count() == 1)
+    pg.click('#mk-tabs .chip:has-text("Карта")'); pg.wait_for_timeout(50)
+    body = g("document.getElementById('mk-body').innerText")
+    ok('заголовок карты Семея', 'Семей' in body, body[:100])
+    ok('пустое состояние без выдуманных точек', 'пока нет' in body and g("document.querySelectorAll('#mk-body .mk-prov').length") == 0, body)
+    ok('реестр сейчас пуст (данные не выдуманы)', g("MARKET_PROVIDERS.length") == 0)
+    ok('карта не грузится без нажатия', g("!document.getElementById('mk-frame').getAttribute('src')"))
+    pg.click('#mk-body .tkt-btn:has-text("Показать Семей")'); pg.wait_for_timeout(50)
+    src = g("document.getElementById('mk-frame').src")
+    ok('по нажатию открыта карта OSM вокруг Семея', 'openstreetmap.org/export/embed.html' in src and '80.' in src and '50.' in src and 'marker' not in src, src)
+    ok('рамка карты видна', g("getComputedStyle(document.getElementById('mk-frame')).display") == 'block')
+    # схема данных: любая запись реестра валидна (сейчас пустой реестр проходит)
+    bad = g("MARKET_PROVIDERS.filter(p=>!(p.id&&p.name&&Array.isArray(p.cats)&&p.cats.length&&p.cats.every(c=>MARKET_CATS.some(x=>x.id===c))&&(p.lat==null||(p.lat>50.3&&p.lat<50.55&&p.lon>80.1&&p.lon<80.45)))).map(p=>p.id)")
+    ok('все записи реестра по схеме', bad == [], bad)
+    # подставляем тестовую запись (только в памяти страницы)
+    g("MARKET_PROVIDERS.push({id:'t1',cats:['s-clean','m-paint'],name:'<i>Тест</i>',desc:'',address:'ул. Тестовая',lat:50.4233,lon:80.2667})")
+    g("MARKET_PROVIDERS.push({id:'t2',cats:['s-clean'],name:'Без координат',desc:''})"); g("renderMarket()")
+    ok('на карте только записи с координатами', g("document.querySelectorAll('#mk-body .mk-prov').length") == 1)
+    ok('HTML в названии экранирован', g("!document.querySelector('#mk-body .mk-prov i')"))
+    ok('категории и адрес в карточке', 'Клининг' in g("document.querySelector('#mk-body .mk-prov').innerText") and 'ул. Тестовая' in g("document.querySelector('#mk-body .mk-prov').innerText"))
+    pg.click('#mk-body .mk-prov .tkt-btn'); pg.wait_for_timeout(50)
+    src = g("document.getElementById('mk-frame').src")
+    ok('«На карте» ставит маркер', 'marker=50.4233%2C80.2667' in src, src)
+    pg.fill('#mk-search', 'нет такого'); pg.wait_for_timeout(50)
+    ok('поиск фильтрует точки', g("document.querySelectorAll('#mk-body .mk-prov').length") == 0)
+    pg.fill('#mk-search', ''); pg.click('#mk-tabs .chip:has-text("Услуги")'); pg.wait_for_timeout(50)
+    ok('возврат к категориям работает', g("document.querySelectorAll('#mk-body .mk-cat').length") > 0)
+    ok('нет ошибок страницы', not errs, errs[:2])
+    pg.screenshot(path=S + '/mk_map.png'); b.close()
+bad = res.count(False); print('TOTAL', len(res), 'FAILED', bad); sys.exit(1 if bad else 0)
