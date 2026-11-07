@@ -1830,6 +1830,69 @@ function mkRecSave() {
   lsSet(LS_RECS, all); toast('Рекомендация сохранена на этом устройстве'); mkOpen(mkCurrent);
 }
 
+// ----- помощник и маркетплейс: стандартные опции поиска (материалы, поставщики, исполнители услуг) -----
+// Данных не придумываем: проверенные поставщики берутся только из MARKET_PROVIDERS, рекомендации жильца только с его устройства.
+const MK_STOP = new Set(['нужен', 'нужна', 'нужно', 'нужны', 'найти', 'найди', 'найдите', 'подбери', 'подберите', 'ищу', 'ищем', 'купить', 'купи', 'заказать', 'закажи', 'посоветуй', 'порекомендуй', 'хочу', 'можно', 'подскажи', 'подскажите', 'какой', 'какая', 'какие', 'есть', 'где', 'мне']);
+const MK_INTENT = /(^|[^а-я])(нужен|нужна|нужно|нужны|найти|найди|найдите|подбери|подберите|ищу|ищем|купить|купи|заказать|закажи|посоветуй|порекомендуй|хочу|подскажи)/;
+const MK_WORDS = /маркетплейс|поставщик|исполнител|подрядчик|материал|услуг[аиу]|мастер/;
+function mkTokens(t) { return mkNorm(t).split(/[^а-яa-z0-9]+/).filter(w => w.length >= 4 && !MK_STOP.has(w)); }
+function mkMatchAll(text) {
+  const toks = mkTokens(text); if (!toks.length) return [];
+  const scored = MARKET_CATS.map(c => {
+    const words = mkNorm(c.name + ' ' + c.kw).split(/[^а-яa-z0-9]+/);
+    let sc = 0;
+    toks.forEach(w => { const st = w.length > 5 ? w.slice(0, w.length - 2) : w; if (words.some(x => x.startsWith(st))) sc++; });
+    return { c, sc };
+  }).filter(o => o.sc > 0);
+  if (!scored.length) return [];
+  const top = Math.max(...scored.map(o => o.sc));
+  return scored.filter(o => o.sc === top).slice(0, 3).map(o => o.c);
+}
+function mkTop() {
+  return { text: 'В маркетплейсе я помогу найти материалы, поставщика или исполнителя услуг. Что вы ищете?', actions: [
+    { label: '🧱 Материалы', do: 'mk-pick', arg: 'mat' },
+    { label: '🏪 Поставщика', do: 'mk-pick', arg: 'sup' },
+    { label: '🛠️ Исполнителя услуг', do: 'mk-pick', arg: 'srv' }] };
+}
+function mkPickReply(kind) {
+  const cats = MARKET_CATS.filter(c => c.grp === (kind === 'srv' ? 'srv' : 'mat'));
+  const what = kind === 'mat' ? 'материалов' : kind === 'sup' ? 'поставщика' : 'исполнителя';
+  const to = kind === 'mat' ? 'mat' : 'prov';
+  const acts = cats.map(c => ({ label: c.icon + ' ' + c.name, do: 'mk-cat', arg: to + ':' + c.id }));
+  acts.push({ label: '🛒 Все категории', do: 'go', arg: 'screen-market' });
+  return { text: 'Какая категория нужна для поиска ' + what + '? Нажмите кнопку или напишите словами, например «плитка» или «уборка».', actions: acts };
+}
+function mkCatReply(c) {
+  const syn = c.kw.split(' ').slice(0, 8).join(', ');
+  return { text: c.icon + ' ' + c.name + '. В категории: ' + syn + '. Что сделать дальше?', actions: [
+    { label: '🏪 Найти поставщика', do: 'mk-cat', arg: 'prov:' + c.id },
+    { label: '🔧 Запрос в ОСИ', do: 'mk-req', arg: c.id },
+    { label: '🛒 Открыть категорию', do: 'mk-open', arg: c.id }] };
+}
+function mkProvReply(c) {
+  const who = c.grp === 'mat' ? 'поставщиков' : 'исполнителей';
+  const provs = mkProviders(c.id), recs = mkRecs(c.id);
+  let t = c.icon + ' ' + c.name + '. ';
+  if (provs.length) t += 'Проверенные ' + who + ':\n' + provs.map(p => '• ' + p.name + (p.desc ? ', ' + p.desc : '') + (p.phone ? ', ' + p.phone : '')).join('\n');
+  else t += 'Проверенных ' + who + ' в этой категории пока нет. Реестр пополняется после проверки.';
+  if (recs.length) t += '\nВаши рекомендации (не проверены):\n' + recs.map(r => '• ' + r.name + (r.phone ? ', ' + r.phone : '')).join('\n');
+  t += '\nМогу открыть форму запроса в ОСИ: вы проверите текст и подтвердите сами.';
+  return { text: t, actions: [
+    { label: '🔧 Запрос в ОСИ', do: 'mk-req', arg: c.id },
+    { label: '➕ Рекомендовать', do: 'mk-rec', arg: c.id },
+    { label: '🛒 Открыть категорию', do: 'mk-open', arg: c.id }] };
+}
+function botMarket(t) {
+  const explicit = MK_WORDS.test(t), intent = MK_INTENT.test(t);
+  if (!explicit && !intent) return null;
+  const hits = mkMatchAll(t);
+  if (!hits.length) return explicit ? mkTop() : null;
+  if (hits.length === 1) return hits[0].grp === 'mat' ? mkCatReply(hits[0]) : mkProvReply(hits[0]);
+  return { text: 'Уточните, что именно нужно:', actions: hits.map(c => ({ label: c.icon + ' ' + c.name, do: 'mk-cat', arg: (c.grp === 'mat' ? 'mat' : 'prov') + ':' + c.id })) };
+}
+function botSay(userText, r) { pushBot('me', userText, 'text'); pushBot('bot', r.text, 'text', r.actions); renderBot(); }
+function mkRequestFor(id) { mkCurrent = id; mkRequest(); }
+
 // ===== ЧАТ: сообщения, повестка и помощник =====
 // Демо: всё хранится на этом устройстве отдельно для каждого номера телефона. Другие жильцы сообщений не видят.
 const LS_CHAT = 'alauDemoChat';
@@ -1982,8 +2045,8 @@ function submitAgenda() {
 
 // ===== ПОМОЩНИК: локальные команды (не нейросеть), работают на этом устройстве =====
 let botPending = null;
-const BOT_CHIPS = ['Мои заявки', 'Ближайшие события', 'Что делать при протечке', 'Что ты умеешь?'];
-const BOT_INTRO = 'Я локальный помощник по командам, не нейросеть. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «ближайшие события»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\nДействия, которые что-то создают, я сначала подтверждаю.';
+const BOT_CHIPS = ['Мои заявки', 'Ближайшие события', 'Что делать при протечке', 'Найти исполнителя', 'Что ты умеешь?'];
+const BOT_INTRO = 'Я локальный помощник по командам, не нейросеть. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «ближайшие события»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\n• «нужна плитка» или «найди сантехника» (маркетплейс)\nДействия, которые что-то создают, я сначала подтверждаю.';
 const NO_W = '(?![а-я])';
 function botNorm(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').trim(); }
 function botCategory(t) {
@@ -2051,6 +2114,7 @@ function botHandle(raw) {
   }
   if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
   const sc = sitRankScored(t);
+  if (!(sc.length && sc[0].sc >= 5)) { const mk = botMarket(t); if (mk) return mk; }
   if (sc.length && (sc[0].sc >= 5 || (sc[0].sc >= 2 && /что (мне )?делать|как быть|как поступить|помоги|подскаж|случилось|произошло|авари/.test(t)))) return sitBotReply(sc[0].s, raw.trim());
   if (/(добав|скача|сохран|занес)[а-яё]*.*календар/.test(t) || /календар/.test(t) && /добав|скача/.test(t)) {
     const ev = botEventByWords(t) || upcoming()[0];
@@ -2128,6 +2192,11 @@ function botAction(mi, ai) {
   else if (a.do === 'go') showScreen(a.arg);
   else if (a.do === 'sit') openSituations(a.arg);
   else if (a.do === 'sit-ask') botSituation(a.arg);
+  else if (a.do === 'mk-pick') botSay(a.label, mkPickReply(a.arg));
+  else if (a.do === 'mk-cat') { const k = String(a.arg).split(':'), c = MARKET_CATS.find(x => x.id === k[1]); if (c) botSay(a.label, k[0] === 'mat' ? mkCatReply(c) : mkProvReply(c)); }
+  else if (a.do === 'mk-req') mkRequestFor(a.arg);
+  else if (a.do === 'mk-open') { showScreen('screen-market'); mkOpen(a.arg); }
+  else if (a.do === 'mk-rec') { showScreen('screen-market'); mkOpen(a.arg); mkRecForm(); }
 }
 function renderBot() {
   const th = $('bot-thread'); if (!th) return;

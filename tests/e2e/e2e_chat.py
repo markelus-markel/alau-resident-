@@ -79,7 +79,7 @@ with sync_playwright() as p:
     # ---------- assistant ----------
     g("switchChatTab('bot')")
     ok('assistant intro explains it is not a neural network', 'не нейросеть' in text('#bot-thread'))
-    ok('4 quick chips', g("document.querySelectorAll('#bot-chips .chip').length")==4)
+    ok('5 quick chips', g("document.querySelectorAll('#bot-chips .chip').length")==5)
     ask=lambda q: (pg.fill('#bot-text',q), pg.press('#bot-text','Enter'), pg.wait_for_timeout(50))
     lastbot=lambda: g("(()=>{const l=chatBox().box.bot; return l[l.length-1].text})()")
     lastacts=lambda: g("(()=>{const l=chatBox().box.bot; return (l[l.length-1].actions||[]).map(a=>a.do+':'+(a.arg||''))})()")
