@@ -42,7 +42,8 @@ with sync_playwright() as p:
     ok('the question the user asked is shown', 'Вы: сломался замок входной двери' in g("document.getElementById('dlg-me').textContent"), g("document.getElementById('dlg-me').textContent"))
     pg.wait_for_timeout(10000)
     ok('typed text equals what the assistant says (the same message)', txt()==full and '\u0301' not in txt(), txt()[:80])
-    ok('spoken text carries the same words', g("__spoken[0]").replace('\u0301','').startswith(full.replace('\n','. ')[:60]), g("__spoken[0]")[:80])
+    spk = g("__spoken[0]").replace('\u0301','')
+    ok('spoken text carries the same steps as the typed text (clean speech: no emoji or numbering)', all(x in spk for x in ['Сломался замок или не открывается дверь', 'Не ломайте дверь и не бейте по замку', 'звоните 112', 'Ответьте: Внутри']) and '🔑' not in spk, spk[:100])
     ok('typing is over: cursor gone, answer buttons shown', '▍' not in txt() and opts()[:3]==['Внутри, дверь не открывается', 'Снаружи, не могу войти', 'Замок в подъезде или общая дверь'], opts())
     # 3. ответ кнопкой на экране диалога: следующий вопрос печатается там же
     g("dlgCps=3000"); pg.click('#dlg-opts button:text-is("Внутри, дверь не открывается")'); pg.wait_for_timeout(500)
@@ -59,7 +60,9 @@ with sync_playwright() as p:
     ok('slow typing in progress', '▍' in txt())
     pg.click('#dlg-text'); ok('tap on the text finishes it at once and shows the buttons', '▍' not in txt() and len(opts())>=3 and txt()==last()['text'], (txt()[-40:], opts()))
     # 6. микрофон: полоса «Слушаю…» видна в диалоге
-    g("dlgCps=3000"); pg.click('#dlg-mic'); pg.wait_for_timeout(200)
+    g("dlgCps=3000"); g("stopAllMics()"); pg.wait_for_timeout(200)
+    ok('no listening bar when the mic is off', g("getComputedStyle(document.getElementById('dlg-listen')).display")=='none')
+    pg.click('#dlg-mic'); pg.wait_for_timeout(200)
     ok('listening bar is visible inside the dialog', g("getComputedStyle(document.getElementById('dlg-listen')).display")!='none')
     g("__recs[__recs.length-1].emit([['снаружи',false],['снаружи не могу войти',false]])")
     ok('live words are shown in the dialog bar', 'снаружи не могу войти' in g("document.getElementById('dlg-listen-text').textContent"))

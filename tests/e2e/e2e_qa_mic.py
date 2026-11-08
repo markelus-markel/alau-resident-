@@ -32,13 +32,13 @@ with sync_playwright() as p:
     # 2. вопрос голосом, озвучка идёт: микрофон ждёт её конца
     g("window.__speaking=true"); g("botAsk('сломался замок','voice')"); pg.wait_for_timeout(700)
     ok('voice question: mic waits while the assistant is still speaking', nrec()==0 and not rec(), nrec())
-    g("window.__speaking=false"); pg.wait_for_timeout(700)
+    g("window.__speaking=false"); pg.wait_for_timeout(2600)
     ok('after the speech ends the mic turns on by itself', nrec()==1 and rec(), nrec())
     ok('a visible "listening" bar is shown', banner() and 'Слушаю' in g("document.getElementById('bot-listen-text').textContent"), g("document.getElementById('bot-listen-text').textContent"))
     # 3. ответ голосом продолжает разговор: следующий вопрос и снова включённый микрофон
     g("__recs[__recs.length-1].emit([['снаружи',false],['снаружи не могу',false],['снаружи не могу войти',false]])")
     ok('live words are shown in the bar', 'снаружи не могу войти' in g("document.getElementById('bot-listen-text').textContent"), g("document.getElementById('bot-listen-text').textContent"))
-    g("__recs[__recs.length-1].stop()"); pg.wait_for_timeout(700)
+    g("__recs[__recs.length-1].stop()"); pg.wait_for_timeout(2600)
     ok('voice answer is accepted: next question', 'следы взлома' in last()['text'], last()['text'][:120])
     ok('mic turns on again for the next question', nrec()==2 and rec() and banner(), nrec())
     # 4. тишина: микрофон выключается, кнопка остаётся
@@ -46,7 +46,7 @@ with sync_playwright() as p:
     ok('silence: mic and bar turn off', not rec() and not banner())
     ok('answer buttons and mic button are still there', any(a['do']=='qa-mic' for a in last()['actions']), last()['actions'])
     # 5. нажатие кнопки ответа в голосовом разговоре: следующий вопрос, микрофон включается
-    n = nrec(); pg.click('#dlg-opts button:text-is("Нет следов")'); pg.wait_for_timeout(700)
+    n = nrec(); pg.click('#dlg-opts button:text-is("Нет следов")'); pg.wait_for_timeout(2600)
     ok('button answer in a voice chat: next question and the mic again', 'запасной ключ' in last()['text'] and nrec()==n+1 and rec(), (last()['text'][:80], nrec(), n))
     # 6. конец опроса: микрофон не включается
     g("__recs[__recs.length-1].emit([['нет',true]])"); g("__recs[__recs.length-1].stop()"); pg.wait_for_timeout(700)

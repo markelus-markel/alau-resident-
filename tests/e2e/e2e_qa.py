@@ -36,7 +36,30 @@ with sync_playwright() as p:
                 if not re.search(o['m'], o['l'].lower().replace('ё', 'е')) and not g("(r=>new RegExp(r).test(%s))(%s)" % (json.dumps(o['l'].lower()), json.dumps(o['m']))): bad.append(sid + '.' + nid + ': кнопка «' + o['l'] + '» не проходит свой же шаблон')
                 if not o['say'].strip(): bad.append(sid + '.' + nid + ': пустой совет')
                 if set(re.findall(r'(?<!\d)\d{3}(?!\d)', o['say'])) - {'112', '101', '102', '103', '104'}: bad.append(sid + '.' + nid + ': ненациональный телефон')
-    ok('every scenario is well-formed', not bad and len(qa) >= 4, bad)
+    allsit = g("SITUATIONS.map(s=>s.id)")
+    ok('every situation of the registry has a question-answer scenario', sorted(qa.keys())==sorted(allsit), sorted(set(allsit)^set(qa.keys())))
+    # ответ голосом однозначен: подпись каждой кнопки узнаётся как она сама, а не как соседняя
+    amb = []
+    for sid, sc in qa.items():
+        for nid, n in sc['nodes'].items():
+            for j, o in enumerate(n['opts']):
+                hit = g("((l,opts)=>opts.findIndex(x=>new RegExp(x.m).test(l.toLowerCase().replace(/ё/g,'е'))))(%s,%s)" % (json.dumps(o['l'], ensure_ascii=False), json.dumps(n['opts'], ensure_ascii=False)))
+                if hit != j: amb.append('%s.%s: «%s» узнаётся как вариант %s' % (sid, nid, o['l'], hit))
+    ok('every answer button is recognised as itself when spoken', not amb, amb)
+    # узлы достижимы из старта, циклов нет
+    odd = []
+    for sid, sc in qa.items():
+        seen = set(); stack = [(sc['start'], ())]
+        while stack:
+            nid, path = stack.pop()
+            if nid in path: odd.append(sid + ': цикл на ' + nid); continue
+            seen.add(nid)
+            for o in sc['nodes'][nid]['opts']:
+                if o.get('next'): stack.append((o['next'], path + (nid,)))
+        if seen != set(sc['nodes']): odd.append(sid + ': недостижимы ' + str(set(sc['nodes']) - seen))
+    ok('scenarios have no cycles and no unreachable questions', not odd, odd)
+    ok('every scenario ends: the last answers have no next question', all(any(not o.get('next') for n in sc['nodes'].values() for o in n['opts']) for sc in qa.values()))
+    ok('every scenario is well-formed', not bad and len(qa) >= 17, bad)
     # 2. фраза с телефона: замок
     ask('сломался замок входной двери')
     r = last()

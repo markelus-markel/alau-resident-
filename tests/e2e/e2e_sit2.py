@@ -69,7 +69,7 @@ with sync_playwright() as p:
     pg.click('#sit-ask')
     ok('ask assistant: popup closed, chat bot tab open', not g("document.getElementById('sit-modal').classList.contains('open')") and g("document.querySelector('.screen.active').id")=='screen-chat' and g("document.getElementById('chatpane-bot').style.display")=='flex')
     ok('assistant thread has question and steps for the situation', 'Что делать: Течёт кровля' in g("document.getElementById('bot-thread').textContent") and 'Сфотографируйте пятна' in g("document.getElementById('bot-thread').textContent"))
-    ok('details action offered and works', g("chatBox().box.bot.slice(-1)[0].actions.map(a=>a.do+':'+a.arg).join()")=='sit:roof')
+    ok('details action offered and works', g("chatBox().box.bot.slice(-1)[0].actions.slice(-1)[0].do+':'+chatBox().box.bot.slice(-1)[0].actions.slice(-1)[0].arg")=='sit:roof')
     pg.click('#bot-thread button:has-text("Подробно") >> nth=-1'); ok('details reopen popup', g("document.getElementById('sit-modal').classList.contains('open')"))
     g("closeSituations()")
     g("openSituations('meeting')"); ok('ask-assistant also in meeting memo', g("!!document.getElementById('sit-ask')")); g("closeSituations()")

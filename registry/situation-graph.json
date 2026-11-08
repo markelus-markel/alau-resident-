@@ -1,0 +1,313 @@
+{
+  "schema": "alau-situation-graph/1",
+  "note": "Источник: index.html (SIT_GRAPH). Ребро escalates: ситуация может перейти в другую; related: обычная связь. Тексты кнопок видит жилец.",
+  "kinds": {
+    "escalates": "Может перейти в",
+    "related": "Связано с"
+  },
+  "nodes": [
+    {
+      "id": "gas",
+      "group": "danger",
+      "level": "emergency",
+      "icon": "⚠️",
+      "title": "Запах газа"
+    },
+    {
+      "id": "fire",
+      "group": "danger",
+      "level": "emergency",
+      "icon": "🔥",
+      "title": "Пожар или задымление"
+    },
+    {
+      "id": "safety",
+      "group": "danger",
+      "level": "urgent",
+      "icon": "🛡️",
+      "title": "Посторонние, взлом, вандализм"
+    },
+    {
+      "id": "lock",
+      "group": "house",
+      "level": "urgent",
+      "icon": "🔑",
+      "title": "Сломался замок или не открывается дверь"
+    },
+    {
+      "id": "leak",
+      "group": "accident",
+      "level": "urgent",
+      "icon": "💧",
+      "title": "Протечка или залив соседей"
+    },
+    {
+      "id": "nowater",
+      "group": "accident",
+      "level": "urgent",
+      "icon": "🚰",
+      "title": "Нет воды или прорыв трубы"
+    },
+    {
+      "id": "sewer",
+      "group": "accident",
+      "level": "urgent",
+      "icon": "🚽",
+      "title": "Засор канализации или запах"
+    },
+    {
+      "id": "power",
+      "group": "accident",
+      "level": "urgent",
+      "icon": "💡",
+      "title": "Нет света или проблемы с электричеством"
+    },
+    {
+      "id": "lift",
+      "group": "accident",
+      "level": "urgent",
+      "icon": "🛗",
+      "title": "Лифт застрял или не работает"
+    },
+    {
+      "id": "heat",
+      "group": "accident",
+      "level": "urgent",
+      "icon": "🔥",
+      "title": "Холодные батареи, нет отопления"
+    },
+    {
+      "id": "roof",
+      "group": "accident",
+      "level": "normal",
+      "icon": "🏚️",
+      "title": "Течёт кровля, сырость и плесень"
+    },
+    {
+      "id": "common",
+      "group": "house",
+      "level": "normal",
+      "icon": "🚪",
+      "title": "Поломка в подъезде"
+    },
+    {
+      "id": "trash",
+      "group": "house",
+      "level": "normal",
+      "icon": "🗑️",
+      "title": "Мусор: контейнеры и мусоропровод"
+    },
+    {
+      "id": "parking",
+      "group": "house",
+      "level": "normal",
+      "icon": "🚗",
+      "title": "Парковка и перекрытый проезд"
+    },
+    {
+      "id": "noise",
+      "group": "house",
+      "level": "normal",
+      "icon": "🔊",
+      "title": "Шум от соседей"
+    },
+    {
+      "id": "meeting",
+      "group": "org",
+      "level": "info",
+      "icon": "👥",
+      "title": "Общее собрание и голосование по вопросам дома"
+    },
+    {
+      "id": "bill",
+      "group": "org",
+      "level": "info",
+      "icon": "🧾",
+      "title": "Вопрос по квитанции или начислениям"
+    }
+  ],
+  "edges": [
+    {
+      "from": "gas",
+      "to": "fire",
+      "kind": "escalates",
+      "why": "Газ может привести к пожару или взрыву",
+      "button": "🔥 Загорелось или появился дым"
+    },
+    {
+      "from": "fire",
+      "to": "lift",
+      "kind": "related",
+      "why": "При пожаре лифтом не пользуются",
+      "button": "🛗 Лифт застрял или не работает"
+    },
+    {
+      "from": "fire",
+      "to": "power",
+      "kind": "related",
+      "why": "При пожаре или перегрузке проводки пропадает свет",
+      "button": "💡 Нет света или проблемы с электричеством"
+    },
+    {
+      "from": "power",
+      "to": "fire",
+      "kind": "escalates",
+      "why": "Искрит или пахнет гарью",
+      "button": "🔥 Искрит или пахнет гарью: пожар"
+    },
+    {
+      "from": "power",
+      "to": "lift",
+      "kind": "related",
+      "why": "Без света лифт останавливается",
+      "button": "🛗 Лифт остановился без света"
+    },
+    {
+      "from": "leak",
+      "to": "power",
+      "kind": "escalates",
+      "why": "Вода у розеток и проводки",
+      "button": "💡 Вода у розеток: что со светом"
+    },
+    {
+      "from": "leak",
+      "to": "sewer",
+      "kind": "related",
+      "why": "Залив стоками из канализации",
+      "button": "🚽 Залив стоками: засор канализации"
+    },
+    {
+      "from": "sewer",
+      "to": "leak",
+      "kind": "escalates",
+      "why": "Стоки заливают нижние этажи",
+      "button": "💧 Протечка или залив соседей"
+    },
+    {
+      "from": "roof",
+      "to": "leak",
+      "kind": "escalates",
+      "why": "Течь с кровли заливает квартиры верхних этажей",
+      "button": "💧 Протечка или залив соседей"
+    },
+    {
+      "from": "roof",
+      "to": "meeting",
+      "kind": "related",
+      "why": "Ремонт кровли выносят на собрание",
+      "button": "📅 Внести вопрос на собрание"
+    },
+    {
+      "from": "nowater",
+      "to": "leak",
+      "kind": "escalates",
+      "why": "При прорыве вода заливает соседей",
+      "button": "💧 Прорыв: протечка или залив соседей"
+    },
+    {
+      "from": "nowater",
+      "to": "heat",
+      "kind": "related",
+      "why": "Авария на сетях: нет и воды, и тепла",
+      "button": "🔥 Холодные батареи, нет отопления"
+    },
+    {
+      "from": "heat",
+      "to": "nowater",
+      "kind": "related",
+      "why": "Нет отопления и горячей воды одновременно",
+      "button": "🚰 Нет воды или прорыв трубы"
+    },
+    {
+      "from": "heat",
+      "to": "meeting",
+      "kind": "related",
+      "why": "Отопление всего дома выносят на собрание",
+      "button": "📅 Внести вопрос на собрание"
+    },
+    {
+      "from": "lock",
+      "to": "safety",
+      "kind": "escalates",
+      "why": "Следы взлома на двери",
+      "button": "🛡️ Следы взлома: посторонние"
+    },
+    {
+      "from": "safety",
+      "to": "lock",
+      "kind": "related",
+      "why": "Взломан или повреждён замок",
+      "button": "🔑 Сломался замок"
+    },
+    {
+      "from": "safety",
+      "to": "meeting",
+      "kind": "related",
+      "why": "Видеонаблюдение выносят на собрание",
+      "button": "📅 Внести вопрос на собрание"
+    },
+    {
+      "from": "common",
+      "to": "lift",
+      "kind": "related",
+      "why": "Лифт относится к общему имуществу",
+      "button": "🛗 Лифт застрял или не работает"
+    },
+    {
+      "from": "common",
+      "to": "lock",
+      "kind": "related",
+      "why": "Замок на двери подъезда",
+      "button": "🔑 Сломался замок"
+    },
+    {
+      "from": "common",
+      "to": "meeting",
+      "kind": "related",
+      "why": "Если нужны деньги, вопрос выносится на собрание",
+      "button": "📅 Внести вопрос на собрание"
+    },
+    {
+      "from": "lift",
+      "to": "power",
+      "kind": "related",
+      "why": "Лифт мог остановиться из-за отключения света",
+      "button": "💡 Нет света или проблемы с электричеством"
+    },
+    {
+      "from": "lift",
+      "to": "common",
+      "kind": "related",
+      "why": "Лифт относится к общему имуществу",
+      "button": "🏢 Поломка в подъезде"
+    },
+    {
+      "from": "noise",
+      "to": "safety",
+      "kind": "escalates",
+      "why": "Драка, угрозы, вандализм",
+      "button": "🛡️ Драка или угрозы: посторонние"
+    },
+    {
+      "from": "parking",
+      "to": "fire",
+      "kind": "related",
+      "why": "Перекрыт проезд пожарных и скорой",
+      "button": "🔥 Пожар или задымление"
+    },
+    {
+      "from": "trash",
+      "to": "fire",
+      "kind": "escalates",
+      "why": "Горит мусор в контейнере или мусоропроводе",
+      "button": "🔥 Горит мусор: пожар"
+    },
+    {
+      "from": "bill",
+      "to": "meeting",
+      "kind": "related",
+      "why": "Тарифы и расходы дома выносят на собрание",
+      "button": "📅 Внести вопрос на собрание"
+    }
+  ]
+}
