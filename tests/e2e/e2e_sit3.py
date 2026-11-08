@@ -42,7 +42,7 @@ with sync_playwright() as p:
     ok('assistant answers aloud with situation and steps', g("__spoken.length")==1 and 'Запах газа' in g("__spoken[0]") and 'Не включайте' in g("__spoken[0]"), g("__spoken"))
     pg.click('#sit-body .sit-row'); ok('suggestion opens the memo', 'Запах газа' in g("document.getElementById('sit-title').textContent"))
     g("openSituations()"); pg.click('#sit-vmic'); g("__recs[1].emit([['абракадабра',true]])"); pg.click('#sit-vmic'); pg.wait_for_timeout(300)
-    ok('voice no match -> spoken hint, ask button', 'не нашлось' in g("__spoken[1]") and 'ничего не нашлось' in g("document.getElementById('sit-body').textContent"), g("__spoken"))
+    ok('voice no match -> spoken hint, ask button', g("__spoken.some(t=>t.includes('не нашлось'))") and 'ничего не нашлось' in g("document.getElementById('sit-body').textContent"), g("__spoken"))
     g("closeSituations()"); ok('no page errors', not errs, errs); ctx.close()
     ctx=b.new_context(viewport={'width':390,'height':844}); ctx.add_init_script("window.SpeechRecognition=undefined;window.webkitSpeechRecognition=undefined;")
     pg=ctx.new_page(); errs=[]; pg.on('pageerror',lambda e:errs.append(str(e)))

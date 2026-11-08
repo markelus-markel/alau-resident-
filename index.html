@@ -3236,6 +3236,25 @@ function openSituations(id) {
   }
   $('sit-modal').classList.add('open');
   body.scrollTop = 0;
+  if (s && s.level === 'emergency' && sitTtsOn()) sitSpeakText(sitNowText(s));
+}
+// Озвучка памятки: опасная ситуация читается сразу при открытии; после диктовки вопроса в поле заявки читается «Что делать сейчас».
+function sitTtsOn() { const t = $('bot-tts'); return !t || t.checked; }
+function sitNowText(s) { return (s.level === 'emergency' ? 'При угрозе жизни сначала звоните сто двенадцать. ' : '') + s.title + '. Что делать сейчас. ' + s.now.join(' '); }
+function sitSpeakText(text) {
+  const b = $('sit-tts'); if (b) b.textContent = '⏹ Стоп';
+  speak(text);
+  const iv = setInterval(() => {
+    let sp = false; try { sp = speechSynthesis.speaking; } catch (e) {}
+    if (!sp) { clearInterval(iv); const bb = $('sit-tts'); if (bb) bb.textContent = '🔊 Прочитать вслух'; }
+  }, 500);
+}
+function sitIsQuestion(t) { return /\?|что\s+(мне\s+|нам\s+)?(делать|предпринять|сделать)|как\s+(мне\s+)?(быть|поступить|действовать)|помогите|подскажите/i.test(String(t || '')); }
+function sitAfterDictate(txt) {
+  const inp = $('sit-text'); if (!inp) return;
+  inp.value = txt; inp.focus();
+  const s = sitById(sitCurrent);
+  if (s && sitTtsOn() && sitIsQuestion(txt)) sitSpeakText(sitNowText(s));
 }
 function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; sitPhotos = []; stopAllMics(); try { speechSynthesis.cancel(); } catch (e) {} }
 function sitVoice() {
@@ -3259,7 +3278,7 @@ function sitAskFree() {
 function sitMic() {
   if (botListening) { vrStop(); return; }
   const inp = $('sit-text'); if (!inp) return;
-  dictate(inp, 'sit-mic', txt => { inp.value = txt; inp.focus(); });
+  dictate(inp, 'sit-mic', txt => sitAfterDictate(txt));
 }
 function sitSpeak() {
   const s = sitById(sitCurrent); if (!s) return;
