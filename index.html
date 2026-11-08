@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>AlauConcierge</title>
+<meta name="theme-color" content="#0f5f52">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AlauConcierge">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a8a7a'/%3E%3Ctext x='32' y='44' font-family='Arial,sans-serif' font-size='38' font-weight='700' text-anchor='middle' fill='white'%3EA%3C/text%3E%3C/svg%3E">
 <style>
   :root {
     --teal: #1a8a7a; --teal-bg: #0f5f52; --teal-light: #e8f5f3; --teal-mid: #2aaa96;
@@ -1810,6 +1816,24 @@ function ctSave() {
 }
 function ctClear() { const id = ctCurrent; ctStore(o => { delete o[id]; }); ctClose(); }
 document.getElementById('ct-modal').addEventListener('click', function (e) { if (e.target === this) ctClose(); });
+
+// ===== Установка на главный экран: манифест и значки строятся из этой же страницы (без отдельных файлов) =====
+function pwaIcon(size) {
+  const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
+  const r = size * 0.22; x.fillStyle = '#1a8a7a'; x.beginPath(); x.moveTo(r, 0); x.arcTo(size, 0, size, size, r); x.arcTo(size, size, 0, size, r); x.arcTo(0, size, 0, 0, r); x.arcTo(0, 0, size, 0, r); x.closePath(); x.fill();
+  x.fillStyle = '#fff'; x.font = '700 ' + Math.round(size * 0.6) + 'px Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillText('A', size / 2, size * 0.7);
+  return c.toDataURL('image/png');
+}
+function pwaSetup() {
+  try {
+    const i192 = pwaIcon(192), i512 = pwaIcon(512), base = location.href.split('#')[0].split('?')[0];
+    const t = document.createElement('link'); t.rel = 'apple-touch-icon'; t.href = i192; document.head.appendChild(t);
+    const man = { name: 'AlauConcierge', short_name: 'Alau', description: 'Приложение жильца ОСИ', lang: 'ru', start_url: base, scope: base.replace(/[^/]*$/, ''), display: 'standalone', background_color: '#f0f2f5', theme_color: '#0f5f52',
+      icons: [{ src: i192, sizes: '192x192', type: 'image/png', purpose: 'any' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' }] };
+    const m = document.createElement('link'); m.rel = 'manifest'; m.href = URL.createObjectURL(new Blob([JSON.stringify(man)], { type: 'application/manifest+json' })); document.head.appendChild(m);
+  } catch (e) {}
+}
+pwaSetup();
 
 // ===== СЧЕТА: фото и учёт на устройстве, оплата в Kaspi.kz вручную (D-26) =====
 const LS_BILLS = 'alauDemoBills';
