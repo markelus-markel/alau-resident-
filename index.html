@@ -584,6 +584,7 @@
     <!-- TAB: ASSISTANT -->
     <div id="chatpane-bot" style="display:none;flex:1;flex-direction:column;overflow:hidden;background:#f5f7fa;">
       <div id="bot-thread" class="chat-body" style="flex:1;"></div>
+      <div id="bot-listen" onclick="vrStop()" style="display:none;background:#fdecea;color:#c62828;font-size:14px;font-weight:600;padding:10px 14px;border-top:1px solid #f3c1bc;cursor:pointer;">🎙️ <span id="bot-listen-text">Слушаю… скажите ответ</span> <span style="font-weight:400;font-size:12px;">· нажмите, чтобы закончить</span></div>
       <div id="bot-chips" class="chip-row" style="padding:8px 12px 0;margin:0;background:#fff;border-top:1px solid #eee;"></div>
       <div class="chat-input-bar">
         <div class="chat-input-wrap"><input class="chat-input" id="bot-text" placeholder="Напишите или скажите команду…" type="text" onkeydown="if(event.key==='Enter')botSend()"></div>
@@ -2355,9 +2356,14 @@ function sendChatMsg(text, via) {
 // ----- микрофоны: диктовка в чат и вопрос помощнику -----
 let chatDictating = false, botListening = false;
 function stopAllMics() {
-  vrCancel(); chatDictating = false; botListening = false;
+  vrCancel(); chatDictating = false; botListening = false; listenBanner(null);
   ['chat-mic', 'bot-mic', 'sit-mic', 'sit-vmic', 'home-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
   document.querySelectorAll('[data-ph]').forEach(i => { i.placeholder = i.dataset.ph; });
+}
+function listenBanner(txt) {
+  const b = $('bot-listen'); if (!b) return;
+  b.style.display = txt ? 'block' : 'none';
+  if (txt) $('bot-listen-text').textContent = txt;
 }
 function dictate(inp, btnId, onText) {
   if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
@@ -2370,9 +2376,9 @@ function dictate(inp, btnId, onText) {
   if (state === 'chat') chatDictating = true; else botListening = true;
   vrStart({
     timer: { textContent: '' },
-    live: { set textContent(v) { if (v === 'Слушаю…') { inp.placeholder = 'Слушаю…'; inp.value = base.trim(); } else inp.value = base + v; } },
+    live: { set textContent(v) { listenBanner(state === 'bot' ? (v === 'Слушаю…' ? 'Слушаю… скажите ответ' : v) : null); if (v === 'Слушаю…') { inp.placeholder = 'Слушаю…'; inp.value = base.trim(); } else inp.value = base + v; } },
     done: res => {
-      chatDictating = false; botListening = false; btn.classList.remove('rec'); inp.placeholder = ph;
+      listenBanner(null); chatDictating = false; botListening = false; btn.classList.remove('rec'); inp.placeholder = ph;
       if (res.text) onText(base + res.text); else { inp.value = base.trim(); const m = voiceErrText(res.err || 'no-speech'); if (m) toast(m); }
     }
   });
@@ -2614,12 +2620,29 @@ function qaMatch(t) {
   if (i < 0) { botQa = null; return null; }
   return qaApply(botQa.id, botQa.node, i);
 }
+// Если разговор с помощником начат голосом, после каждого его вопроса микрофон включается сам, когда озвучка закончилась.
+function waitSpeechEnd(tries) {
+  return new Promise(res => {
+    const tick = n => { let sp = false; try { sp = speechSynthesis.speaking; } catch (e) {} if (!sp || n <= 0) res(); else setTimeout(() => tick(n - 1), 300); };
+    tick(tries || 200);
+  });
+}
+function qaListenSoon(speaking) {
+  if (!botQa || !botQa.voice || !SpeechRec) return;
+  const mark = botQa.id + '|' + botQa.node;
+  // speak() сам ограничен 9 секундами, а памятка читается дольше: ждём по состоянию синтезатора, а не по его промису
+  new Promise(r => setTimeout(r, speaking ? 500 : 0)).then(waitSpeechEnd).then(() => {
+    if (!botQa || botQa.id + '|' + botQa.node !== mark || botListening) return;
+    const scr = $('screen-chat'); if (!scr || !scr.classList.contains('active')) return;
+    botMic();
+  });
+}
 function qaClick(arg) {
   const [id, node, i] = String(arg).split('|'); const n = qaNode(id, node), o = n && n.opts[+i]; if (!o) return;
-  if (!botQa || botQa.id !== id || botQa.node !== node) botQa = { id, node, picked: [], text: '' };
+  if (!botQa || botQa.id !== id || botQa.node !== node) botQa = { id, node, picked: [], text: '', voice: botQa && botQa.voice };
   pushBot('me', o.l, 'text');
   const r = qaApply(id, node, +i); if (r) pushBot('bot', r.text, 'text', r.actions);
-  renderBot();
+  renderBot(); qaListenSoon(null);
 }
 function sitBotReply(sit, userText) {
   if (SIT_QA[sit.id]) {
@@ -2672,11 +2695,14 @@ function botAsk(raw, via) {
   pushBot('bot', r.text, 'text', r.actions);
   renderBot();
   const tts = $('bot-tts');
+  if (botQa && via === 'voice') botQa.voice = true;
+  let speaking = null;
   if (via === 'voice' && tts && tts.checked) {
     // если помощник задал вопрос с вариантами, голосом же говорим, как на него ответить
     const opts = (r.actions || []).filter(a => a.do === 'qa').map(a => a.label);
-    speak(r.text.replace(/\n/g, '. ') + (opts.length ? ' Ответьте: ' + opts.join(', или ') + '. Нажмите кнопку или микрофон.' : ''));
+    speaking = speak(r.text.replace(/\n/g, '. ') + (opts.length ? ' Ответьте: ' + opts.join(', или ') + '. Нажмите кнопку или микрофон.' : ''));
   }
+  qaListenSoon(speaking);
 }
 function botSend() { const inp = $('bot-text'); const t = inp.value; inp.value = ''; stopAllMics(); botAsk(t, 'text'); }
 function botAction(mi, ai) {
