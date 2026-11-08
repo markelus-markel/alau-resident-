@@ -1309,6 +1309,11 @@
       <button class="btn-ghost" id="hm-set" onclick="homeSetHere()" style="margin-top:10px;">📍 Запомнить это место как мой дом</button>
       <iframe class="map-frame" id="hm-frame" title="Карта дома" loading="lazy"></iframe>
     </div>
+    <div class="auth-card" id="voice-card" style="display:none;">
+      <div class="auth-title" style="font-size:16px;">🔊 Выберите, пожалуйста, голос помощника</div>
+      <div class="auth-sub" style="margin-bottom:8px;">Выбранный голос читает памятки раздела «Если случилось». Ответы помощника в чате читает голос вашего телефона.</div>
+      <div id="voice-list"></div>
+    </div>
     <div class="demo-note" style="margin:0;">Данные анкеты хранятся только в этом браузере. Наружу уходят только запросы к картам и только по вашей кнопке. Очистка данных сайта удалит профиль.</div>
     <button class="btn-primary" onclick="editProfile()">✏️ Изменить анкету</button>
     <button class="btn-ghost" onclick="logout()">Выйти</button>
@@ -2666,7 +2671,7 @@ function alauOnShow(id) {
   if (id === 'screen-calendar') renderCalendar();
   if (id === 'screen-chat') renderChatScreen();
   else if (chatDictating || botListening) stopAllMics();
-  if (id === 'screen-profile') renderProfile();
+  if (id === 'screen-profile') { renderProfile(); renderVoiceCard(); }
 }
 
 // ----- вход по SMS-коду (демо) -----
@@ -2846,7 +2851,47 @@ function renderProfile() {
 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 let currentRec = null, voiceAbort = false;
 function setVoiceStatus(t) { const s = $('voice-status'); if (s) s.textContent = t; }
+// ----- голос помощника: готовые записи (audio/sit/<Голос>/, создаёт tools/gen_voice.py), иначе голос телефона -----
+const LS_VOICE = 'alauDemoVoice';
+const ASSIST_VOICES = ['Sarah', 'Alice', 'Brian', 'George'];
+const VOICE_HELLO = 'Здравствуйте! Я помощник AlauConcierge. Так я буду читать вам подсказки.';
+const voiceMan = {}; let voicesOk = [], clipEl = null;
+function voiceChoice() { const v = lsGet(LS_VOICE, ''); return voicesOk.includes(v) ? v : ''; }
+function voiceManifest(v) {
+  if (!voiceMan[v]) voiceMan[v] = fetch('audio/sit/' + v + '/manifest.json').then(r => r.ok ? r.json() : Promise.reject()).catch(() => { delete voiceMan[v]; return {}; });
+  return voiceMan[v];
+}
+function clipStop() { if (clipEl) { try { clipEl.pause(); } catch (e) {} clipEl = null; } }
+function clipPlaying() { return !!(clipEl && !clipEl.paused && !clipEl.ended); }
+// true, если запись найдена, совпала с текущим текстом реестра и запущена
+function speakClip(key, text, voice) {
+  const v = voice || voiceChoice(); if (!v) return Promise.resolve(false);
+  return voiceManifest(v).then(man => {
+    if (man[key] !== text) return false;
+    return new Promise(res => {
+      clipStop(); try { speechSynthesis.cancel(); } catch (e) {}
+      const a = new Audio('audio/sit/' + v + '/' + key + '.mp3'); clipEl = a;
+      a.onended = () => { if (clipEl === a) clipEl = null; };
+      a.onerror = () => { if (clipEl === a) clipEl = null; res(false); };
+      a.play().then(() => res(true), () => { if (clipEl === a) clipEl = null; res(false); });
+    });
+  }).catch(() => false);
+}
+function voiceProbe() {
+  if (!/^https?:$/.test(location.protocol)) return Promise.resolve(); // из файла записи недоступны
+  return Promise.all(ASSIST_VOICES.map(v => voiceManifest(v).then(m => (m.hello === VOICE_HELLO ? v : null)))).then(r => { voicesOk = r.filter(Boolean); renderVoiceCard(); });
+}
+function renderVoiceCard() {
+  const c = $('voice-card'); if (!c) return;
+  c.style.display = voicesOk.length ? '' : 'none';
+  const cur = voiceChoice();
+  const row = (v, label, prev) => '<div class="prof-row" style="align-items:center;"><label style="display:flex;gap:8px;align-items:center;flex:1;"><input type="radio" name="asv" value="' + v + '"' + (cur === v ? ' checked' : '') + ' onchange="voicePick(this.value)"> ' + label + '</label>' + (prev ? '<button class="btn-link" onclick="voicePreview(\'' + v + '\')">▶ Послушать</button>' : '') + '</div>';
+  $('voice-list').innerHTML = row('', 'Голос моего телефона', false) + voicesOk.map(v => row(v, v, true)).join('');
+}
+function voicePick(v) { lsSet(LS_VOICE, v); if (v) voicePreview(v); else { clipStop(); toast('Выбран голос телефона'); } }
+function voicePreview(v) { speakClip('hello', VOICE_HELLO, v).then(ok => { if (!ok) toast('Образец голоса сейчас недоступен'); }); }
 function speak(text) {
+  clipStop();
   return new Promise(res => {
     if (!('speechSynthesis' in window)) { res(); return; }
     try {
@@ -3225,7 +3270,7 @@ function openSituations(id) {
     h += '<div class="sit-h">Что делать сейчас</div><ol class="sit-ol">' + li(s.now) + '</ol>';
     h += '<div class="sit-h">Что дальше</div><ul class="sit-ul">' + li(s.next) + '</ul>';
     if (s.call.length) h += '<div class="sit-calls">' + s.call.map(c => '<a class="tkt-btn sit-call" href="tel:' + c[0] + '">📞 ' + c[0] + ' · ' + escHtml(c[1]) + '</a>').join('') + '</div>';
-    h += '<div class="sit-calls"><button class="tkt-btn" id="sit-tts" onclick="sitSpeak()">🔊 Прочитать вслух</button><button class="tkt-btn" id="sit-ask" onclick="sitAsk()">🤖 Спросить помощника</button></div>';
+    h += '<div class="sit-calls"><button class="tkt-btn" id="sit-tts" onclick="sitSpeak()">🔊 Прочитать вслух</button><button class="tkt-btn" id="sit-ask" onclick="sitAsk()">🤖 Спросить помощника</button>' + (voicesOk.length ? '<button class="tkt-btn" id="sit-voice" onclick="sitPickVoice()">🎚 Выбрать голос</button>' : '') + '</div>';
     if (s.go) h += '<div class="sit-calls"><button class="tkt-btn chk" onclick="sitMakeTicket()">📋 Внести вопрос на повестку</button><button class="tkt-btn" onclick="openSituations()">← Все ситуации</button></div>';
     else h += '<div class="sit-h">Сообщить об этом</div><textarea id="sit-text" class="modal-input" rows="3" placeholder="Опишите: где, что произошло, когда. Можно продиктовать голосом." style="resize:vertical;"></textarea>'
       + '<div class="sit-calls"><button class="tkt-btn" id="sit-mic" onclick="sitMic()">🎙️ Голосом</button><label class="tkt-btn" style="text-align:center;cursor:pointer;">📷 Фото<input id="sit-file" type="file" accept="image/*" capture="environment" multiple hidden onchange="sitAddPhotos(this.files)"></label></div>'
@@ -3236,27 +3281,31 @@ function openSituations(id) {
   }
   $('sit-modal').classList.add('open');
   body.scrollTop = 0;
-  if (s && s.level === 'emergency' && sitTtsOn()) sitSpeakText(sitNowText(s));
+  if (s && s.level === 'emergency' && sitTtsOn()) sitSpeakText(sitNowText(s), s.id);
 }
 // Озвучка памятки: опасная ситуация читается сразу при открытии; после диктовки вопроса в поле заявки читается «Что делать сейчас».
 function sitTtsOn() { const t = $('bot-tts'); return !t || t.checked; }
 function sitNowText(s) { return (s.level === 'emergency' ? 'При угрозе жизни сначала звоните сто двенадцать. ' : '') + s.title + '. Что делать сейчас. ' + s.now.join(' '); }
-function sitSpeakText(text) {
+function sitFullText(s) { return sitNowText(s) + ' Что дальше. ' + s.next.join(' '); }
+// key — имя записи выбранного голоса (<id> или <id>-full); нет записи или голос не выбран — читает голос телефона
+function sitSpeakText(text, key) {
   const b = $('sit-tts'); if (b) b.textContent = '⏹ Стоп';
-  speak(text);
-  const iv = setInterval(() => {
-    let sp = false; try { sp = speechSynthesis.speaking; } catch (e) {}
-    if (!sp) { clearInterval(iv); const bb = $('sit-tts'); if (bb) bb.textContent = '🔊 Прочитать вслух'; }
-  }, 500);
+  speakClip(key, text).then(ok => {
+    if (!ok) speak(text);
+    const iv = setInterval(() => {
+      let sp = false; try { sp = speechSynthesis.speaking; } catch (e) {}
+      if (!sp && !clipPlaying()) { clearInterval(iv); const bb = $('sit-tts'); if (bb) bb.textContent = '🔊 Прочитать вслух'; }
+    }, 500);
+  });
 }
 function sitIsQuestion(t) { return /\?|что\s+(мне\s+|нам\s+)?(делать|предпринять|сделать)|как\s+(мне\s+)?(быть|поступить|действовать)|помогите|подскажите/i.test(String(t || '')); }
 function sitAfterDictate(txt) {
   const inp = $('sit-text'); if (!inp) return;
   inp.value = txt; inp.focus();
   const s = sitById(sitCurrent);
-  if (s && sitTtsOn() && sitIsQuestion(txt)) sitSpeakText(sitNowText(s));
+  if (s && sitTtsOn() && sitIsQuestion(txt)) sitSpeakText(sitNowText(s), s.id);
 }
-function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; sitPhotos = []; stopAllMics(); try { speechSynthesis.cancel(); } catch (e) {} }
+function closeSituations() { $('sit-modal').classList.remove('open'); sitCurrent = null; sitPhotos = []; stopAllMics(); clipStop(); try { speechSynthesis.cancel(); } catch (e) {} }
 function sitVoice() {
   if (botListening) { vrStop(); return; }
   const inp = $('sit-search'); if (!inp) return;
@@ -3280,12 +3329,14 @@ function sitMic() {
   const inp = $('sit-text'); if (!inp) return;
   dictate(inp, 'sit-mic', txt => sitAfterDictate(txt));
 }
+function sitPickVoice() { closeSituations(); showScreen('screen-profile'); const c = $('voice-card'); if (c && c.scrollIntoView) c.scrollIntoView(); }
 function sitSpeak() {
   const s = sitById(sitCurrent); if (!s) return;
+  if (clipPlaying()) { clipStop(); const bb = $('sit-tts'); if (bb) bb.textContent = '🔊 Прочитать вслух'; return; }
   try {
     if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
   } catch (e) {}
-  speak(s.title + '. Что делать сейчас. ' + s.now.join(' ') + ' Что дальше. ' + s.next.join(' '));
+  sitSpeakText(sitFullText(s), s.id + '-full');
 }
 function sitShrink(file) {
   return new Promise(res => {
@@ -3360,6 +3411,7 @@ function ruPlural(n, a, b, c) { n = Math.abs(n) % 100; const k = n % 10; return 
   if (isProfileComplete(u)) { applyProfile(u); showScreen('screen-home'); }
   else showScreen(currentPhone() ? 'screen-register' : 'screen-auth');
   guardSilent = false;
+  voiceProbe();
 })();
 </script>
 </body>
