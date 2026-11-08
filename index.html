@@ -31,7 +31,7 @@
   .topbar-logo { display: flex; align-items: center; gap: 8px; }
   .logo-mark { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--teal); line-height: 1.1; text-align: center; }
   .topbar h1 { color: #fff; font-size: 20px; font-weight: 700; }
-  .apt-badge { background: rgba(255,255,255,0.2); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+  .apt-badge { white-space: nowrap; flex: 0 0 auto; background: rgba(255,255,255,0.2); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
   .back-topbar-btn { background: rgba(255,255,255,0.2); border: none; color: #fff; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 14px; }
 
   /* HOME */
@@ -361,11 +361,6 @@
   .voice-assist .va-t { font-size: 14px; font-weight: 700; color: var(--teal-bg); }
   .voice-assist .va-s { font-size: 12px; color: #3b5f59; line-height: 1.5; margin: 4px 0 10px; }
   #voice-status { font-size: 13px; color: var(--teal-bg); font-weight: 600; margin-top: 8px; min-height: 18px; }
-  .profile-strip { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 14px; cursor: pointer; }
-  .ps-avatar { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; }
-  .ps-name { font-size: 15px; font-weight: 700; color: var(--text); }
-  .ps-addr { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .ps-arrow { margin-left: auto; color: var(--teal); font-size: 20px; }
   .prof-row { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
   .prof-row:last-child { border-bottom: none; }
   .prof-row span:first-child { color: var(--text-muted); }
@@ -391,20 +386,35 @@
 <!-- =================== HOME =================== -->
 <div class="screen active" id="screen-home">
   <div class="topbar">
-    <div class="topbar-logo">
+    <div class="topbar-logo" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:0;">
       <h1>AlauConcierge</h1>
+      <div id="home-who" onclick="showScreen('screen-profile')" style="font-size:12px;color:rgba(255,255,255,.88);cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="ps-name">Профиль</span> · <span id="ps-addr">заполните анкету</span></div>
     </div>
     <div class="apt-badge" id="home-apt" onclick="showScreen('screen-profile')" style="cursor:pointer;">Кв. №—</div>
   </div>
   <div class="home-content">
 
-    <!-- Профиль -->
-    <div class="profile-strip" onclick="showScreen('screen-profile')">
-      <div class="ps-avatar" id="ps-avatar">?</div>
-      <div><div class="ps-name" id="ps-name">Профиль</div><div class="ps-addr" id="ps-addr">Заполните анкету</div></div>
-      <span class="ps-arrow">›</span>
+
+    <!-- Знакомство: помощник представляется и предлагает помощь (показывается, пока жилец не закроет) -->
+    <div id="welcome-card" style="display:none;background:#e8f5f1;border:1px solid #b9ddd3;border-radius:14px;padding:14px;margin:0 0 12px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">👋 Здравствуйте! Я помощник AlauConcierge</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:10px;">Подскажу, что делать в домашних ситуациях, и помогу найти нужный раздел. Хотите, расскажу, что умеет приложение и как им пользоваться?</div>
+      <div class="sit-calls"><button class="tkt-btn chk" id="welcome-guide" onclick="guideOpen()">📖 Что умеет приложение</button><button class="tkt-btn" id="welcome-later" onclick="welcomeDone()">Позже</button></div>
     </div>
 
+    <!-- Помощник: единая строка «Чем помочь?» (текст или голос) -->
+    <div id="home-ask" style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin:0 0 14px;">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">🤖 Чем помочь?</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="home-ask-in" type="text" placeholder="Например: пахнет газом, где мои счета" enterkeyhint="send" onkeydown="if(event.key==='Enter')homeAsk()" style="flex:1;min-width:0;border:2px solid #e8e8e8;border-radius:10px;padding:11px;font-size:15px;box-sizing:border-box;">
+        <button class="chat-mic-btn" id="home-mic" onclick="homeMic()" title="Сказать голосом" aria-label="Сказать голосом">🎙️</button>
+      </div>
+      <button class="btn-primary" id="home-ask-go" onclick="homeAsk()" style="margin-top:8px;">Спросить помощника</button>
+      <div class="sit-calls" style="margin-top:8px;">
+        <button class="tkt-btn" id="home-chip-sit" onclick="openSituations()">🚨 Что-то случилось</button>
+        <button class="tkt-btn" id="home-chip-bills" onclick="showScreen('screen-bills')">🧾 Мои счета</button>
+      </div>
+    </div>
 
     <!-- Общий календарь (внешняя ссылка, см. CALENDAR_URL) -->
     <div class="cal-card" id="cal-card" onclick="showScreen('screen-calendar')">
@@ -461,13 +471,6 @@
       </div>
     </div>
 
-    <!-- Знакомство: помощник представляется и предлагает помощь (показывается, пока жилец не закроет) -->
-    <div id="welcome-card" style="display:none;background:#e8f5f1;border:1px solid #b9ddd3;border-radius:14px;padding:14px;margin:0 0 12px;">
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">👋 Здравствуйте! Я помощник AlauConcierge</div>
-      <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:10px;">Подскажу, что делать в домашних ситуациях, и помогу найти нужный раздел. Хотите, расскажу, что умеет приложение и как им пользоваться?</div>
-      <div class="sit-calls"><button class="tkt-btn chk" id="welcome-guide" onclick="guideOpen()">📖 Что умеет приложение</button><button class="tkt-btn" id="welcome-later" onclick="welcomeDone()">Позже</button></div>
-    </div>
-
     <!-- Навигатор -->
     <div class="section-header">
       <div class="section-title">🧭 Навигатор</div>
@@ -491,7 +494,7 @@
     <button class="nav-btn active" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -524,7 +527,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn active" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -619,7 +622,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn active" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -640,7 +643,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -670,7 +673,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -739,7 +742,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-market')"><span class="nav-icon">🛒</span><span class="nav-label">Маркетплейс</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -890,7 +893,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn active" onclick="showScreen('screen-tickets')"><span class="nav-icon">📋</span><span class="nav-label">Заявки</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -1111,7 +1114,7 @@
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
     <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
     <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
-    <button class="nav-btn" onclick="showScreen('screen-tickets')"><span class="nav-icon">📋</span><span class="nav-label">Заявки</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
   </nav>
 </div>
 
@@ -2340,7 +2343,7 @@ function sendChatMsg(text, via) {
 let chatDictating = false, botListening = false;
 function stopAllMics() {
   vrCancel(); chatDictating = false; botListening = false;
-  ['chat-mic', 'bot-mic', 'sit-mic', 'sit-vmic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
+  ['chat-mic', 'bot-mic', 'sit-mic', 'sit-vmic', 'home-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
   document.querySelectorAll('[data-ph]').forEach(i => { i.placeholder = i.dataset.ph; });
 }
 function dictate(inp, btnId, onText) {
@@ -2427,6 +2430,16 @@ function welcomeSeen() { const p = currentPhone(); return !p || !!(lsGet(LS_WELC
 function renderWelcome() { const c = $('welcome-card'); if (c) c.style.display = welcomeSeen() ? 'none' : ''; }
 function welcomeDone() { const p = currentPhone(); if (!p) return; const a = lsGet(LS_WELCOME, {}); a[p] = 1; lsSet(LS_WELCOME, a); renderWelcome(); }
 function guideText() { return (GUIDE_INTRO + ' Что умеет приложение. ' + APP_CAPS.map(c => c.title + '. ' + c.what + ' Самому: ' + c.self + (c.ask ? ' С помощником: скажите «' + c.ask + '».' : '')).join(' ')).replace(/🎙️?/g, 'микрофон'); }
+function openAssistant() { showScreen('screen-chat'); switchChatTab('bot'); }
+function homeAsk(raw, via) {
+  const inp = $('home-ask-in'), text = String(raw != null ? raw : inp.value).trim();
+  if (!text) { toast('Напишите или скажите, что вам нужно'); inp.focus(); return; }
+  inp.value = ''; openAssistant(); botAsk(text, via || 'text');
+}
+function homeMic() {
+  if (botListening) { vrStop(); return; }
+  dictate($('home-ask-in'), 'home-mic', txt => { $('home-ask-in').value = ''; homeAsk(txt, 'voice'); });
+}
 function guideOpen() {
   $('guide-sub').textContent = GUIDE_INTRO;
   $('guide-body').innerHTML = APP_CAPS.map((c, i) => '<div class="prof-row" style="display:block;padding:10px 0;">'
@@ -2899,7 +2912,6 @@ function fillTestData() {
 function applyProfile(u) {
   APT = u.apt; CITY = u.city; fillApt();
   const badge = $('home-apt'); if (badge) badge.textContent = 'Кв. №' + u.apt;
-  $('ps-avatar').textContent = ((u.first[0] || '') + (u.last[0] || '')).toUpperCase();
   $('ps-name').textContent = u.last + ' ' + u.first;
   $('ps-addr').textContent = u.city + ', ' + u.street + ', д. ' + u.house + ', кв. ' + u.apt;
 }
