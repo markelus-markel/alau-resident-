@@ -7,8 +7,9 @@ S = sys.argv[1]; res = []
 def ok(n, c, x=''):
     res.append(c); print(('PASS ' if c else 'FAIL ') + n + (' | ' + str(x)[:300] if not c else ''))
 MOCK = """
+window.__spoken=[];
 window.SpeechSynthesisUtterance=function(t){this.text=t};
-Object.defineProperty(window,'speechSynthesis',{value:{speaking:false,speak(){},cancel(){}},configurable:true});
+Object.defineProperty(window,'speechSynthesis',{value:{speaking:false,speak:u=>{window.__spoken.push(u.text)},cancel(){}},configurable:true});
 """
 SEED = """()=>{const u={};u['77011234567']={phone:'77011234567',last:'Иванов',first:'Тест',middle:'',iin:makeTestIIN(),city:'Семей',street:'ул. Найманбаева',house:'12',apt:'23'};lsSet(LS_USERS,u);lsSet(LS_SESSION,'77011234567');}"""
 URL = 'file://' + os.environ.get('ALAU_INDEX', '/home/claude/alau-resident-/index.html')
@@ -52,6 +53,16 @@ with sync_playwright() as p:
     click('✅ Да'); pg.wait_for_timeout(200)
     top = g("ticketBox().box.list[0]")
     ok('lock: confirming creates a ticket with the answers', cnt()==n0+1 and 'Внутри, дверь не открывается; Да' in top['text'] and top['prio']=='urgent', top)
+    # способ ответа: голосом проговаривается, как отвечать, и есть кнопка микрофона
+    g("void(window.__spoken=[])"); ask('сломался замок'); sp = [x.replace('\u0301', '') for x in g("__spoken")]
+    ok('voice question: the assistant says how to answer', len(sp)==1 and 'Ответьте: Внутри, дверь не открывается, или Снаружи, не могу войти, или Замок в подъезде' in sp[0] and 'микрофон' in sp[0], sp)
+    ok('every question has the voice-answer button', '🎙️ Ответить голосом' in labels(), labels())
+    ok('typed question is not read aloud', (g("void(window.__spoken=[])"), g("botAsk('сломался замок','text')"), g("__spoken.length")==0)[2])
+    # ударение: «замок» читается как замОк (знак ударения только в озвучке, на экране текст прежний)
+    st = g("ttsStress('Сломался замок. Не бейте по замку, замка нет, Замок, замков, замкнуть, взломали')")
+    ok('stress mark on the lock forms only', 'замо\u0301к' in st and 'замку\u0301' in st and 'замка\u0301' in st and 'Замо\u0301к' in st and 'замко\u0301в' in st and 'замкнуть' in st and 'взломали' in st, st)
+    g("void(window.__spoken=[])"); ask('сломался замок входной двери')
+    ok('spoken text carries the stress, screen text does not', 'замо\u0301к' in g("__spoken[0]") and '\u0301' not in last()['text'], g("__spoken[0]")[:80])
     # 3. ответы словами (голос), ветка «снаружи»
     ask('сломался замок'); ask('снаружи не могу войти')
     ok('voice answer "снаружи" is understood', 'следы взлома' in last()['text'], last()['text'][:150])

@@ -2580,7 +2580,9 @@ let botQa = null; // {id, node, picked, text}: идущий опрос по си
 function qaNode(id, node) { const q = SIT_QA[id]; return q && q.nodes[node]; }
 function qaAsk(id, node) {
   const n = qaNode(id, node);
-  return { text: n.q, actions: n.opts.map((o, i) => ({ label: o.l, do: 'qa', arg: id + '|' + node + '|' + i })) };
+  const acts = n.opts.map((o, i) => ({ label: o.l, do: 'qa', arg: id + '|' + node + '|' + i }));
+  acts.push({ label: '🎙️ Ответить голосом', do: 'qa-mic' });
+  return { text: n.q, actions: acts };
 }
 // Применяет выбранный ответ: возвращает ответ помощника (следующий вопрос или итог с предложением заявки).
 function qaApply(id, node, i) {
@@ -2670,7 +2672,11 @@ function botAsk(raw, via) {
   pushBot('bot', r.text, 'text', r.actions);
   renderBot();
   const tts = $('bot-tts');
-  if (via === 'voice' && tts && tts.checked) speak(r.text.replace(/\n/g, '. '));
+  if (via === 'voice' && tts && tts.checked) {
+    // если помощник задал вопрос с вариантами, голосом же говорим, как на него ответить
+    const opts = (r.actions || []).filter(a => a.do === 'qa').map(a => a.label);
+    speak(r.text.replace(/\n/g, '. ') + (opts.length ? ' Ответьте: ' + opts.join(', или ') + '. Нажмите кнопку или микрофон.' : ''));
+  }
 }
 function botSend() { const inp = $('bot-text'); const t = inp.value; inp.value = ''; stopAllMics(); botAsk(t, 'text'); }
 function botAction(mi, ai) {
@@ -2682,6 +2688,7 @@ function botAction(mi, ai) {
   else if (a.do === 'sit') openSituations(a.arg);
   else if (a.do === 'guide') guideOpen();
   else if (a.do === 'qa') qaClick(a.arg);
+  else if (a.do === 'qa-mic') botMic();
   else if (a.do === 'sit-ask') botSituation(a.arg);
   else if (a.do === 'mk-pick') botSay(a.label, mkPickReply(a.arg));
   else if (a.do === 'mk-cat') { const k = String(a.arg).split(':'), c = MARKET_CATS.find(x => x.id === k[1]); if (c) botSay(a.label, k[0] === 'mat' ? mkCatReply(c) : mkProvReply(c)); }
@@ -3037,8 +3044,14 @@ function renderVoiceCard() {
 }
 function voicePick(v) { lsSet(LS_VOICE, v); if (v) voicePreview(v); else { clipStop(); toast('Выбран голос телефона'); } }
 function voicePreview(v) { speakClip('hello', VOICE_HELLO, v).then(ok => { if (!ok) toast('Образец голоса сейчас недоступен'); }); }
+// Системный голос читает «замок» как «зАмок». Для озвучки ставим знак ударения на форму слова «замок» (запирающее устройство); на экране текст не меняется.
+const TTS_STRESS = { 'замок': 'замо\u0301к', 'замка': 'замка\u0301', 'замку': 'замку\u0301', 'замком': 'замко\u0301м', 'замке': 'замке\u0301', 'замки': 'замки\u0301', 'замков': 'замко\u0301в', 'замкам': 'замка\u0301м', 'замками': 'замка\u0301ми', 'замках': 'замка\u0301х' };
+function ttsStress(text) {
+  return String(text).replace(/(?<![а-яё])[Зз]ам(?:ок|к(?:а|у|ом|е|и|ов|ам|ами|ах))(?![а-яё])/g, w => { const r = TTS_STRESS[w.toLowerCase()]; return r ? (w[0] === 'З' ? 'З' + r.slice(1) : r) : w; });
+}
 function speak(text) {
   clipStop();
+  text = ttsStress(text);
   return new Promise(res => {
     if (!('speechSynthesis' in window)) { res(); return; }
     try {
