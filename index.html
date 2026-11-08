@@ -461,6 +461,13 @@
       </div>
     </div>
 
+    <!-- Знакомство: помощник представляется и предлагает помощь (показывается, пока жилец не закроет) -->
+    <div id="welcome-card" style="display:none;background:#e8f5f1;border:1px solid #b9ddd3;border-radius:14px;padding:14px;margin:0 0 12px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">👋 Здравствуйте! Я помощник AlauConcierge</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:10px;">Подскажу, что делать в домашних ситуациях, и помогу найти нужный раздел. Хотите, расскажу, что умеет приложение и как им пользоваться?</div>
+      <div class="sit-calls"><button class="tkt-btn chk" id="welcome-guide" onclick="guideOpen()">📖 Что умеет приложение</button><button class="tkt-btn" id="welcome-later" onclick="welcomeDone()">Позже</button></div>
+    </div>
+
     <!-- Навигатор -->
     <div class="section-header">
       <div class="section-title">🧭 Навигатор</div>
@@ -477,6 +484,7 @@
       <button class="quick-btn" onclick="showScreen('screen-bills')"><span class="quick-icon">🧾</span><span class="quick-label">Счета</span></button>
       <button class="quick-btn" onclick="showScreen('screen-profile')"><span class="quick-icon">👤</span><span class="quick-label">Мой профиль</span></button>
     </div>
+    <div style="text-align:center;margin:8px 0 14px;"><button class="btn-link" id="guide-link" onclick="guideOpen()">📖 Что умеет приложение и как им пользоваться</button></div>
 
   </div>
   <nav class="bottom-nav">
@@ -1117,6 +1125,18 @@
     <div id="check-progress" style="font-size:13px;font-weight:700;color:var(--teal);margin:12px 0 4px;"></div>
     <div style="font-size:11px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;">Демо: в настоящей версии шаги отмечает председатель ОСИ. Здесь вы отмечаете их сами, чтобы увидеть, как меняется статус заявки. Отметки хранятся только на этом устройстве.</div>
     <button class="modal-submit" onclick="closeChecklist()">Готово</button>
+  </div>
+</div>
+
+<!-- =================== GUIDE MODAL: что умеет приложение =================== -->
+<div class="modal-overlay" id="guide-modal">
+  <div class="modal-sheet" style="max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div class="modal-title">👋 Что умеет приложение</div>
+    <div class="modal-sub" id="guide-sub"></div>
+    <div id="guide-body" style="overflow-y:auto;flex:1;"></div>
+    <div class="sit-calls" style="margin-top:8px;"><button class="tkt-btn" id="guide-tts" onclick="guideSpeak()">🔊 Прочитать вслух</button><button class="tkt-btn" onclick="guideAsk(-1)">🤖 Спросить помощника</button></div>
+    <button class="btn-primary" onclick="guideClose()" style="margin-top:8px;">Закрыть</button>
   </div>
 </div>
 
@@ -2387,10 +2407,51 @@ function submitAgenda() {
   showScreen('screen-chat'); switchChatTab('chat');
 }
 
+// ===== ЗНАКОМСТВО: помощник представляется, перечисляет возможности и два способа пользоваться =====
+const LS_WELCOME = 'alauDemoWelcome';
+const GUIDE_INTRO = 'Я помощник AlauConcierge. Пользоваться приложением можно двумя способами: самому, выбирая плитки, или вместе со мной: напишите или скажите, что вам нужно, своими словами. Почти везде есть значок 🎙️: можно говорить вместо набора.';
+// ask — фраза для помощника; try — её безопасно отправить одной кнопкой (ничего не создаёт)
+const APP_CAPS = [
+  { icon: '🚨', title: 'Если случилось', what: 'Что делать при запахе газа, пожаре, протечке, отключении света, застрявшем лифте и в других ситуациях. Опасные памятки читаются вслух.', self: 'Плитка «Ситуации»: напишите пару слов или нажмите 🎙️.', ask: 'пахнет газом', try: true, go: 'sit' },
+  { icon: '🔧', title: 'Заявка мастеру', what: 'Сообщить о поломке или проблеме в доме. В демо заявка создаётся только на этом устройстве.', self: 'Плитка «Заявка мастеру».', ask: 'создай заявку: не горит свет в подъезде', try: false, go: 'screen-requests' },
+  { icon: '📋', title: 'Мои заявки', what: 'Статусы ваших заявок.', self: 'Плитка «Мои заявки».', ask: 'что с моими заявками', try: true, go: 'screen-tickets' },
+  { icon: '🧾', title: 'Счета', what: 'Сфотографируйте квитанцию: приложение заполнит поля, вы проверите и сохраните. Оплата в Kaspi: приложение подсказывает, платёж не проводит.', self: 'Плитка «Счета».', ask: 'где мои счета', try: true, go: 'screen-bills' },
+  { icon: '💬', title: 'Чат жильцов', what: 'Общий чат дома и вопросы на повестку. В демо сообщения видите только вы.', self: 'Плитка «Чат жильцов».', ask: 'внеси вопрос на повестку: установить лавочки у подъезда', try: false, go: 'screen-chat' },
+  { icon: '📣', title: 'Объявления', what: 'Объявления и обсуждения дома.', self: 'Плитка «Объявления».', ask: '', try: false, go: 'screen-announcements' },
+  { icon: '🛒', title: 'Маркетплейс', what: 'Поиск мастеров и услуг. Показываются только исполнители, зарегистрированные в приложении; пока их может не быть.', self: 'Плитка «Маркетплейс».', ask: 'найди сантехника', try: true, go: 'screen-market' },
+  { icon: '📞', title: 'Контакты', what: 'Номера экстренных служб 112, 101, 102, 103, 104 и контакты дома и города, которые добавляете вы сами.', self: 'Плитка «Контакты».', ask: '', try: false, go: 'screen-contacts' },
+  { icon: '📅', title: 'Календарь дома', what: 'Ближайшие события дома.', self: 'Карточка «Календарь дома» на главном экране.', ask: 'ближайшие события', try: true, go: 'screen-calendar' },
+  { icon: '👤', title: 'Мой профиль', what: 'Ваши данные, дом на карте и выбор голоса помощника.', self: 'Плитка «Мой профиль».', ask: '', try: false, go: 'screen-profile' }
+];
+function welcomeSeen() { const p = currentPhone(); return !p || !!(lsGet(LS_WELCOME, {})[p]); }
+function renderWelcome() { const c = $('welcome-card'); if (c) c.style.display = welcomeSeen() ? 'none' : ''; }
+function welcomeDone() { const p = currentPhone(); if (!p) return; const a = lsGet(LS_WELCOME, {}); a[p] = 1; lsSet(LS_WELCOME, a); renderWelcome(); }
+function guideText() { return GUIDE_INTRO.replace('🎙️', 'микрофона') + ' Что умеет приложение. ' + APP_CAPS.map(c => c.title + '. ' + c.what + ' Самому: ' + c.self + (c.ask ? ' С помощником: скажите «' + c.ask + '».' : '')).join(' '); }
+function guideOpen() {
+  $('guide-sub').textContent = GUIDE_INTRO;
+  $('guide-body').innerHTML = APP_CAPS.map((c, i) => '<div class="prof-row" style="display:block;padding:10px 0;">'
+    + '<div style="font-weight:700;">' + c.icon + ' ' + escHtml(c.title) + '</div>'
+    + '<div style="font-size:13px;line-height:1.5;margin:2px 0 6px;">' + escHtml(c.what) + '</div>'
+    + '<div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Самому: ' + escHtml(c.self) + '</div>'
+    + (c.ask ? '<div style="font-size:12px;color:var(--text-muted);line-height:1.5;">С помощником: скажите или напишите «' + escHtml(c.ask) + '»</div>' : '')
+    + '<div class="sit-calls" style="margin-top:6px;"><button class="tkt-btn" data-i="' + i + '" onclick="guideGo(+this.dataset.i)">Открыть самому</button>'
+    + (c.ask && c.try ? '<button class="tkt-btn chk" data-i="' + i + '" onclick="guideAsk(+this.dataset.i)">Показать с помощником</button>' : '') + '</div></div>').join('');
+  $('guide-modal').classList.add('open'); $('guide-body').scrollTop = 0;
+  welcomeDone();
+}
+function guideClose() { $('guide-modal').classList.remove('open'); clipStop(); try { speechSynthesis.cancel(); } catch (e) {} }
+function guideGo(i) { const c = APP_CAPS[i]; if (!c) return; guideClose(); if (c.go === 'sit') openSituations(); else showScreen(c.go); }
+// i = -1: просто открыть чат с помощником; иначе отправить помощнику фразу возможности
+function guideAsk(i) { const c = APP_CAPS[i]; guideClose(); showScreen('screen-chat'); switchChatTab('bot'); if (c && c.ask) botAsk(c.ask, 'text'); }
+function guideSpeak() {
+  try { if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; } } catch (e) {}
+  speak(guideText());
+}
+
 // ===== ПОМОЩНИК: локальные команды (не нейросеть), работают на этом устройстве =====
 let botPending = null;
 const BOT_CHIPS = ['Мои заявки', 'Ближайшие события', 'Что делать при протечке', 'Найти исполнителя', 'Что ты умеешь?'];
-const BOT_INTRO = 'Я локальный помощник по командам, не нейросеть. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «ближайшие события»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\n• «нужна плитка» или «найди сантехника» (маркетплейс)\nДействия, которые что-то создают, я сначала подтверждаю.';
+const BOT_INTRO = 'Здравствуйте! Я локальный помощник по командам AlauConcierge, не нейросеть. Подскажу, что делать в домашних ситуациях, и помогу найти нужный раздел. Скажите или напишите, например:\n• «создай заявку: не горит свет в подъезде»\n• «ближайшие события»\n• «что с моими заявками»\n• «что делать при протечке» или «ситуации»\n• «внеси вопрос на повестку: …»\n• «напиши в чат: …»\n• «нужна плитка» или «найди сантехника» (маркетплейс)\n• «где мои счета»\nДействия, которые что-то создают, я сначала подтверждаю.';
 const NO_W = '(?![а-я])';
 function botNorm(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е').trim(); }
 function botCategory(t) {
@@ -2434,7 +2495,7 @@ function botHandle(raw) {
     return 'Сейчас нечего подтверждать. Скажите «что ты умеешь», чтобы увидеть команды.';
   }
   let m;
-  if (/что (ты )?(умеешь|можешь)|команды/.test(t) || (/^помощь/.test(t) && t.length < 12)) return BOT_INTRO;
+  if (/что (ты )?(умеешь|можешь)|команды/.test(t) || (/^помощь/.test(t) && t.length < 12)) return { text: BOT_INTRO, actions: [{ label: '📖 Что умеет приложение', do: 'guide' }] };
   if (/^(привет|здравствуй|добрый (день|вечер)|доброе утро)/.test(t)) return 'Здравствуйте! Чем помочь? Скажите «что ты умеешь», чтобы увидеть команды.';
   if ((m = t.match(/(созда|оформ|подай|сделай|завед|отправ)[а-яё]*\s+(?:нов[а-яё]+\s+)?заявк[а-яё]*\s*[:,—-]?\s*(.*)$/))) {
     const desc = raw.trim().slice(raw.trim().length - m[2].length).trim();
@@ -2456,6 +2517,7 @@ function botHandle(raw) {
     botPending = { type: 'post', text: desc };
     return { text: 'Отправить в чат: «' + desc + '»?', actions: [A_YES, A_NO] };
   }
+  if (/(мои|мой|все|открой|покажи)\s+(счет|квитанц)|счета\s+за|оплат[а-яё]*\s+(счет|свет|коммунал|квитанц)|сфотограф[а-яё]*\s+(счет|квитанц)/.test(t)) return { text: 'Раздел «Счета»: сфотографируйте квитанцию, приложение заполнит поля, вы проверите и сохраните. Оплата в Kaspi: приложение только подсказывает, платёж не проводит.', actions: [{ label: '🧾 Открыть «Счета»', do: 'go', arg: 'screen-bills' }] };
   if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
   const sc = sitRankScored(t);
   if (!(sc.length && sc[0].sc >= 5)) { const mk = botMarket(t); if (mk) return mk; }
@@ -2535,6 +2597,7 @@ function botAction(mi, ai) {
   else if (a.do === 'ics') icsDownloadOne(a.arg);
   else if (a.do === 'go') showScreen(a.arg);
   else if (a.do === 'sit') openSituations(a.arg);
+  else if (a.do === 'guide') guideOpen();
   else if (a.do === 'sit-ask') botSituation(a.arg);
   else if (a.do === 'mk-pick') botSay(a.label, mkPickReply(a.arg));
   else if (a.do === 'mk-cat') { const k = String(a.arg).split(':'), c = MARKET_CATS.find(x => x.id === k[1]); if (c) botSay(a.label, k[0] === 'mat' ? mkCatReply(c) : mkProvReply(c)); }
@@ -2547,7 +2610,7 @@ function renderBot() {
   const th = $('bot-thread'); if (!th) return;
   const { box } = chatBox();
   const bub = (cls, who, text, time, extra) => '<div class="chat-msg ' + cls + '"><div class="chat-avatar' + (cls === 'other' ? ' chair' : '') + '"' + (cls === 'mine' ? ' style="background:var(--teal);color:#fff;"' : '') + '>' + (cls === 'other' ? '🤖' : escHtml(APT)) + '</div><div><div class="chat-sender"' + (cls === 'mine' ? ' style="text-align:right;"' : '') + '>' + who + '</div><div class="chat-bubble" style="white-space:pre-wrap;">' + escHtml(text) + '</div>' + (extra || '') + (time ? '<div class="chat-time"' + (cls === 'mine' ? ' style="text-align:right;"' : '') + '>' + time + '</div>' : '') + '</div></div>';
-  let html = bub('other', 'Помощник', BOT_INTRO, '', '');
+  let html = bub('other', 'Помощник', BOT_INTRO, '', '<div class="tkt-actions" style="margin-top:6px;"><button class="tkt-btn chk" id="bot-guide" onclick="guideOpen()">📖 Что умеет приложение</button></div>');
   box.bot.forEach((m, i) => {
     if (m.role === 'me') html += bub('mine', 'Вы' + (m.via === 'voice' ? ' · 🎙️' : ''), m.text, fmtTime(m.ts), '');
     else {
@@ -2672,6 +2735,7 @@ function alauOnShow(id) {
   if (id === 'screen-chat') renderChatScreen();
   else if (chatDictating || botListening) stopAllMics();
   if (id === 'screen-profile') { renderProfile(); renderVoiceCard(); }
+  if (id === 'screen-home') renderWelcome();
 }
 
 // ----- вход по SMS-коду (демо) -----
