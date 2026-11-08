@@ -1624,25 +1624,38 @@ function icsDownloadAll() { if (!houseEvents().length) { toast('В календ�
 
 // ----- распознавание речи (Web Speech API, ru-RU); текст всегда можно ввести и поправить руками -----
 let vr = null;
+// Склеивает куски распознавания. Если следующий кусок начинается с предыдущего, это его уточнение: заменяем, а не дописываем.
+function vrJoin(parts) {
+  const out = [];
+  parts.forEach(raw => {
+    const tr = String(raw || '').trim(); if (!tr) return;
+    const prev = out[out.length - 1], a = tr.toLowerCase(), b = prev ? prev.toLowerCase() : '';
+    if (prev && a.startsWith(b)) out[out.length - 1] = tr;
+    else if (prev && b.endsWith(a)) return;
+    else out.push(tr);
+  });
+  return out.join(' ');
+}
 function vrStart(ui) {
   vrCancel();
   const r = new SpeechRec();
-  const st = { rec: r, fin: '', int: '', err: null, cancelled: false, secs: 0, tick: null };
+  const st = { rec: r, fin: '', int: '', all: '', err: null, cancelled: false, secs: 0, tick: null };
   vr = st;
   r.lang = 'ru-RU'; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
   r.onresult = e => {
-    let fin = '', int = '';
+    const fin = [], int = [], all = [];
     for (let i = 0; i < e.results.length; i++) {
       const tr = e.results[i][0].transcript;
-      if (e.results[i].isFinal) fin += tr + ' '; else int += tr;
+      (e.results[i].isFinal ? fin : int).push(tr); all.push(tr);
     }
-    st.fin = fin.trim(); st.int = int.trim();
-    ui.live.textContent = (st.fin + ' ' + st.int).trim() || 'Слушаю…';
+    // на Android Chrome каждый промежуточный вариант приходит отдельной записью и повторяет предыдущий
+    st.fin = vrJoin(fin); st.int = vrJoin(int); st.all = vrJoin(all);
+    ui.live.textContent = st.all || 'Слушаю…';
   };
   r.onerror = e => { st.err = e.error || 'error'; };
   r.onend = () => {
     clearInterval(st.tick); if (vr === st) vr = null;
-    if (!st.cancelled) ui.done({ text: (st.fin + ' ' + st.int).trim(), err: st.err });
+    if (!st.cancelled) ui.done({ text: st.all || '', err: st.err });
   };
   ui.timer.textContent = '0:00'; ui.live.textContent = 'Слушаю…';
   st.tick = setInterval(() => { st.secs++; ui.timer.textContent = Math.floor(st.secs / 60) + ':' + pad2(st.secs % 60); }, 1000);
@@ -3249,7 +3262,7 @@ const SITUATIONS = [
     now: ['Не сливайте воду и не пользуйтесь санузлом, если канализация поднимается.', 'Предупредите соседей на нижних этажах.', 'Сообщите диспетчеру: общий засор стояка чистит обслуживающая организация.'],
     next: ['Оставьте заявку с описанием и временем начала проблемы.', 'Если засор только в вашей квартире, нужен сантехник.'],
     call: [] },
-  { id: 'power', grp: 'accident', icon: '💡', level: 'urgent', title: 'Нет света или проблемы с электричеством', kw: 'нет света|выбило|свет (погас|пропал)|подъезд темн|не горит свет|электричеств|искрит|перегорел|короткое замыкание|розетк|выбива|автомат|пробки|щиток|электрощит|напряжени', cat: 'electric',
+  { id: 'power', grp: 'accident', icon: '💡', level: 'urgent', title: 'Нет света или проблемы с электричеством', kw: 'нет света|выбило|свет (погас|пропал)|(отключ|пропал|погас|вырубил)[а-я]* (электричеств|свет)|свет[а-я]* (отключ|пропал|погас|вырубил)|без (света|электричеств)|подъезд темн|не горит свет|электричеств|искрит|перегорел|короткое замыкание|розетк|выбива|автомат|пробки|щиток|электрощит|напряжени', cat: 'electric',
     now: ['Проверьте автомат в квартирном щитке.', 'Если света нет во всём подъезде или доме, сообщите диспетчеру.', 'Не трогайте оголённые провода и не открывайте общий щиток.', 'Если искрит или пахнет гарью, звоните на 112 или 101.'],
     next: ['Оставьте заявку: что не работает, где именно, с какого времени.'],
     call: [['112', 'Единая служба спасения']] },
