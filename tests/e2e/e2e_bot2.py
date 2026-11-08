@@ -33,7 +33,7 @@ with sync_playwright() as p:
     n0=g("ticketBox().box.list.length"); ask('да')
     ok('yes creates urgent ticket with category and user words', g("ticketBox().box.list.length")==n0+1 and g("ticketBox().box.list[0].prio")=='urgent' and 'запах газа' in g("ticketBox().box.list[0].text") and 'Безопасность' in g("ticketBox().box.list[0].cat"), g("JSON.stringify(ticketBox().box.list[0])"))
     ok('gas memo pops up after emergency ticket', g("document.getElementById('sit-modal').classList.contains('open')")); g("closeSituations()")
-    ask('капает потолок'); ask('нет'); ok('decline -> no ticket', g("ticketBox().box.list.length")==n0+1 and 'отменила' in last())
+    ask('шумят соседи'); ask('нет'); ok('decline -> no ticket', g("ticketBox().box.list.length")==n0+1 and 'отменила' in last())
     ask('не горит свет в подъезде, создай заявку'); ok('explicit create still wins', 'Создать заявку' in last() and 'Категория: Электрика' in last(), last()); ask('нет')
     ask('Мои заявки'); ok('my tickets still works', 'Ваших заявок' in last(), last()[:80])
     ask('Ближайшие события'); ok('events still works', 'пока нет событий' in last())
