@@ -1144,6 +1144,26 @@
   </div>
 </div>
 
+<!-- =================== ДИАЛОГ С ПОМОЩНИКОМ (голосовой разговор) =================== -->
+<div id="dlg" style="display:none;position:fixed;inset:22px 0 0 0;z-index:210;background:#f5f7fa;flex-direction:column;">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--teal);color:#fff;">
+    <div style="font-size:26px;">🤖</div>
+    <div style="flex:1;"><div style="font-weight:700;">Помощник</div><div style="font-size:12px;opacity:.85;">Говорю и печатаю то, что говорю</div></div>
+    <button id="dlg-snd" onclick="dlgSound()" title="Звук печати" style="background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:10px;font-size:18px;padding:6px 10px;cursor:pointer;">🔔</button>
+    <button id="dlg-close" onclick="dlgClose(false)" title="Закрыть" style="background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:10px;font-size:18px;padding:6px 12px;cursor:pointer;">✕</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px;">
+    <div id="dlg-me" style="font-size:13px;color:var(--text-muted);margin-bottom:10px;"></div>
+    <div id="dlg-text" onclick="dlgSkip()" style="background:#fff;border-radius:16px;padding:16px;font-size:17px;line-height:1.55;white-space:pre-wrap;box-shadow:0 1px 6px rgba(0,0,0,.08);min-height:120px;"></div>
+    <div id="dlg-opts" style="display:flex;flex-direction:column;gap:8px;margin-top:14px;"></div>
+  </div>
+  <div id="dlg-listen" onclick="vrStop()" style="display:none;background:#fdecea;color:#c62828;font-size:15px;font-weight:600;padding:12px 16px;border-top:1px solid #f3c1bc;cursor:pointer;">🎙️ <span id="dlg-listen-text">Слушаю… скажите ответ</span> <span style="font-weight:400;font-size:12px;">· нажмите, чтобы закончить</span></div>
+  <div style="padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eee;display:flex;gap:8px;">
+    <button class="tkt-btn chk" id="dlg-mic" onclick="dlgMic()" style="flex:1;">🎙️ Говорить</button>
+    <button class="tkt-btn" id="dlg-chat" onclick="dlgClose(true)" style="flex:1;">💬 Открыть чат</button>
+  </div>
+</div>
+
 <!-- =================== SITUATIONS MODAL =================== -->
 <div class="modal-overlay" id="sit-modal">
   <div class="modal-sheet" style="max-height:88vh;display:flex;flex-direction:column;">
@@ -2360,10 +2380,70 @@ function stopAllMics() {
   ['chat-mic', 'bot-mic', 'sit-mic', 'sit-vmic', 'home-mic'].forEach(id => { const b = $(id); if (b) b.classList.remove('rec'); });
   document.querySelectorAll('[data-ph]').forEach(i => { i.placeholder = i.dataset.ph; });
 }
+// ===== Экран диалога: помощник печатает то, что говорит, под лёгкий звук тапа =====
+const LS_DLGSND = 'alauDemoDlgSound';
+let dlgIsOpen = false, dlgIdx = -1, dlgTimer = null, dlgCps = 16, dlgAudio = null, dlgPending = null;
+function dlgBeep() {
+  if (!lsGet(LS_DLGSND, true)) return;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    dlgAudio = dlgAudio || new AC(); if (dlgAudio.state === 'suspended') dlgAudio.resume();
+    const t = dlgAudio.currentTime, o = dlgAudio.createOscillator(), g = dlgAudio.createGain();
+    o.type = 'sine'; o.frequency.value = 1400 + Math.random() * 400;
+    g.gain.setValueAtTime(0.04, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+    o.connect(g); g.connect(dlgAudio.destination); o.start(t); o.stop(t + 0.04);
+  } catch (e) {}
+}
+function dlgSoundIcon() { const b = $('dlg-snd'); if (b) b.textContent = lsGet(LS_DLGSND, true) ? '🔔' : '🔕'; }
+function dlgSound() { lsSet(LS_DLGSND, !lsGet(LS_DLGSND, true)); dlgSoundIcon(); }
+function dlgOpen() { dlgIsOpen = true; $('dlg').style.display = 'flex'; dlgSoundIcon(); }
+function dlgClose(toChat) {
+  dlgIsOpen = false; dlgIdx = -1; clearInterval(dlgTimer); dlgTimer = null; dlgPending = null;
+  $('dlg').style.display = 'none'; stopAllMics(); try { speechSynthesis.cancel(); } catch (e) {}
+  if (toChat) { renderBot(); const th = $('bot-thread'); if (th) scrollDown(th); }
+}
+function dlgMic() { botMic(); }
+function dlgShowOpts() {
+  const d = dlgPending; if (!d) return;
+  $('dlg-opts').innerHTML = (d.actions || []).map((a, j) => '<button class="tkt-btn chk" style="padding:12px;font-size:15px;" data-m="' + d.mi + '" data-a="' + j + '" onclick="dlgAct(this.dataset.m,this.dataset.a)">' + escHtml(a.label) + '</button>').join('');
+}
+function dlgAct(mi, ai) {
+  const m = chatBox().box.bot[+mi], a = m && m.actions && m.actions[+ai]; if (!a) return;
+  if (!['qa', 'qa-mic', 'yes', 'no'].includes(a.do)) dlgClose(false);
+  botAction(mi, ai);
+}
+// Допечатывает текст сразу (нажатие на текст).
+function dlgSkip() {
+  const d = dlgPending; if (!d || !dlgTimer) return;
+  clearInterval(dlgTimer); dlgTimer = null; $('dlg-text').textContent = d.text; dlgShowOpts();
+}
+function dlgType(m, mi) {
+  clearInterval(dlgTimer); dlgPending = { text: m.text, actions: m.actions || [], mi };
+  const el = $('dlg-text'); el.textContent = ''; $('dlg-opts').innerHTML = '';
+  let i = 0; const step = Math.max(1, Math.round(dlgCps * 0.05));
+  dlgTimer = setInterval(() => {
+    const n = Math.min(m.text.length, i + step);
+    for (let k = i; k < n; k++) if (m.text[k] !== ' ' && m.text[k] !== '\n' && k % 2 === 0) { dlgBeep(); break; }
+    i = n; el.textContent = m.text.slice(0, i) + (i < m.text.length ? '▍' : '');
+    if (i >= m.text.length) { clearInterval(dlgTimer); dlgTimer = null; dlgShowOpts(); const sc = el.parentElement; if (sc) sc.scrollTop = sc.scrollHeight; }
+    else { const sc = el.parentElement; if (sc) sc.scrollTop = sc.scrollHeight; }
+  }, 50);
+}
+// Вызывается после каждого renderBot: если открыт диалог, показывает последний ответ помощника.
+function dlgSync() {
+  if (!dlgIsOpen) return;
+  const box = chatBox().box.bot; let li = -1;
+  for (let i = box.length - 1; i >= 0; i--) if (box[i].role === 'bot') { li = i; break; }
+  if (li < 0 || li === dlgIdx) return;
+  dlgIdx = li;
+  const me = box.slice(0, li).reverse().find(x => x.role === 'me');
+  $('dlg-me').textContent = me ? 'Вы: ' + me.text : '';
+  dlgType(box[li], li);
+}
 function listenBanner(txt) {
-  const b = $('bot-listen'); if (!b) return;
-  b.style.display = txt ? 'block' : 'none';
-  if (txt) $('bot-listen-text').textContent = txt;
+  const b = $('bot-listen'), d = $('dlg-listen');
+  if (b) { b.style.display = txt ? 'block' : 'none'; if (txt) $('bot-listen-text').textContent = txt; }
+  if (d) { d.style.display = txt ? 'block' : 'none'; if (txt) $('dlg-listen-text').textContent = txt; }
 }
 function dictate(inp, btnId, onText) {
   if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
@@ -2689,6 +2769,7 @@ function pushBot(role, text, via, actions) {
 }
 function botAsk(raw, via) {
   const text = String(raw || '').trim(); if (!text) return;
+  if (via === 'voice') dlgOpen(); // голосовой вопрос открывает экран диалога
   pushBot('me', text, via);
   let r; try { r = botHandle(text); } catch (e) { r = 'Не получилось выполнить команду.'; }
   if (typeof r === 'string') r = { text: r };
@@ -2736,6 +2817,7 @@ function renderBot() {
     }
   });
   th.innerHTML = html;
+  dlgSync();
   $('bot-chips').innerHTML = BOT_CHIPS.map(c => '<button class="chip" onclick="botAsk(this.textContent,\'text\')">' + c + '</button>').join('');
   scrollDown(th);
 }

@@ -132,11 +132,12 @@ with sync_playwright() as p:
     ok('reply spoken for voice command', g("__spoken.length")==n0+1, g("__spoken.length"))
     ok('bot input cleared after voice', g("document.getElementById('bot-text').value")=='')
     ask('нет'); ok('typed reply not spoken', g("__spoken.length")==n0+1)
+    g("dlgClose(false)")  # голосовой вопрос открывает экран диалога поверх чата
     g("document.getElementById('bot-tts').checked=false")
     pg.click('#bot-mic'); g("__recs[__recs.length-1].emit([['что со статусом заявок',true]])"); pg.click('#bot-mic'); pg.wait_for_timeout(300)
     ok('tts off -> not spoken', g("__spoken.length")==n0+1)
     # mic: chat vs bot exclusivity
-    g("switchChatTab('chat')"); pg.click('#chat-mic'); g("switchChatTab('bot')"); pg.click('#bot-mic')
+    g("dlgClose(false)"); g("switchChatTab('chat')"); pg.click('#chat-mic'); g("switchChatTab('bot')"); pg.click('#bot-mic')
     ok('only bot mic active', g("document.getElementById('bot-mic').classList.contains('rec')") and not g("document.getElementById('chat-mic').classList.contains('rec')"))
     pg.screenshot(path=S+'/chat_bot.png'); g("stopAllMics()")
     ok('no page errors (with SR)', not errs, errs)

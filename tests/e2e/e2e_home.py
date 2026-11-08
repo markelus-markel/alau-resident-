@@ -59,6 +59,8 @@ with sync_playwright() as p:
     ok('live text appears in the field', 'пахнет газом' in g("document.getElementById('home-ask-in').value"))
     pg.click('#home-mic'); pg.wait_for_timeout(400)
     ok('voice question goes to the assistant and is answered', g("document.querySelector('.screen.active').id")=='screen-chat' and 'на лестнице' in g("document.getElementById('bot-thread').textContent"))
+    ok('voice question opens the dialog screen over the chat', g("getComputedStyle(document.getElementById('dlg')).display")!='none')
+    g("dlgClose(false)")
     # быстрые кнопки
     g("showScreen('screen-home')"); pg.click('#home-chip-sit'); ok('chip "Что-то случилось" opens the situations', g("document.getElementById('sit-modal').classList.contains('open')")); g("closeSituations()")
     pg.click('#home-chip-bills'); ok('chip "Мои счета" opens the bills screen', g("document.querySelector('.screen.active').id")=='screen-bills')

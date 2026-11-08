@@ -46,16 +46,16 @@ with sync_playwright() as p:
     ok('silence: mic and bar turn off', not rec() and not banner())
     ok('answer buttons and mic button are still there', any(a['do']=='qa-mic' for a in last()['actions']), last()['actions'])
     # 5. нажатие кнопки ответа в голосовом разговоре: следующий вопрос, микрофон включается
-    n = nrec(); pg.click('#bot-thread .tkt-btn:text-is("Нет следов") >> nth=-1'); pg.wait_for_timeout(700)
+    n = nrec(); pg.click('#dlg-opts button:text-is("Нет следов")'); pg.wait_for_timeout(700)
     ok('button answer in a voice chat: next question and the mic again', 'запасной ключ' in last()['text'] and nrec()==n+1 and rec(), (last()['text'][:80], nrec(), n))
     # 6. конец опроса: микрофон не включается
     g("__recs[__recs.length-1].emit([['нет',true]])"); g("__recs[__recs.length-1].stop()"); pg.wait_for_timeout(700)
     ok('end of questions: ticket offer, mic stays off', 'Создать заявку' in last()['text'] and not rec() and not banner(), last()['text'][-100:])
     # 7. кнопка «Ответить голосом» работает вручную
     g("botQa=null"); g("botAsk('сломался замок','text')"); n = nrec()
-    pg.click('#bot-thread .tkt-btn:text-is("🎙️ Ответить голосом") >> nth=-1'); pg.wait_for_timeout(200)
+    pg.click('#dlg-opts button:text-is("🎙️ Ответить голосом")'); pg.wait_for_timeout(200)
     ok('manual "answer by voice" button turns the mic on', nrec()==n+1 and rec() and banner(), (nrec(), n))
-    pg.click('#bot-listen'); pg.wait_for_timeout(300)
+    pg.click('#dlg-listen'); pg.wait_for_timeout(300)
     ok('tap on the bar finishes listening', not rec() and not banner())
     pg.screenshot(path=S + '/qa_mic.png')
     ok('no page errors', not errs, errs)

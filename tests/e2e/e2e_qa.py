@@ -21,7 +21,8 @@ with sync_playwright() as p:
     g("showScreen('screen-chat')"); g("switchChatTab('bot')")
     last = lambda: g("(()=>{const m=chatBox().box.bot;return m[m.length-1]})()")
     labels = lambda: [a['label'] for a in last().get('actions', [])]
-    ask = lambda q: g("botAsk(%s,'voice')" % json.dumps(q))
+    def ask(q):
+        g("botAsk(%s,'voice')" % json.dumps(q)); g("dlgClose(false)")  # экран диалога здесь не нужен, его проверяет e2e_dialog
     click = lambda label: pg.click('#bot-thread .tkt-btn:text-is(%s) >> nth=-1' % json.dumps(label, ensure_ascii=False))
     # 1. целостность сценариев
     qa = g("SIT_QA"); bad = []
