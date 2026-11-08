@@ -11,6 +11,7 @@
   <id>.mp3       текст «Что делать сейчас» (как sitNowText() в index.html)
   <id>-full.mp3  то же + «Что дальше» (как sitFullText(), кнопка «Прочитать вслух»)
   hello.mp3      фраза для кнопки «Послушать» при выборе голоса
+  guide.mp3      окно «Что умеет приложение» (текст из registry/guide.json, node tools/export-guide.js)
   manifest.json  ключ -> точный текст файла
 Приложение проигрывает файл, только если текст в manifest.json совпадает с текущим реестром,
 иначе читает системным голосом. Уже готовые файлы с тем же текстом повторно не генерируются.
@@ -67,11 +68,12 @@ def main():
     if not a.voices:
         sys.exit('Укажите --voices Имя1,Имя2 (после --sample выберите по прослушиванию).')
     only = set(a.only.split(',')) if a.only else None
+    guide = json.load(open(os.path.join(ROOT, 'registry/guide.json'), encoding='utf-8'))['text']
     for voice in a.voices.split(','):
         out = os.path.join(ROOT, 'audio/sit', voice); os.makedirs(out, exist_ok=True)
         mpath = os.path.join(out, 'manifest.json')
         man = json.load(open(mpath, encoding='utf-8')) if os.path.exists(mpath) else {}
-        jobs = [('hello', HELLO)]
+        jobs = [('hello', HELLO), ('guide', guide)]
         for s in sits:
             if only and s['id'] not in only:
                 continue

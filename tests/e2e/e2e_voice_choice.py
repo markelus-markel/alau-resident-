@@ -15,6 +15,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 INDEX = os.environ.get('ALAU_INDEX', os.path.join(ROOT, 'index.html'))
 spec = importlib.util.spec_from_file_location('gen_voice', os.path.join(ROOT, 'tools', 'gen_voice.py'))
 gv = importlib.util.module_from_spec(spec); spec.loader.exec_module(gv)
+GUIDE = json.load(open(os.path.join(ROOT, 'registry', 'guide.json'), encoding='utf-8'))['text']
 sits = json.load(open(os.path.join(ROOT, 'registry', 'situations.json'), encoding='utf-8'))['situations']
 SEED = """()=>{const u={};u['77011234567']={phone:'77011234567',last:'Иванов',first:'Тест',middle:'',iin:makeTestIIN(),city:'Семей',street:'ул. Найманбаева',house:'12',apt:'23'};lsSet(LS_USERS,u);lsSet(LS_SESSION,'77011234567');}"""
 MOCK = """
@@ -28,13 +29,13 @@ tmp = tempfile.mkdtemp(prefix='alau-voice-')
 shutil.copy(INDEX, os.path.join(tmp, 'index.html'))
 def put(voice, stale=()):
     d = os.path.join(tmp, 'audio', 'sit', voice); os.makedirs(d)
-    man = {'hello': gv.HELLO}
+    man = {'hello': gv.HELLO, 'guide': GUIDE}
     for s in sits:
         man[s['id']] = gv.now_text(s); man[s['id'] + '-full'] = gv.full_text(s)
     for k in stale: man[k] = 'устаревший текст'
     for k in man: open(os.path.join(d, k + '.mp3'), 'wb').write(b'ID3')
     json.dump(man, open(os.path.join(d, 'manifest.json'), 'w', encoding='utf-8'), ensure_ascii=False)
-put('Sarah'); put('Brian', stale=('fire',))
+put('Sarah'); put('Brian', stale=('fire', 'guide'))
 class Q(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
 srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Q, directory=tmp))
@@ -58,6 +59,7 @@ with sync_playwright() as p:
     pg.goto(URL); pg.evaluate(SEED); pg.reload(); g = pg.evaluate; pg.wait_for_timeout(500)
     ok('app text equals generator text for every memo (now and full)', all(g("(id=>[sitNowText(sitById(id)),sitFullText(sitById(id))])(%s)" % json.dumps(s['id']))==[gv.now_text(s), gv.full_text(s)] for s in sits))
     ok('hello phrase equals generator phrase', g("VOICE_HELLO")==gv.HELLO)
+    ok('guide text in registry/guide.json equals the app text', g("guideText()")==GUIDE)
     g("showScreen('screen-profile')")
     ok('voice card visible', g("getComputedStyle(document.getElementById('voice-card')).display")!='none')
     ok('title asks to choose a voice', 'Выберите, пожалуйста, голос помощника' in g("document.getElementById('voice-card').textContent"))
@@ -78,12 +80,22 @@ with sync_playwright() as p:
     pg.click('#sit-tts'); pg.wait_for_timeout(200)
     ok('second press stops the recording', g("clipPlaying()")==False)
     ok('voice button in memo opens profile voice card', (pg.click('#sit-voice'), g("document.querySelector('.screen.active').id")=='screen-profile')[1])
+    # окно «Что умеет приложение» читает выбранный голос
+    g("showScreen('screen-home')"); g("guideOpen()"); g("void(window.__clips=[])"); g("void(window.__spoken=[])")
+    pg.click('#guide-tts'); pg.wait_for_timeout(300)
+    ok('guide read aloud with the chosen recorded voice', g("__clips")==['audio/sit/Sarah/guide.mp3'] and g("__spoken.length")==0, (g("__clips"), g("__spoken")))
+    pg.click('#guide-tts'); pg.wait_for_timeout(200)
+    ok('second press stops the guide recording', g("clipPlaying()")==False)
+    g("guideClose()"); g("showScreen('screen-profile')")
     # устаревший текст у Brian -> читает голос телефона
     pg.click('#voice-list input[value=Brian]'); pg.wait_for_timeout(200)
     g("void(window.__clips=[])"); g("void(window.__spoken=[])")
     g("openSituations('fire')"); pg.wait_for_timeout(300)
     ok('stale recording text -> system voice reads, clip not played', g("__clips.length")==0 and g("__spoken.length")==1 and 'пожар' in g("__spoken[0]").lower(), (g("__clips"), g("__spoken")))
-    g("closeSituations()"); g("showScreen('screen-profile')")
+    g("closeSituations()")
+    g("guideOpen()"); g("void(window.__clips=[])"); g("void(window.__spoken=[])"); pg.click('#guide-tts'); pg.wait_for_timeout(300)
+    ok('stale guide recording -> system voice reads the guide', g("__clips.length")==0 and g("__spoken.length")==1 and 'Я помощник AlauConcierge' in g("__spoken[0]"), (g("__clips"), g("__spoken")))
+    g("guideClose()"); g("showScreen('screen-profile')")
     pg.click('#voice-list input[value=""]'); pg.wait_for_timeout(200)
     ok('phone voice choice saved', g("lsGet(LS_VOICE,'x')")=='')
     g("void(window.__clips=[])"); g("void(window.__spoken=[])")

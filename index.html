@@ -2426,7 +2426,7 @@ const APP_CAPS = [
 function welcomeSeen() { const p = currentPhone(); return !p || !!(lsGet(LS_WELCOME, {})[p]); }
 function renderWelcome() { const c = $('welcome-card'); if (c) c.style.display = welcomeSeen() ? 'none' : ''; }
 function welcomeDone() { const p = currentPhone(); if (!p) return; const a = lsGet(LS_WELCOME, {}); a[p] = 1; lsSet(LS_WELCOME, a); renderWelcome(); }
-function guideText() { return GUIDE_INTRO.replace('🎙️', 'микрофона') + ' Что умеет приложение. ' + APP_CAPS.map(c => c.title + '. ' + c.what + ' Самому: ' + c.self + (c.ask ? ' С помощником: скажите «' + c.ask + '».' : '')).join(' '); }
+function guideText() { return (GUIDE_INTRO + ' Что умеет приложение. ' + APP_CAPS.map(c => c.title + '. ' + c.what + ' Самому: ' + c.self + (c.ask ? ' С помощником: скажите «' + c.ask + '».' : '')).join(' ')).replace(/🎙️?/g, 'микрофон'); }
 function guideOpen() {
   $('guide-sub').textContent = GUIDE_INTRO;
   $('guide-body').innerHTML = APP_CAPS.map((c, i) => '<div class="prof-row" style="display:block;padding:10px 0;">'
@@ -2443,9 +2443,12 @@ function guideClose() { $('guide-modal').classList.remove('open'); clipStop(); t
 function guideGo(i) { const c = APP_CAPS[i]; if (!c) return; guideClose(); if (c.go === 'sit') openSituations(); else showScreen(c.go); }
 // i = -1: просто открыть чат с помощником; иначе отправить помощнику фразу возможности
 function guideAsk(i) { const c = APP_CAPS[i]; guideClose(); showScreen('screen-chat'); switchChatTab('bot'); if (c && c.ask) botAsk(c.ask, 'text'); }
+// выбранный голос читает запись «guide» (tools/gen_voice.py), если её текст совпал; иначе голос телефона
 function guideSpeak() {
+  if (clipPlaying()) { clipStop(); return; }
   try { if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; } } catch (e) {}
-  speak(guideText());
+  const text = guideText();
+  speakClip('guide', text).then(ok => { if (!ok) speak(text); });
 }
 
 // ===== ПОМОЩНИК: локальные команды (не нейросеть), работают на этом устройстве =====
