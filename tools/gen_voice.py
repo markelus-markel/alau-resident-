@@ -19,6 +19,7 @@
 Приложение проигрывает файл, только если текст в manifest.json совпадает с текущим реестром,
 иначе читает системным голосом. Уже готовые файлы с тем же текстом повторно не генерируются.
 """
+import time
 import argparse, json, os, re, sys, urllib.request, urllib.error
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,10 +42,17 @@ STRESS = {'замок': 'замо\u0301к', 'замка': 'замка\u0301', '�
           'замки': 'замки\u0301', 'замков': 'замко\u0301в', 'замкам': 'замка\u0301м', 'замками': 'замка\u0301ми', 'замках': 'замка\u0301х'}
 
 
-def stress(text):
-    """Ставит знак ударения на «замок» (запирающее устройство). То же, что ttsStress() в index.html."""
+# ElevenLabs игнорирует знак U+0301 и заглавные гласные; сработало деление на слоги через дефис: «зам-кУ».
+# Формы «замок» (им./вин. падеж) читаются верно без правки.
+STRESS_CAPS = {'замок': 'замок', 'замка': 'зам-кА', 'замку': 'зам-кУ', 'замком': 'зам-кОм', 'замке': 'зам-кЕ',
+               'замки': 'зам-кИ', 'замков': 'зам-кОв', 'замкам': 'зам-кАм', 'замками': 'зам-кАми', 'замках': 'зам-кАх'}
+
+
+def stress(text, caps=False):
+    """Правит слово «замок» (запирающее устройство) для озвучки: знак U+0301 или (caps=True) слоги через дефис, «зам-кУ»."""
+    table = STRESS_CAPS if caps else STRESS
     def f(m):
-        w = m.group(0); r = STRESS.get(w.lower())
+        w = m.group(0); r = table.get(w.lower())
         return w if not r else (w[0] + r[1:] if w[0] == 'З' else r)
     return re.sub(r'(?<![а-яё])[Зз]ам(?:ок|к(?:а|у|ом|е|и|ов|ам|ами|ах))(?![а-яё])', f, text)
 
@@ -52,15 +60,21 @@ def stress(text):
 def tts(text, voice, key):
     body = json.dumps({'text': text, 'voice': voice, 'language_code': 'ru',
                        'stability': 0.55, 'similarity_boost': 0.75, 'speed': 0.95}).encode()
-    req = urllib.request.Request(URL, data=body, headers={
-        'Authorization': 'Key ' + key, 'Content-Type': 'application/json'})
-    try:
-        with urllib.request.urlopen(req, timeout=120) as r:
-            audio_url = json.load(r)['audio']['url']
-        with urllib.request.urlopen(audio_url, timeout=120) as r:
-            return r.read()
-    except urllib.error.HTTPError as e:
-        sys.exit('fal.ai вернул %s: %s' % (e.code, e.read()[:300].decode('utf-8', 'replace')))
+    for attempt in range(1, 4):
+        req = urllib.request.Request(URL, data=body, headers={
+            'Authorization': 'Key ' + key, 'Content-Type': 'application/json'})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                audio_url = json.load(r)['audio']['url']
+            with urllib.request.urlopen(audio_url, timeout=60) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:  # ключ, баланс, неверный запрос: повтор не поможет
+            sys.exit('fal.ai вернул %s: %s' % (e.code, e.read()[:300].decode('utf-8', 'replace')))
+        except (urllib.error.URLError, OSError) as e:  # сеть и таймауты: пробуем ещё раз
+            print('сбой сети (попытка %d из 3): %s' % (attempt, e))
+            if attempt == 3:
+                sys.exit('Сеть не отвечает. Запустите команду снова: готовые реплики пропустятся.')
+            time.sleep(3 * attempt)
 
 
 def main():
@@ -68,8 +82,10 @@ def main():
     ap.add_argument('--sample', action='store_true')
     ap.add_argument('--voices')
     ap.add_argument('--only')
-    ap.add_argument('--stress', action='store_true', help='ставить знак ударения на слово «замок» (сначала проверьте --stress-sample)')
+    ap.add_argument('--stress', action='store_true', help='править слово «замок» для озвучки: «зам-кУ» (проверено на слух, вариант v1)')
+    ap.add_argument('--stress-caps', action='store_true', help='то же, что --stress (оставлено для совместимости)')
     ap.add_argument('--stress-sample', action='store_true')
+    ap.add_argument('--stress-variants', action='store_true', help='пробные фразы про замок: дефис, смысловая подсказка, другой падеж')
     a = ap.parse_args()
     key = os.environ.get('FAL_KEY')
     if not key:
@@ -83,13 +99,27 @@ def main():
             open(os.path.join(out, v + '.mp3'), 'wb').write(audio)
             print('готово', v)
         return
+    if a.stress_variants:
+        out = os.path.join(ROOT, 'audio/samples'); os.makedirs(out, exist_ok=True)
+        variants = {
+            'lock-v1-hyphen': 'Не бейте по зам-кУ. Если замок не запирается, не оставляйте квартиру без присмотра.',
+            'lock-v2-context': 'Не бейте по дверному замку. Если замок не запирается, не оставляйте квартиру без присмотра.',
+            'lock-v3-case': 'Не бейте замок. Если замок не запирается, не оставляйте квартиру без присмотра.',
+        }
+        for name, t in variants.items():
+            open(os.path.join(out, name + '.mp3'), 'wb').write(tts(t, 'Sarah', key))
+            print('готово', name)
+        print('послушайте три файла в audio/samples: где «замкУ» или «замОк» звучит верно')
+        return
     if a.stress_sample:
         out = os.path.join(ROOT, 'audio/samples'); os.makedirs(out, exist_ok=True)
         t = 'Не бейте по замку. Если замок не запирается, не оставляйте квартиру без присмотра.'
         plain, marked = tts(t, 'Sarah', key), tts(stress(t), 'Sarah', key)
         open(os.path.join(out, 'lock-plain.mp3'), 'wb').write(plain)
         open(os.path.join(out, 'lock-stress.mp3'), 'wb').write(marked)
-        print('готово lock-plain.mp3 и lock-stress.mp3: послушайте оба, какой правильнее произносит «замОк»')
+        caps = tts(stress(t, True), 'Sarah', key)
+        open(os.path.join(out, 'lock-caps.mp3'), 'wb').write(caps)
+        print('готово lock-plain.mp3, lock-stress.mp3 и lock-caps.mp3: в каком из них «по замкУ» и «замОк не запирается»')
         return
     if not a.voices:
         sys.exit('Укажите --voices Имя1,Имя2 (после --sample выберите по прослушиванию).')
@@ -112,7 +142,7 @@ def main():
             f = os.path.join(out, k + '.mp3')
             if man.get(k) == t and os.path.exists(f):
                 continue
-            audio = tts(stress(t) if a.stress else t, voice, key)  # файл создаём только после успешного ответа
+            audio = tts(stress(t, True) if (a.stress or a.stress_caps) else t, voice, key)  # файл создаём только после успешного ответа
             open(f, 'wb').write(audio)
             man[k] = t
             json.dump(man, open(mpath, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
