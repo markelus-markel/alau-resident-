@@ -486,6 +486,7 @@
       <button class="quick-btn" onclick="showScreen('screen-contacts')"><span class="quick-icon">📞</span><span class="quick-label">Контакты</span></button>
       <button class="quick-btn" onclick="showScreen('screen-bills')"><span class="quick-icon">🧾</span><span class="quick-label">Счета</span></button>
       <button class="quick-btn" onclick="showScreen('screen-profile')"><span class="quick-icon">👤</span><span class="quick-label">Мой профиль</span></button>
+      <button class="quick-btn" onclick="showScreen('screen-journal')"><span class="quick-icon">📓</span><span class="quick-label">Журнал случаев</span></button>
     </div>
     <div style="text-align:center;margin:8px 0 14px;"><button class="btn-link" id="guide-link" onclick="guideOpen()">📖 Что умеет приложение и как им пользоваться</button></div>
 
@@ -1078,6 +1079,24 @@
 </div>
 
 <!-- =================== CALENDAR (HOUSE) =================== -->
+<div class="screen" id="screen-journal">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">📓 Журнал случаев</h1>
+    <div style="font-size:11px;color:rgba(255,255,255,0.8);">кв.<span class="js-apt">—</span></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Здесь остаются ваши обращения к помощнику по ситуациям: что случилось, как вы отвечали на вопросы, чем всё закончилось. Записи хранятся только на этом устройстве.</div>
+    <div id="journal-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
+  </nav>
+</div>
+
 <div class="screen" id="screen-calendar">
   <div class="topbar">
     <button class="back-topbar-btn" onclick="showScreen('screen-home')">← Назад</button>
@@ -2586,13 +2605,89 @@ function stageTicket(desc) {
   return { text: 'Создать заявку «' + text + '»?\nКатегория: ' + cat + '. Скажите «да» или нажмите кнопку.', actions: [A_YES, A_NO] };
 }
 function botExecute(p) {
-  if (p.type === 'ticket') { const t = addTicket('v', p.cat, p.text, p.prio || 'normal'); sitAutoPop(p.text); return { text: 'Готово: заявка ' + t.id + ' создана (демо, хранится на этом устройстве).', actions: [{ label: '📋 Мои заявки', do: 'go', arg: 'screen-tickets' }] }; }
+  if (p.type === 'ticket') { const t = addTicket('v', p.cat, p.text, p.prio || 'normal'); if (p.sit) journalUpdate(p.sit, e => { e.outcome = 'ticket'; e.ticket = t.id; }); sitAutoPop(p.text); return { text: 'Готово: заявка ' + t.id + ' создана (демо, хранится на этом устройстве).', actions: [{ label: '📋 Мои заявки', do: 'go', arg: 'screen-tickets' }] }; }
   if (p.type === 'agenda') { addAgendaItem(p.text); return { text: 'Вопрос добавлен в повестку.', actions: [{ label: '💬 Открыть чат', do: 'go', arg: 'screen-chat' }] }; }
   if (p.type === 'post') { sendChatMsg(p.text, 'text'); return 'Сообщение отправлено в чат (демо: его видите только вы).'; }
   return 'Нечего выполнять.';
 }
 function upcoming() { return houseEvents().filter(e => e.off >= 0).sort((a, b) => a.off - b.off); }
 function evLine(e) { return evDayLabel(e) + (e.from ? ', ' + e.from + '–' + e.to : '') + ' — ' + e.title + (e.place ? ' (' + e.place + ')' : ''); }
+// ----- журнал случаев: одна запись на обращение к помощнику по ситуации (на этом устройстве, отдельно для каждого номера) -----
+const LS_JOURNAL = 'alauDemoJournal';
+const JRN_WINDOW = 10 * 60 * 1000; // повторный вопрос о той же ситуации в течение 10 минут остаётся тем же случаем
+const JRN_MAX = 200;
+let jrnCur = null; // id случая, который сейчас ведёт помощник
+function journalBox() { const all = lsGet(LS_JOURNAL, {}); const p = currentPhone() || 'anon'; return { all, p, list: Array.isArray(all[p]) ? all[p] : [] }; }
+function journalSave(b) { b.all[b.p] = b.list.slice(0, JRN_MAX); lsSet(LS_JOURNAL, b.all); }
+function journalOpen(sit, userText) {
+  const b = journalBox(), now = Date.now(), last = b.list[0], text = String(userText || '').slice(0, 200);
+  if (last && last.sit === sit.id && last.outcome === 'viewed' && now - last.ts < JRN_WINDOW) {
+    last.ts = now; last.path = []; if (text) last.text = text; jrnCur = last.id; journalSave(b); return last;
+  }
+  const n = b.list.reduce((m, e) => Math.max(m, +String(e.id).replace(/\D/g, '') || 0), 0) + 1;
+  const e = { id: 'Ж-' + String(n).padStart(3, '0'), ts: now, sit: sit.id, title: sit.title, icon: sit.icon, text, path: [], outcome: 'viewed', ticket: null, status: 'open' };
+  b.list.unshift(e); journalSave(b); jrnCur = e.id; return e;
+}
+// Меняет текущий случай, если он относится к этой ситуации.
+function journalUpdate(sitId, fn) {
+  const b = journalBox(), e = jrnCur && b.list.find(x => x.id === jrnCur);
+  if (!e || e.sit !== sitId) return null;
+  fn(e); journalSave(b); return e;
+}
+function journalToggle(id) { const b = journalBox(), e = b.list.find(x => x.id === id); if (!e) return; e.status = e.status === 'done' ? 'open' : 'done'; journalSave(b); renderJournal(); }
+function journalOutcomeLabel(e) {
+  if (e.outcome === 'ticket') return '📋 Создана заявка ' + (e.ticket || '');
+  if (e.outcome === 'declined') return '✖ От заявки отказались';
+  return '📖 Прочитана памятка, заявка не создавалась';
+}
+function renderJournal() {
+  const el = $('journal-list'); if (!el) return;
+  const list = journalBox().list;
+  el.innerHTML = list.map(e => {
+    const done = e.status === 'done';
+    return '<div class="tkt-card ' + (done ? 'done' : 'processing') + '">' +
+      '<div class="tkt-header"><div class="tkt-num" style="font-size:14px;">' + escHtml(e.icon || '') + ' ' + escHtml(e.title) + '</div><span class="tkt-status ' + (done ? 'status-done' : 'status-proc') + '">' + (done ? 'Решён' : 'Открыт') + '</span></div>' +
+      '<div class="tkt-meta">' + escHtml(e.id) + ' · ' + fmtDay(e.ts) + ' · ' + fmtTime(e.ts) + '</div>' +
+      (e.text ? '<div class="tkt-text" style="margin-bottom:6px;"><b>Вы сказали:</b> «' + escHtml(e.text) + '»</div>' : '') +
+      (e.path && e.path.length ? '<div class="tkt-text" style="margin-bottom:6px;"><b>Ваши ответы:</b> ' + e.path.map(escHtml).join(' → ') + '</div>' : '') +
+      '<div class="tkt-text" style="margin-bottom:10px;">' + escHtml(journalOutcomeLabel(e)) + '</div>' +
+      '<div class="tkt-actions" style="margin-bottom:8px;"><button class="tkt-btn" data-id="' + escHtml(e.id) + '" data-do="toggle" onclick="journalAct(this)">' + (done ? '↩ Открыть снова' : '✔ Отметить решённым') + '</button>' +
+      (e.ticket ? '<button class="tkt-btn chk" data-do="tickets" onclick="journalAct(this)">📋 Мои заявки</button>' : '') + '</div>' +
+      '<div class="tkt-meta" style="margin-bottom:4px;">Напомнить проверить, в календарь (.ics):</div>' +
+      '<div class="tkt-actions"><button class="tkt-btn chk" data-id="' + escHtml(e.id) + '" data-do="remind" data-k="h2" onclick="journalAct(this)">📅 Через 2 часа</button>' +
+      '<button class="tkt-btn chk" data-id="' + escHtml(e.id) + '" data-do="remind" data-k="d1" onclick="journalAct(this)">📅 Завтра 9:00</button>' +
+      '<button class="tkt-btn chk" data-id="' + escHtml(e.id) + '" data-do="remind" data-k="d3" onclick="journalAct(this)">📅 Через 3 дня</button></div></div>';
+  }).join('') || '<div style="text-align:center;color:var(--text-muted);font-size:13px;line-height:1.6;padding:30px 10px;">Случаев пока нет.<br>Запись появляется, когда вы обращаетесь к помощнику по ситуации, например «пахнет газом» или «сломался замок».</div>';
+}
+function journalAct(btn) {
+  const d = btn.dataset;
+  if (d.do === 'toggle') journalToggle(d.id);
+  else if (d.do === 'tickets') showScreen('screen-tickets');
+  else if (d.do === 'remind') journalRemind(d.id, d.k);
+}
+function journalWhen(k) {
+  const d = new Date();
+  if (k === 'h2') return d.getTime() + 2 * 3600000;
+  d.setDate(d.getDate() + (k === 'd3' ? 3 : 1)); d.setHours(9, 0, 0, 0); return d.getTime();
+}
+// Напоминание проверить случай: одно событие с сигналом в момент начала. Время «плавающее», как и у событий дома.
+function icsReminder(e, when) {
+  const dt = ts => { const d = new Date(ts); return icsD(d) + 'T' + pad2(d.getHours()) + pad2(d.getMinutes()) + '00'; };
+  const clean = s => String(s || '').replace(/;/g, ',');
+  const summary = 'Проверить: ' + clean(e.title);
+  const desc = 'Случай ' + e.id + ' от ' + fmtDay(e.ts) + '.' + (e.path && e.path.length ? ' Ваши ответы: ' + clean(e.path.join(' / ')) + '.' : '') + (e.ticket ? ' Заявка ' + e.ticket + '.' : '') + ' AlauConcierge.';
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AlauConcierge//Demo//RU', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
+    'UID:' + e.id + '-' + when + '@alau-demo', 'DTSTAMP:' + icsStamp(), 'DTSTART:' + dt(when), 'DTEND:' + dt(when + 15 * 60000),
+    'SUMMARY:' + icsEscape(summary), 'DESCRIPTION:' + icsEscape(desc),
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscape(summary), 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'];
+  return L.map(icsFold).join('\r\n') + '\r\n';
+}
+function journalRemind(id, k) {
+  const e = journalBox().list.find(x => x.id === id); if (!e) return;
+  const when = journalWhen(k);
+  icsSave(icsReminder(e, when), 'alau-case-' + String(e.id).replace(/\D/g, '') + '.ics');
+  toast('Напоминание скачано: откройте файл, и оно появится в календаре');
+}
 function botHandle(raw) {
   const t = botNorm(raw);
   if (botQa && !botPending) { const r = qaMatch(t); if (r) return r; }
@@ -2605,7 +2700,11 @@ function botHandle(raw) {
     }
     const strong = ((sitRankScored(t)[0] || {}).sc || 0) >= 5;
     if (!strong && new RegExp('^(да|давай|подтверждаю|верно|ага|конечно|ок|окей|согласен|согласна)' + NO_W).test(t)) { botPending = null; return botExecute(p); }
-    if (!strong && new RegExp('^(нет|отмена|отменить|не надо|не нужно|стоп)' + NO_W).test(t)) { botPending = null; return 'Хорошо, отменила.'; }
+    if (!strong && new RegExp('^(нет|отмена|отменить|не надо|не нужно|стоп)' + NO_W).test(t)) {
+      botPending = null;
+      if (p.type === 'ticket' && p.sit) journalUpdate(p.sit, e => { if (e.outcome === 'viewed') e.outcome = 'declined'; });
+      return 'Хорошо, отменила.';
+    }
     botPending = null;
   } else if (/^(да|нет|ага|ок|окей|давай|конечно)(\s+(пожалуйста|спасибо|конечно))?[\s.,!]*$/.test(t)) {
     return 'Сейчас нечего подтверждать. Скажите «что ты умеешь», чтобы увидеть команды.';
@@ -2634,6 +2733,7 @@ function botHandle(raw) {
     return { text: 'Отправить в чат: «' + desc + '»?', actions: [A_YES, A_NO] };
   }
   if (/(мои|мой|все|открой|покажи)\s+(счет|квитанц)|счета\s+за|оплат[а-яё]*\s+(счет|свет|коммунал|квитанц)|сфотограф[а-яё]*\s+(счет|квитанц)/.test(t)) return { text: 'Раздел «Счета»: сфотографируйте квитанцию, приложение заполнит поля, вы проверите и сохраните. Оплата в Kaspi: приложение только подсказывает, платёж не проводит.', actions: [{ label: '🧾 Открыть «Счета»', do: 'go', arg: 'screen-bills' }] };
+  if (/журнал|мои случаи|история случаев/.test(t)) return { text: 'Журнал случаев: ваши обращения по ситуациям, что вы отвечали и чем всё закончилось. К каждому можно добавить напоминание в календарь.', actions: [{ label: '📓 Открыть журнал', do: 'go', arg: 'screen-journal' }] };
   if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
   const sc = sitRankScored(t);
   if (!(sc.length && sc[0].sc >= 5)) { const mk = botMarket(t); if (mk) return mk; }
@@ -2698,6 +2798,7 @@ function qaApply(id, node, i) {
   const sit = sitById(id), n = qaNode(id, node), o = n && n.opts[i]; if (!sit || !o) return null;
   if (!botQa || botQa.id !== id) botQa = { id, node, picked: [], text: '' };
   botQa.picked.push(o.l);
+  journalUpdate(id, e => { e.path = botQa.picked.slice(); });
   let text = o.say, acts = [];
   if (o.next) {
     botQa.node = o.next; const nx = qaAsk(id, o.next);
@@ -2706,7 +2807,7 @@ function qaApply(id, node, i) {
     if (sit.level !== 'info') {
       const label = (typeof mvCatMap !== 'undefined' && mvCatMap[sit.cat]) || sit.cat;
       const full = ((botQa.text || sit.title) + ' (' + botQa.picked.join('; ') + ')').slice(0, 300);
-      botPending = { type: 'ticket', text: full, cat: label, prio: sit.level === 'normal' ? 'normal' : 'urgent' };
+      botPending = { type: 'ticket', text: full, cat: label, prio: sit.level === 'normal' ? 'normal' : 'urgent', sit: id };
       text += '\n\nСоздать заявку «' + full.slice(0, 120) + (full.length > 120 ? '…' : '') + '»? Категория: ' + label + '. Скажите «да» или нажмите кнопку.';
       acts = [A_YES, A_NO];
     }
@@ -2756,6 +2857,7 @@ function qaClick(arg) {
   qaListenSoon(r && dlgIsOpen && tts && tts.checked ? speakReply(r) : null);
 }
 function sitBotReply(sit, userText) {
+  journalOpen(sit, userText);
   if (SIT_QA[sit.id]) {
     let t = sit.icon + ' ' + sit.title + '.\n';
     if (sit.level === 'emergency') t += '⚠️ Угроза безопасности: ' + (sit.call.length ? 'сначала позвоните ' + sit.call.map(c => c[0]).join(' или ') + '. ' : '') + 'Затем действуйте по шагам.\n';
@@ -2772,7 +2874,7 @@ function sitBotReply(sit, userText) {
   const acts = [];
   if (userText && !sit.go && sit.level !== 'info') {
     const label = (typeof mvCatMap !== 'undefined' && mvCatMap[sit.cat]) || sit.cat;
-    botPending = { type: 'ticket', text: userText.slice(0, 200), cat: label, prio: (sit.level === 'emergency' || sit.level === 'urgent') ? 'urgent' : 'normal' };
+    botPending = { type: 'ticket', text: userText.slice(0, 200), cat: label, prio: (sit.level === 'emergency' || sit.level === 'urgent') ? 'urgent' : 'normal', sit: sit.id };
     t += '\n\nСоздать заявку «' + userText.slice(0, 80) + (userText.length > 80 ? '…' : '') + '»? Категория: ' + label + '. Скажите «да» или нажмите кнопку.';
     acts.push(A_YES, A_NO);
   } else if (sit.go) t += '\n\nМожно внести вопрос на повестку: скажите «внеси вопрос на повестку: …».';
@@ -2969,6 +3071,7 @@ function alauOnShow(id) {
   if (id === 'screen-contacts') renderContacts();
   if (id === 'screen-bills') renderBills();
   if (id === 'screen-calendar') renderCalendar();
+  if (id === 'screen-journal') renderJournal();
   if (id === 'screen-chat') renderChatScreen();
   else if (chatDictating || botListening) stopAllMics();
   if (id === 'screen-profile') { renderProfile(); renderVoiceCard(); }

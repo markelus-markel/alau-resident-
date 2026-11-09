@@ -24,7 +24,7 @@ with sync_playwright() as p:
     ok('home: welcome card shown to a new resident', vis('#welcome-card') and active()=='screen-home')
     txt = g("document.getElementById('welcome-card').textContent")
     ok('assistant introduces itself and offers help', 'Я помощник AlauConcierge' in txt and 'Хотите, расскажу' in txt, txt)
-    ok('welcome card does not change navigator tile count', g("document.querySelectorAll('#screen-home .quick-btn').length")==10)
+    ok('welcome card does not change navigator tile count', g("document.querySelectorAll('#screen-home .quick-btn').length")==11)
     pg.wait_for_timeout(500); pg.screenshot(path=S + '/guide_welcome.png')
     # 2. «Позже» скрывает и запоминает для этого жильца
     pg.click('#welcome-later')

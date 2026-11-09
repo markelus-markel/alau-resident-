@@ -35,7 +35,7 @@ with sync_playwright() as p:
     ok('header shows the apartment badge', g("document.getElementById('home-apt').textContent")=='Кв. №23')
     ok('assistant block comes before calendar and announcements', g("(()=>{const a=document.getElementById('home-ask'),c=document.getElementById('cal-card');return !!(a.compareDocumentPosition(c)&Node.DOCUMENT_POSITION_FOLLOWING)})()"))
     ok('welcome comes before the assistant block for a new resident', g("(()=>{const w=document.getElementById('welcome-card'),a=document.getElementById('home-ask');return !!(w.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING)})()"))
-    ok('navigator still has 10 tiles', g("document.querySelectorAll('#screen-home .quick-btn').length")==10)
+    ok('navigator has 11 tiles (incl. case journal)', g("document.querySelectorAll('#screen-home .quick-btn').length")==11)
     pg.wait_for_timeout(300); pg.screenshot(path=S + '/home.png')
     # профиль достижим из шапки
     pg.click('#home-who'); ok('tap on name in header opens profile', g("document.querySelector('.screen.active').id")=='screen-profile')
