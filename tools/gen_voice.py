@@ -7,6 +7,7 @@
   python3 tools/gen_voice.py --voices Sarah,Alice,Brian,George
   python3 tools/gen_voice.py --voices Sarah --only gas,fire
   python3 tools/gen_voice.py --voices Sarah --only qa      # только реплики сценариев «вопрос-ответ»
+  python3 tools/gen_voice.py --voices Sarah --only duty    # слова для голоса сводки напоминаний (~100 коротких файлов d-*.mp3)
   python3 tools/gen_voice.py --stress-sample               # слово «замок» с ударением и без -> audio/samples/
 
 Для каждого голоса создаётся папка audio/sit/<Голос>/:
@@ -15,6 +16,7 @@
   hello.mp3      фраза для кнопки «Послушать» при выборе голоса
   guide.mp3      окно «Что умеет приложение» (текст из registry/guide.json, node tools/export-guide.js)
   qa-<id>-start.mp3, qa-<id>-<узел>-<N>.mp3  реплики сценариев (тексты из registry/scenarios.json, node tools/export-scenarios.js)
+  d-<слово>.mp3  слова и фразы для сводки «Консьерж напоминает» (registry/duty-voice.json, node tools/export-duty-voice.js); приложение склеивает из них фразу
   manifest.json  ключ -> точный текст файла
 Приложение проигрывает файл, только если текст в manifest.json совпадает с текущим реестром,
 иначе читает системным голосом. Уже готовые файлы с тем же текстом повторно не генерируются.
@@ -125,19 +127,23 @@ def main():
         sys.exit('Укажите --voices Имя1,Имя2 (после --sample выберите по прослушиванию).')
     only = set(a.only.split(',')) if a.only else None
     qa_only = only == {'qa'}
+    duty_only = only == {'duty'}
+    duty = json.load(open(os.path.join(ROOT, 'registry/duty-voice.json'), encoding='utf-8'))['clips']
     guide = json.load(open(os.path.join(ROOT, 'registry/guide.json'), encoding='utf-8'))['text']
     scen = json.load(open(os.path.join(ROOT, 'registry/scenarios.json'), encoding='utf-8'))['clips']
     for voice in a.voices.split(','):
         out = os.path.join(ROOT, 'audio/sit', voice); os.makedirs(out, exist_ok=True)
         mpath = os.path.join(out, 'manifest.json')
         man = json.load(open(mpath, encoding='utf-8')) if os.path.exists(mpath) else {}
-        jobs = [] if qa_only else [('hello', HELLO), ('guide', guide)]
-        for s in ([] if qa_only else sits):
+        jobs = [] if (qa_only or duty_only) else [('hello', HELLO), ('guide', guide)]
+        for s in ([] if (qa_only or duty_only) else sits):
             if only and s['id'] not in only:
                 continue
             jobs += [(s['id'], now_text(s)), (s['id'] + '-full', full_text(s))]
         if not only or qa_only:
             jobs += [(c['key'], c['text']) for c in scen]
+        if not only or duty_only:
+            jobs += list(duty.items())
         for k, t in jobs:
             f = os.path.join(out, k + '.mp3')
             if man.get(k) == t and os.path.exists(f):

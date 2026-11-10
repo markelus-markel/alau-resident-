@@ -2381,7 +2381,7 @@ function renderDuty() {
   c.style.display = '';
   const th = 'text-align:left;font-size:11px;color:var(--text-muted);font-weight:700;padding:2px 4px 4px;', td = 'padding:6px 4px;border-top:1px solid #eee;vertical-align:top;font-size:13px;';
   c.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;"><div style="font-weight:800;font-size:15px;">🛎️ Консьерж напоминает:</div>'
-    + '<button id="duty-speak" type="button" aria-label="Послушать" title="Послушать" onclick="speak(dutySpeech())" style="flex:none;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--teal);background:#fff;font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;">🔊</button></div>'
+    + '<button id="duty-speak" type="button" aria-label="Послушать" title="Послушать" onclick="dutyPlay()" style="flex:none;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--teal);background:#fff;font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;">🔊</button></div>'
     + '<table class="duty-table" style="width:100%;border-collapse:collapse;"><thead><tr><th style="' + th + 'width:26px;"></th><th style="' + th + '">Предмет</th><th style="' + th + 'text-align:right;">Сумма</th><th style="' + th + '">Срок</th></tr></thead><tbody>'
     + L.map(x => '<tr class="duty-row' + (x.cls ? ' ' + x.cls : '') + '"><td style="' + td + 'font-size:16px;">' + x.ic + '</td><td style="' + td + 'font-weight:600;">' + escHtml(x.what) + '</td><td style="' + td + 'text-align:right;white-space:nowrap;">' + escHtml(x.sum) + '</td><td style="' + td + (x.cls === 'late' ? 'color:#b3261e;' : '') + '">' + escHtml(x.due) + (x.note ? '<div style="font-size:11px;color:var(--text-muted);">' + escHtml(x.note) + '</div>' : '') + '</td></tr>').join('')
     + '</tbody></table>' + (T.more > 0 ? '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">и ещё ' + T.more + ' в разделе «Счета»</div>' : '')
@@ -2390,6 +2390,98 @@ function renderDuty() {
     + (L.some(x => x.meters) ? '<button class="tkt-btn chk" style="flex:none;padding:8px 12px;font-size:13px;" onclick="showScreen(\'screen-meters\');mtOpen(null)">📸 Передать показания</button>' : '')
     + '</div>';
 }
+// ===== Голос сводки записанными словами: словарь для tools/gen_voice.py (--only duty) и сборка фразы из кусочков =====
+// DUTY_VOICE_BEGIN
+const DUTY_VOICE = (() => {
+  const v = {}, put = (k, t) => { v['d-' + k] = t; };
+  ['один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять', 'десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать'].forEach((w, i) => put('n' + (i + 1), w));
+  ['двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'].forEach((w, i) => put('n' + (20 + i * 10), w));
+  ['сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'].forEach((w, i) => put('n' + (100 + i * 100), w));
+  put('f1', 'одна'); put('f2', 'две'); put('t1', 'тысяча'); put('t2', 'тысячи'); put('t5', 'тысяч');
+  ['первого', 'второго', 'третьего', 'четвёртого', 'пятого', 'шестого', 'седьмого', 'восьмого', 'девятого', 'десятого', 'одиннадцатого', 'двенадцатого', 'тринадцатого', 'четырнадцатого', 'пятнадцатого', 'шестнадцатого', 'семнадцатого', 'восемнадцатого', 'девятнадцатого'].forEach((w, i) => put('o' + (i + 1), w));
+  put('o20', 'двадцатого'); put('o30', 'тридцатого');
+  for (let m = 1; m <= 12; m++) put('m' + m, new Date(2000, m - 1, 1).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }).replace(/^\d+\s*/, ''));
+  put('hello', 'Здравствуйте'); put('late', 'Просрочено'); put('bill1', 'счёт'); put('bill2', 'счёта'); put('bill5', 'счетов');
+  put('on', 'на'); put('to', 'до'); put('in', 'через'); put('today', 'сегодня'); put('tomorrow', 'завтра'); put('tenge', 'тенге');
+  put('day1', 'день'); put('day2', 'дня'); put('day5', 'дней');
+  put('near', 'Ближайший срок'); put('meterdue', 'Пора передать показания приборов учёта'); put('meterin', 'Показания нужно передать');
+  put('k-elec', 'Электричество'); put('k-water', 'Вода и водоотведение'); put('k-heat', 'Отопление'); put('k-gas', 'Газ');
+  put('k-trash', 'Вывоз мусора'); put('k-osi', 'Взносы ОСИ'); put('k-net', 'Связь и интернет'); put('k-other', 'Другое');
+  return v;
+})();
+// DUTY_VOICE_END
+function dutyForm(n) { const a = n % 100, b = n % 10; return (a > 10 && a < 20) ? 5 : b === 1 ? 1 : (b >= 2 && b <= 4) ? 2 : 5; }
+// Число 1..999999 -> ключи слов. fem: «одна/две» только перед «тысяча».
+function dutyNumKeys(n) {
+  n = Math.round(n); if (!(n >= 1 && n <= 999999)) return null;
+  const part = (x, f) => {
+    const r = [], h = Math.floor(x / 100) * 100, t = x % 100, fm = u => (f && u <= 2 ? 'f' : 'n') + u;
+    if (h) r.push('n' + h);
+    if (t >= 1 && t <= 19) r.push(fm(t));
+    else if (t) { r.push('n' + Math.floor(t / 10) * 10); if (t % 10) r.push(fm(t % 10)); }
+    return r;
+  };
+  const th = Math.floor(n / 1000), out = [];
+  if (th) { out.push(...part(th, true), 't' + dutyForm(th)); }
+  out.push(...part(n % 1000, false));
+  return out;
+}
+function dutyDateKeys(iso) {
+  const m = String(iso || '').match(/^\d{4}-(\d{2})-(\d{2})$/); if (!m) return null;
+  const d = +m[2], mo = +m[1]; if (d < 1 || d > 31 || mo < 1 || mo > 12) return null;
+  const day = d <= 19 || d === 20 || d === 30 ? ['o' + d] : d < 30 ? ['n20', 'o' + (d - 20)] : ['n30', 'o1'];
+  return [...day, 'm' + mo];
+}
+function dutyInKeys(n) {
+  if (n === 0) return ['today']; if (n === 1) return ['tomorrow'];
+  const k = dutyNumKeys(n); return k ? ['in', ...k, 'day' + dutyForm(n)] : null;
+}
+// Фраза сводки из записанных слов; '.' означает паузу. null, если чего-то нельзя собрать (тогда читает голос телефона).
+function dutyClipSeq() {
+  const d = dutyData(), q = ['hello', '.'], kind = b => DUTY_VOICE['d-k-' + b.kind] ? 'k-' + b.kind : 'k-other';
+  if (d.late.length) {
+    q.push('late', ...dutyNumKeys(d.late.length), 'bill' + dutyForm(d.late.length));
+    if (d.lateSum) { const m = dutyNumKeys(d.lateSum); if (!m) return null; q.push('on', ...m, 'tenge'); }
+    q.push('.');
+  }
+  if (d.upcoming.length) {
+    const b = d.upcoming[0], dt = dutyDateKeys(b.due), inn = dutyInKeys(dutyDays(b.due)); if (!dt || !inn) return null;
+    q.push('near', kind(b));
+    if (b.amount) { const m = dutyNumKeys(b.amount); if (!m) return null; q.push(...m, 'tenge'); }
+    q.push('to', ...dt, ...inn, '.');
+  }
+  if (d.meter) {
+    if (d.meter.state === 'due') q.push('meterdue');
+    else { const inn = dutyInKeys(d.meter.n); if (!inn) return null; q.push('meterin', ...inn); }
+    q.push('.');
+  }
+  return q.length > 2 ? q : null;
+}
+// Кнопка «Послушать»: голос Сары записанными словами, если все слова записаны; иначе голос телефона.
+function dutyPlay() {
+  const v = voiceChoice(), seq = v ? dutyClipSeq() : null, phone = () => speak(dutySpeech());
+  if (!seq) return phone();
+  return voiceManifest(v).then(man => {
+    const keys = seq.filter(k => k !== '.');
+    if (!keys.every(k => man['d-' + k] && man['d-' + k] === DUTY_VOICE['d-' + k])) return phone();
+    clipStop(); try { speechSynthesis.cancel(); } catch (e) {}
+    const tok = clipSeqTok, els = {};
+    keys.forEach(k => { if (!els[k]) { const a = new Audio('audio/sit/' + v + '/d-' + k + '.mp3'); a.preload = 'auto'; els[k] = a; } });
+    let i = 0;
+    const fail = () => { if (tok === clipSeqTok) { clipStop(); phone(); } };
+    const next = () => {
+      if (tok !== clipSeqTok) return;
+      if (i >= seq.length) { clipEl = null; return; }
+      const k = seq[i++];
+      if (k === '.') { setTimeout(next, 280); return; }
+      const a = els[k]; try { a.currentTime = 0; } catch (e) {} clipEl = a;
+      a.onended = () => setTimeout(next, 30); a.onerror = fail;
+      a.play().catch(fail);
+    };
+    next();
+  }).catch(() => phone());
+}
+
 // Ответы консьержа в чате: mode = debt | due | meters | all
 function dutyReply(mode) {
   const d = dutyData(), acts = [];
@@ -3711,7 +3803,8 @@ function voiceManifest(v) {
   if (!voiceMan[v]) voiceMan[v] = fetch('audio/sit/' + v + '/manifest.json').then(r => r.ok ? r.json() : Promise.reject()).catch(() => { delete voiceMan[v]; return {}; });
   return voiceMan[v];
 }
-function clipStop() { if (clipEl) { try { clipEl.pause(); } catch (e) {} clipEl = null; } }
+let clipSeqTok = 0; // номер текущей цепочки записанных слов; clipStop обрывает её
+function clipStop() { clipSeqTok++; if (clipEl) { try { clipEl.pause(); } catch (e) {} clipEl = null; } }
 function clipPlaying() { return !!(clipEl && !clipEl.paused && !clipEl.ended); }
 // true, если запись найдена, совпала с текущим текстом реестра и запущена
 function speakClip(key, text, voice) {
