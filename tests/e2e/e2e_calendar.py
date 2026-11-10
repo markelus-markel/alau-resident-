@@ -33,7 +33,7 @@ with sync_playwright() as p:
     ok('edit form prefilled', g("document.getElementById('reg-cad').value")=='20-318-040-123')
     g("showScreen('screen-home')")
     # ---- calendar screen ----
-    pg.click('#cal-card')
+    pg.click('#home-cal')
     ok('calendar screen opens', g("document.querySelector('.screen.active').id")=='screen-calendar')
     ok('house + cadastral shown', 'Найманбаева' in g("document.getElementById('cal-house').textContent") and '20-318-040-123' in g("document.getElementById('cal-cad').textContent"))
     ok('no invented events: empty state', 'Событий пока нет' in g("document.getElementById('cal-list').textContent") and g('houseEvents().length')==0)

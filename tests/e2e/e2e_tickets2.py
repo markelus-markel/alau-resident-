@@ -64,9 +64,9 @@ with sync_playwright() as p:
     g("lsSet(LS_SESSION,'77011234567')")
     # calendar
     g("showScreen('screen-home')")
-    ok('calendar card visible on home', pg.is_visible('#cal-card'))
-    pg.click('#cal-card')
-    ok('home card opens house calendar screen', g("document.querySelector('.screen.active').id")=='screen-calendar')
+    ok('calendar button visible on home (header)', pg.is_visible('#home-cal'))
+    pg.click('#home-cal')
+    ok('home calendar button opens house calendar screen', g("document.querySelector('.screen.active').id")=='screen-calendar')
     g("openCalendar()")
     ok('empty CALENDAR_URL -> toast, no navigation', g("document.getElementById('toast').classList.contains('show')") and 'не задана' in g("document.getElementById('toast').textContent"))
     g("window.__opened=[]; window.open=(u,t,f)=>{window.__opened.push([u,t,f])}")
