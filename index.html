@@ -1374,7 +1374,7 @@
     </div>
     <div class="auth-card" id="voice-card" style="display:none;">
       <div class="auth-title" style="font-size:16px;">🔊 Выберите, пожалуйста, голос помощника</div>
-      <div class="auth-sub" style="margin-bottom:8px;">Выбранный голос читает памятки раздела «Если случилось». Ответы помощника в чате читает голос вашего телефона.</div>
+      <div class="auth-sub" style="margin-bottom:8px;">Выбранный голос читает памятки раздела «Если случилось» и ответы помощника, для которых есть запись. Остальные ответы читает голос вашего телефона.</div>
       <div id="voice-list"></div>
     </div>
     <div class="demo-note" style="margin:0;">Данные анкеты хранятся только в этом браузере. Наружу уходят только запросы к картам и только по вашей кнопке. Очистка данных сайта удалит профиль.</div>
@@ -3257,9 +3257,15 @@ function setVoiceStatus(t) { const s = $('voice-status'); if (s) s.textContent =
 // ----- голос помощника: готовые записи (audio/sit/<Голос>/, создаёт tools/gen_voice.py), иначе голос телефона -----
 const LS_VOICE = 'alauDemoVoice';
 const ASSIST_VOICES = ['Sarah', 'Alice', 'Brian', 'George'];
+const DEFAULT_VOICE = 'Sarah'; // пока человек сам не выбрал голос, помощник говорит голосом Sarah (если записи доступны)
 const VOICE_HELLO = 'Здравствуйте! Я помощник AlauConcierge. Так я буду читать вам подсказки.';
 const voiceMan = {}; let voicesOk = [], clipEl = null;
-function voiceChoice() { const v = lsGet(LS_VOICE, ''); return voicesOk.includes(v) ? v : ''; }
+// Нет сохранённого выбора -> голос по умолчанию; сохранённая пустая строка = человек выбрал голос телефона.
+function voiceChoice() {
+  const v = lsGet(LS_VOICE, null);
+  if (v === null) return voicesOk.includes(DEFAULT_VOICE) ? DEFAULT_VOICE : '';
+  return voicesOk.includes(v) ? v : '';
+}
 function voiceManifest(v) {
   if (!voiceMan[v]) voiceMan[v] = fetch('audio/sit/' + v + '/manifest.json').then(r => r.ok ? r.json() : Promise.reject()).catch(() => { delete voiceMan[v]; return {}; });
   return voiceMan[v];
@@ -3288,7 +3294,7 @@ function renderVoiceCard() {
   const c = $('voice-card'); if (!c) return;
   c.style.display = voicesOk.length ? '' : 'none';
   const cur = voiceChoice();
-  const row = (v, label, prev) => '<div class="prof-row" style="align-items:center;"><label style="display:flex;gap:8px;align-items:center;flex:1;"><input type="radio" name="asv" value="' + v + '"' + (cur === v ? ' checked' : '') + ' onchange="voicePick(this.value)"> ' + label + '</label>' + (prev ? '<button class="btn-link" onclick="voicePreview(\'' + v + '\')">▶ Послушать</button>' : '') + '</div>';
+  const row = (v, label, prev) => '<div class="prof-row" style="align-items:center;"><label style="display:flex;gap:8px;align-items:center;flex:1;"><input type="radio" name="asv" value="' + v + '"' + (cur === v ? ' checked' : '') + ' onclick="voicePick(this.value)"> ' + label + '</label>' + (prev ? '<button class="btn-link" onclick="voicePreview(\'' + v + '\')">▶ Послушать</button>' : '') + '</div>';
   $('voice-list').innerHTML = row('', 'Голос моего телефона', false) + voicesOk.map(v => row(v, v, true)).join('');
 }
 function voicePick(v) { lsSet(LS_VOICE, v); if (v) voicePreview(v); else { clipStop(); toast('Выбран голос телефона'); } }

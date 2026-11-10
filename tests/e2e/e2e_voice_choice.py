@@ -64,8 +64,15 @@ with sync_playwright() as p:
     ok('voice card visible', g("getComputedStyle(document.getElementById('voice-card')).display")!='none')
     ok('title asks to choose a voice', 'Выберите, пожалуйста, голос помощника' in g("document.getElementById('voice-card').textContent"))
     ok('only voices with recordings offered (+ phone voice)', g("[...document.querySelectorAll('#voice-list input')].map(i=>i.value)")==['', 'Sarah', 'Brian'], g("[...document.querySelectorAll('#voice-list input')].map(i=>i.value)"))
-    ok('phone voice selected by default', g("document.querySelector('#voice-list input:checked').value")=='')
+    ok('nothing saved yet (fresh profile)', g("lsGet(LS_VOICE,'none')")=='none')
+    ok('Sarah selected by default', g("document.querySelector('#voice-list input:checked').value")=='Sarah')
+    ok('default voice is Sarah', g("voiceChoice()")=='Sarah')
     pg.screenshot(path=S + '/voice_card.png')
+    # без единого клика по выбору: памятка читается записью Sarah, голос телефона молчит
+    g("void(window.__clips=[])"); g("void(window.__spoken=[])")
+    g("openSituations('gas')"); pg.wait_for_timeout(300)
+    ok('default: memo is read by the Sarah recording, not by the phone voice', g("__clips")==['audio/sit/Sarah/gas.mp3'] and g("__spoken.length")==0, (g("__clips"), g("__spoken")))
+    g("closeSituations()"); g("clipStop()"); g("showScreen('screen-profile')"); g("void(window.__clips=[])")
     pg.click('#voice-list input[value=Sarah]'); pg.wait_for_timeout(300)
     ok('choice saved', g("lsGet(LS_VOICE,'')")=='Sarah')
     ok('choosing a voice plays its hello clip', g("__clips")==['audio/sit/Sarah/hello.mp3'], g("__clips"))
@@ -102,6 +109,11 @@ with sync_playwright() as p:
     g("openSituations('gas')"); pg.wait_for_timeout(300)
     ok('phone voice: system voice reads, no clips', g("__clips.length")==0 and g("__spoken.length")==1)
     g("closeSituations()")
+    # явный выбор голоса телефона переживает перезагрузку: по умолчанию Sarah его не перебивает
+    pg.reload(); pg.wait_for_timeout(500)
+    ok('explicit phone-voice choice survives reload (Sarah default does not override it)', g("voiceChoice()")=='' and g("lsGet(LS_VOICE,'none')")=='')
+    g("showScreen('screen-profile')")
+    ok('after reload the phone voice is still selected in the card', g("document.querySelector('#voice-list input:checked').value")=='')
     # выбор переживает перезагрузку
     g("lsSet(LS_VOICE,'Sarah')"); pg.reload(); pg.wait_for_timeout(500)
     ok('choice survives reload', g("voiceChoice()")=='Sarah')
