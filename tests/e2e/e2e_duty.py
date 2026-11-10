@@ -1,0 +1,69 @@
+import os
+import sys
+from playwright.sync_api import sync_playwright
+S = sys.argv[1]; res = []
+def ok(n, c, x=''):
+    res.append(c); print(('PASS ' if c else 'FAIL ') + n + (' | ' + str(x)[:300] if not c else ''))
+SEED = """()=>{const u={};u['77011234567']={phone:'77011234567',last:'Иванов',first:'Тест',middle:'',iin:makeTestIIN(),city:'Семей',street:'ул. Найманбаева',house:'12',apt:'23'};lsSet(LS_USERS,u);lsSet(LS_SESSION,'77011234567');lsSet(LS_WELCOME,{'77011234567':1});}"""
+URL = 'file://' + os.environ.get('ALAU_INDEX', os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'index.html'))
+# данные жильца задаются в странице: даты считаются от сегодняшнего дня
+PUT = """(o)=>{const iso=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const p='77011234567';
+lsSet(LS_BILLS,{[p]:(o.bills||[]).map((b,i)=>({id:'S-t'+i,kind:b.kind,amount:b.amount,due:b.off===null?'':iso(b.off),paid:!!b.paid,period:'',account:'',photo:null,created:new Date().toISOString()}))});
+const day=o.day===undefined?0:(o.day==='today'?Math.min(new Date().getDate(),28):o.day);
+const rd=(o.reads||[]).map((r,i)=>({id:'R'+i,kind:'water',label:'',value:100+i,date:iso(r),photo:null,auto:false,created:new Date().toISOString()}));
+lsSet(LS_METERS,{[p]:{readings:rd,day:day}});
+renderDuty();}"""
+with sync_playwright() as p:
+    b = p.chromium.launch(executable_path='/usr/bin/google-chrome', headless=True, args=['--no-sandbox'])
+    ctx = b.new_context(viewport={'width': 390, 'height': 844}); pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
+    pg.goto(URL); pg.evaluate(SEED); pg.reload(); g = pg.evaluate
+    vis = lambda: g("document.getElementById('home-duty').style.display !== 'none'")
+    txt = lambda: g("document.getElementById('home-duty').innerText")
+    # 1. данных нет: карточки нет, чат не выдумывает
+    ok('no data: no duty card on home', not vis())
+    g("showScreen('screen-chat'); switchChatTab('bot')")
+    def ask(q): pg.fill('#bot-text', q); pg.press('#bot-text', 'Enter'); pg.wait_for_timeout(40)
+    last = lambda: g("(()=>{const l=chatBox().box.bot; return l[l.length-1].text})()")
+    acts = lambda: g("(()=>{const l=chatBox().box.bot; return (l[l.length-1].actions||[]).map(a=>a.do+':'+(a.arg||''))})()")
+    ask('что я должен'); ok('no data: concierge says there is nothing to remind, offers to add a bill', 'нечего напоминать' in last() and 'bill-new:' in acts(), last())
+    # 2. просроченный и ближайший счёт, день показаний наступил, показаний нет
+    g(PUT, {'bills': [{'kind': 'elec', 'amount': 12500, 'off': -3}, {'kind': 'water', 'amount': 8000, 'off': 5}, {'kind': 'gas', 'amount': 3000, 'off': -1, 'paid': True}], 'day': 'today'})
+    g("showScreen('screen-home')"); t = txt()
+    ok('card shown with real data', vis())
+    ok('overdue: counts only unpaid overdue bills with the sum', 'Просрочено: 1 счёт на 12' in t and '500' in t, t)
+    ok('nearest deadline is the upcoming bill with days left', 'Ближайший срок: Вода' in t and 'через 5 дней' in t, t)
+    ok('meters reminder when the day has come and no readings', 'Пора передать показания' in t, t)
+    ok('card greets by name', 'Тест' in t, t)
+    pg.screenshot(path=S + '/duty_home.png')
+    # 3. кнопки карточки ведут в разделы
+    g("document.querySelector('#home-duty button').click()"); ok('card button Счета opens the bills screen', g("document.querySelector('.screen.active').id") == 'screen-bills')
+    g("showScreen('screen-home')"); g("[...document.querySelectorAll('#home-duty button')].find(b=>b.textContent.includes('показания')).click()")
+    ok('card button opens meters with the photo window', g("document.querySelector('.screen.active').id") == 'screen-meters' and g("document.getElementById('mt-modal').classList.contains('open')")); g("mtClose()")
+    # 4. голос: короткая фраза без значков
+    sp = g("dutySpeech()"); ok('speech text is plain: greeting by name, no emoji, no brackets', sp.startswith('Здравствуйте, Тест') and '⚠' not in sp and '(' not in sp and 'Просрочено' in sp, sp)
+    # 5. вопросы консьержу
+    g("showScreen('screen-chat'); switchChatTab('bot')")
+    for q, must, first in [('что я должен', 'Задолженность', 'go:screen-bills'), ('сколько мне оплатить', 'Задолженность', 'go:screen-bills'), ('сроки оплаты', 'Ближайшие сроки', 'go:screen-bills'),
+                           ('когда платить', 'Ближайшие сроки', 'go:screen-bills'), ('пора ли передавать показания', 'Пора передать показания', 'meter-new:'), ('что срочного', 'Задолженность', 'meter-new:')]:
+        ask(q); a = acts(); ok(f'«{q}» -> reply and first button', must in last() and a and a[0] == first, (last()[:90], a))
+    ask('что я должен'); ok('debt reply lists the overdue bill with the real amount and date', 'Электричество' in last() and 'до ' in last() and 'Газ' not in last(), last())
+    ask('передать показания'); ok('plain «передать показания» still goes to meters', 'meter-new:' in acts())
+    # 6. всё оплачено и показания переданы: карточка исчезает, чат говорит правду
+    g(PUT, {'bills': [{'kind': 'elec', 'amount': 12500, 'off': -3, 'paid': True}], 'day': 'today', 'reads': [0]})
+    g("showScreen('screen-home')"); ok('all paid and readings done: card is hidden', not vis(), txt())
+    g("showScreen('screen-chat'); switchChatTab('bot')"); ask('что я должен'); ok('nothing overdue is stated honestly', 'Просроченных счетов нет' in last(), last())
+    # 7. показания скоро: напоминание за 1–3 дня
+    if g("new Date().getDate()") <= 25:
+        g(PUT, {'bills': [], 'day': g("new Date().getDate()") + 2, 'reads': [0]}); g("showScreen('screen-home')")
+        ok('meters day in two days: soon reminder', vis() and 'через 2 дня' in txt(), txt())
+        g(PUT, {'bills': [], 'day': g("new Date().getDate()") + 6, 'reads': [0]}); g("showScreen('screen-home')")
+        ok('meters day is far: no reminder yet', not vis(), txt())
+    # 8. без срока оплаты
+    g(PUT, {'bills': [{'kind': 'trash', 'amount': 1500, 'off': None}]}); g("showScreen('screen-home')")
+    ok('bill without a deadline does not invent one', not vis() or 'до ' not in txt(), txt())
+    g("showScreen('screen-chat'); switchChatTab('bot')"); ask('сроки оплаты'); ok('no deadline: says there are no upcoming deadlines', 'нет' in last().lower(), last())
+    ok('intro mentions the new questions', 'что я должен' in g("BOT_INTRO"))
+    ok('no page errors', not errs, errs)
+    ctx.close(); b.close()
+print('TOTAL', len(res), 'FAILED', res.count(False))
