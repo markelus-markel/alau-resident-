@@ -25,7 +25,6 @@ with sync_playwright() as p:
     ctx, pg, errs = fresh(b, 360, 640); g = pg.evaluate
     rect = lambda sel: g("(s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top,bottom:r.bottom}})(%s)" % json.dumps(sel))
     ok('small phone: assistant input visible without scrolling', rect('#home-ask-in')['bottom'] <= 640, rect('#home-ask-in'))
-    ok('small phone: ask button visible without scrolling', rect('#home-ask-go')['bottom'] <= 640, rect('#home-ask-go'))
     ok('small phone: welcome visible without scrolling for a new resident', rect('#welcome-card')['bottom'] <= 640, rect('#welcome-card'))
     pg.wait_for_timeout(300); pg.screenshot(path=S + '/home_small.png'); ctx.close()
     # обычный телефон
@@ -43,6 +42,7 @@ with sync_playwright() as p:
     ok('question field shows the full hint when it grows on hover', (pg.hover('#home-ask-in'), pg.wait_for_timeout(350), g("(()=>{const e=document.getElementById('home-ask-in');return e.placeholder==='Например: пахнет газом, где мои счета'&&e.getBoundingClientRect().height>=80})()"))[2])
     ok('question field is smaller again when the pointer leaves', (pg.mouse.move(5, 5), pg.wait_for_timeout(350), g("document.getElementById('home-ask-in').getBoundingClientRect().height<50"))[2])
     pg.fill('#home-ask-in', 'a'); ok('typed text keeps the field big', (pg.mouse.move(5, 5), pg.wait_for_timeout(350), g("document.getElementById('home-ask-in').getBoundingClientRect().height>=80"))[2]); pg.fill('#home-ask-in', '')
+    ok('no duplicate green button and no duplicate chips under the question field', g("!document.getElementById('home-ask-go')&&!document.getElementById('home-chip-sit')&&!document.getElementById('home-chip-bills')&&!document.querySelector('#home-ask .btn-primary')&&!document.querySelector('#home-ask .tkt-btn')"))
     ok('microphone is 50% bigger than the old 38 px button', g("(()=>{const r=document.getElementById('home-mic').getBoundingClientRect();return Math.round(r.width)==57&&Math.round(r.height)==57})()"))
     ok('mic state label says off when not recording', g("(()=>{const e=document.querySelector('#home-ask .ms-off'),o=document.querySelector('#home-ask .ms-on');return getComputedStyle(e).display!=='none'&&getComputedStyle(o).display==='none'&&e.textContent==='выкл'})()"))
     pg.wait_for_timeout(300); pg.screenshot(path=S + '/home.png')
@@ -51,7 +51,7 @@ with sync_playwright() as p:
     g("showScreen('screen-home')"); pg.click('#home-apt'); ok('tap on apartment badge opens profile', g("document.querySelector('.screen.active').id")=='screen-profile')
     g("showScreen('screen-home')")
     # пустой запрос
-    pg.click('#home-ask-go'); ok('empty ask: stays on home and shows a hint', g("document.querySelector('.screen.active').id")=='screen-home' and 'Напишите или скажите' in g("document.getElementById('toast').textContent"))
+    pg.press('#home-ask-in', 'Enter'); ok('empty ask: Enter: stays on home and shows a hint', g("document.querySelector('.screen.active').id")=='screen-home' and 'Напишите или скажите' in g("document.getElementById('toast').textContent"))
     # текстовый запрос
     pg.fill('#home-ask-in', 'пахнет газом'); pg.press('#home-ask-in', 'Enter'); pg.wait_for_timeout(200)
     ok('typed question opens the assistant chat', g("document.querySelector('.screen.active').id")=='screen-chat' and g("document.getElementById('chatpane-bot').style.display")=='flex')
@@ -59,7 +59,7 @@ with sync_playwright() as p:
     ok('assistant answers the typed question', 'пахнет газом' in th and 'Запах газа' in th, th[-300:])
     ok('input is cleared after sending', g("(showScreen('screen-home'),document.getElementById('home-ask-in').value)")=='')
     # «где мои счета»
-    pg.fill('#home-ask-in', 'где мои счета'); pg.click('#home-ask-go'); pg.wait_for_timeout(200)
+    pg.fill('#home-ask-in', 'где мои счета'); pg.press('#home-ask-in', 'Enter'); pg.wait_for_timeout(200)
     ok('"где мои счета" gets the Счета button', 'Открыть «Счета»' in g("document.getElementById('bot-thread').textContent"))
     # голос
     g("showScreen('screen-home')"); n0 = g("__recs.length")
@@ -72,8 +72,6 @@ with sync_playwright() as p:
     ok('voice question opens the dialog screen over the chat', g("getComputedStyle(document.getElementById('dlg')).display")!='none')
     g("dlgClose(false)")
     # быстрые кнопки
-    g("showScreen('screen-home')"); pg.click('#home-chip-sit'); ok('chip "Что-то случилось" opens the situations', g("document.getElementById('sit-modal').classList.contains('open')")); g("closeSituations()")
-    pg.click('#home-chip-bills'); ok('chip "Мои счета" opens the bills screen', g("document.querySelector('.screen.active').id")=='screen-bills')
     # нижняя панель
     g("showScreen('screen-home')")
     navs = g("[...document.querySelectorAll('.bottom-nav')].map(n=>[...n.querySelectorAll('.nav-label')].map(l=>l.textContent))")
