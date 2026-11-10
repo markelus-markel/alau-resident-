@@ -58,7 +58,8 @@ with sync_playwright() as p:
     # вернуть ОСИ: всё как было
     g("mgmtPick('osi')")
     ok('back to OSI: static note restored', g("document.querySelector('#screen-calendar .js-role').textContent") == 'События добавляет председатель ОСИ.')
-    g("showScreen('screen-contacts')"); ok('back to OSI: contact slot restored', 'Председатель ОСИ №14' in g("document.getElementById('ct-house').textContent"))
+    g("showScreen('screen-contacts')"); ok('back to OSI: contact slot restored', 'Председатель ОСИ' in g("document.getElementById('ct-house').textContent"))
+    ok('contact slot does not carry a made-up house number', '№14' not in g("document.getElementById('ct-house').textContent"))
     g("showScreen('screen-home')"); pg.screenshot(path=S + '/mgmt_role_home.png')
     ok('no page errors', not errs, errs)
     ctx.close(); b.close()
