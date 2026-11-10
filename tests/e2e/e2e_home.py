@@ -37,7 +37,7 @@ with sync_playwright() as p:
     ok('the old calendar card is gone from the home body', g("!document.getElementById('cal-card')"))
     ok('assistant block comes before announcements', g("(()=>{const a=document.getElementById('home-ask'),n=[...document.querySelector('#screen-home .home-content').children],ia=n.indexOf(a),io=n.findIndex(e=>e.textContent.includes('Объявления и обсуждения'));return ia>=0&&io>ia})()"))
     ok('welcome comes before the assistant block for a new resident', g("(()=>{const w=document.getElementById('welcome-card'),a=document.getElementById('home-ask');return !!(w.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING)})()"))
-    ok('navigator has 11 tiles (incl. case journal)', g("document.querySelectorAll('#screen-home .quick-btn').length")==11)
+    ok('navigator has 8 tiles (voice, contacts, profile moved to the header menu)', g("document.querySelectorAll('#screen-home .quick-btn').length")==8)
     pg.wait_for_timeout(300); pg.screenshot(path=S + '/home.png')
     # профиль достижим из шапки
     pg.click('#home-who'); ok('tap on name in header opens profile', g("document.querySelector('.screen.active').id")=='screen-profile')

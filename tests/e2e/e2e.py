@@ -90,11 +90,11 @@ with sync_playwright() as p:
     ok('badge shows apt', pg.inner_text('#home-apt')=='Кв. №23', pg.inner_text('#home-apt'))
     ok('profile strip name', pg.inner_text('#ps-name')=='Иванов Петр', pg.inner_text('#ps-name'))
     ok('profile strip address', 'ул. Найманбаева, д. 12А, кв. 23' in pg.inner_text('#ps-addr'), pg.inner_text('#ps-addr'))
-    ok('navigator has 11 tiles (incl. case journal)', pg.evaluate("document.querySelectorAll('#screen-home .quick-btn').length")==11)
+    ok('navigator has 8 tiles (voice, contacts, profile moved to the header menu)', pg.evaluate("document.querySelectorAll('#screen-home .quick-btn').length")==8)
     pg.wait_for_timeout(500); pg.screenshot(path=S+'/s5_home.png', full_page=False)
     # navigator tiles all open their screens
     bad=[]
-    for i in range(9):
+    for i in range(8):
         pg.evaluate("showScreen('screen-home')")
         pg.evaluate("document.querySelectorAll('#screen-home .quick-btn')[%d].click()" % i)
         a = active()

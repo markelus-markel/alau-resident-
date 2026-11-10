@@ -31,6 +31,22 @@
   .topbar-logo { display: flex; align-items: center; gap: 8px; }
   .logo-mark { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--teal); line-height: 1.1; text-align: center; }
   .topbar h1 { color: #fff; font-size: 20px; font-weight: 700; }
+  #screen-home .topbar h1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  @media (max-width: 380px) {
+    #screen-home .topbar { padding-left: 10px; padding-right: 10px; }
+    #screen-home .topbar h1 { font-size: 17px; }
+    #screen-home .topbar-left { gap: 8px; }
+    #screen-home .topbar-right { gap: 6px; margin-left: 6px; }
+    #screen-home .apt-badge { padding: 4px 8px; font-size: 12px; }
+    #screen-home .cal-chip { min-width: 48px; padding: 3px 6px; }
+  }
+  .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+  .menu-btn { flex: 0 0 auto; width: 38px; height: 38px; border: none; border-radius: 12px; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; font-family: inherit; }
+  .home-menu { display: none; position: absolute; left: 12px; top: calc(100% - 4px); min-width: 250px; background: #fff; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,.25); padding: 6px; z-index: 120; }
+  .home-menu.open { display: block; }
+  .home-menu button { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; padding: 12px 10px; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--text); text-align: left; cursor: pointer; }
+  .home-menu button:active { background: #eef6f5; }
+  .home-menu .hm-ico { font-size: 20px; width: 26px; text-align: center; }
   .topbar-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-left: 8px; }
   .cal-chip { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 56px; background: rgba(255,255,255,0.2); color: #fff; border: none; border-radius: 12px; padding: 3px 8px; cursor: pointer; font-family: inherit; line-height: 1.15; }
   .cal-chip .cal-chip-wd { font-size: 11px; font-weight: 600; opacity: .9; white-space: nowrap; }
@@ -389,13 +405,22 @@
 <!-- =================== HOME =================== -->
 <div class="screen active" id="screen-home">
   <div class="topbar">
-    <div class="topbar-logo" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:0;">
-      <h1>AlauConcierge</h1>
-      <div id="home-who" onclick="showScreen('screen-profile')" style="font-size:12px;color:rgba(255,255,255,.88);cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="ps-name">Профиль</span> · <span id="ps-addr">заполните анкету</span></div>
+    <div class="topbar-left">
+      <button class="menu-btn" id="home-menu-btn" onclick="homeMenuToggle(event)" aria-label="Меню" aria-haspopup="true" aria-expanded="false" aria-controls="home-menu">☰</button>
+      <div class="topbar-logo" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:0;">
+        <h1>AlauConcierge</h1>
+        <div id="home-who" onclick="showScreen('screen-profile')" style="font-size:12px;color:rgba(255,255,255,.88);cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="ps-name">Профиль</span> · <span id="ps-addr">заполните анкету</span></div>
+      </div>
     </div>
     <div class="topbar-right">
       <button class="cal-chip" id="home-cal" onclick="showScreen('screen-calendar')" aria-label="Календарь дома"><span class="cal-chip-wd" id="home-cal-wd">📅</span><span class="cal-chip-day" id="home-cal-day">—</span></button>
       <div class="apt-badge" id="home-apt" onclick="showScreen('screen-profile')" style="cursor:pointer;">Кв. №—</div>
+    </div>
+    <div class="home-menu" id="home-menu" role="menu" aria-label="Меню">
+      <button role="menuitem" id="hm-guide" onclick="homeMenuGo('guide')"><span class="hm-ico">📖</span>Что умеет приложение</button>
+      <button role="menuitem" id="hm-voice" onclick="homeMenuGo('screen-voice')"><span class="hm-ico">🎙️</span>Голосовой помощник</button>
+      <button role="menuitem" id="hm-contacts" onclick="homeMenuGo('screen-contacts')"><span class="hm-ico">📞</span>Контакты</button>
+      <button role="menuitem" id="hm-profile" onclick="homeMenuGo('screen-profile')"><span class="hm-ico">👤</span>Мой профиль</button>
     </div>
   </div>
   <div class="home-content">
@@ -480,14 +505,10 @@
       <button class="quick-btn" onclick="showScreen('screen-chat')"><span class="quick-icon">💬</span><span class="quick-label">Чат жильцов</span></button>
       <button class="quick-btn" onclick="showScreen('screen-announcements')"><span class="quick-icon">📣</span><span class="quick-label">Объявления</span></button>
       <button class="quick-btn" onclick="showScreen('screen-market')"><span class="quick-icon">🛒</span><span class="quick-label">Маркетплейс</span></button>
-      <button class="quick-btn" onclick="showScreen('screen-voice')"><span class="quick-icon">🎙️</span><span class="quick-label">Голос. помощник</span></button>
       <button class="quick-btn" onclick="showScreen('screen-tickets')"><span class="quick-icon">📋</span><span class="quick-label">Мои заявки</span></button>
-      <button class="quick-btn" onclick="showScreen('screen-contacts')"><span class="quick-icon">📞</span><span class="quick-label">Контакты</span></button>
       <button class="quick-btn" onclick="showScreen('screen-bills')"><span class="quick-icon">🧾</span><span class="quick-label">Счета</span></button>
-      <button class="quick-btn" onclick="showScreen('screen-profile')"><span class="quick-icon">👤</span><span class="quick-label">Мой профиль</span></button>
       <button class="quick-btn" onclick="showScreen('screen-journal')"><span class="quick-icon">📓</span><span class="quick-label">Журнал случаев</span></button>
     </div>
-    <div style="text-align:center;margin:8px 0 14px;"><button class="btn-link" id="guide-link" onclick="guideOpen()">📖 Что умеет приложение и как им пользоваться</button></div>
 
   </div>
   <nav class="bottom-nav">
@@ -2540,9 +2561,9 @@ const APP_CAPS = [
   { icon: '💬', title: 'Чат жильцов', what: 'Общий чат дома и вопросы на повестку. В демо сообщения видите только вы.', self: 'Плитка «Чат жильцов».', ask: 'внеси вопрос на повестку: установить лавочки у подъезда', try: false, go: 'screen-chat' },
   { icon: '📣', title: 'Объявления', what: 'Объявления и обсуждения дома.', self: 'Плитка «Объявления».', ask: '', try: false, go: 'screen-announcements' },
   { icon: '🛒', title: 'Маркетплейс', what: 'Поиск мастеров и услуг. Показываются только исполнители, зарегистрированные в приложении; пока их может не быть.', self: 'Плитка «Маркетплейс».', ask: 'найди сантехника', try: true, go: 'screen-market' },
-  { icon: '📞', title: 'Контакты', what: 'Номера экстренных служб 112, 101, 102, 103, 104 и контакты дома и города, которые добавляете вы сами.', self: 'Плитка «Контакты».', ask: '', try: false, go: 'screen-contacts' },
+  { icon: '📞', title: 'Контакты', what: 'Номера экстренных служб 112, 101, 102, 103, 104 и контакты дома и города, которые добавляете вы сами.', self: 'Меню в левом верхнем углу главного экрана, пункт «Контакты».', ask: '', try: false, go: 'screen-contacts' },
   { icon: '📅', title: 'Календарь дома', what: 'Ближайшие события дома.', self: 'Кнопка с сегодняшней датой в правом верхнем углу главного экрана.', ask: 'ближайшие события', try: true, go: 'screen-calendar' },
-  { icon: '👤', title: 'Мой профиль', what: 'Ваши данные, дом на карте и выбор голоса помощника.', self: 'Плитка «Мой профиль».', ask: '', try: false, go: 'screen-profile' }
+  { icon: '👤', title: 'Мой профиль', what: 'Ваши данные, дом на карте и выбор голоса помощника.', self: 'Меню в левом верхнем углу главного экрана, пункт «Мой профиль».', ask: '', try: false, go: 'screen-profile' }
 ];
 function welcomeSeen() { const p = currentPhone(); return !p || !!(lsGet(LS_WELCOME, {})[p]); }
 function renderWelcome() { const c = $('welcome-card'); if (c) c.style.display = welcomeSeen() ? 'none' : ''; }
@@ -3073,8 +3094,17 @@ function renderHomeDate() {
   if (b) b.setAttribute('aria-label', 'Календарь дома. Сегодня ' + d.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
 }
 renderHomeDate(); setInterval(renderHomeDate, 60000); document.addEventListener('visibilitychange', renderHomeDate);
+// Меню в шапке главной: «Что умеет приложение», «Голосовой помощник», «Контакты», «Мой профиль».
+function homeMenuSet(open) {
+  const m = $('home-menu'), b = $('home-menu-btn'); if (!m || !b) return;
+  m.classList.toggle('open', !!open); b.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function homeMenuToggle(ev) { if (ev) ev.stopPropagation(); const m = $('home-menu'); homeMenuSet(!(m && m.classList.contains('open'))); }
+function homeMenuGo(target) { homeMenuSet(false); if (target === 'guide') guideOpen(); else showScreen(target); }
+document.addEventListener('click', e => { const m = $('home-menu'); if (m && m.classList.contains('open') && !m.contains(e.target)) homeMenuSet(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') homeMenuSet(false); });
 function alauOnShow(id) {
-  fillRelDates(); fillApt(); renderHomeDate();
+  fillRelDates(); fillApt(); renderHomeDate(); homeMenuSet(false);
   if (id === 'screen-tickets') renderTickets();
   if (id === 'screen-market') renderMarket();
   if (id === 'screen-contacts') renderContacts();
