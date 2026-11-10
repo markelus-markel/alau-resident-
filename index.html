@@ -2380,14 +2380,15 @@ function renderDuty() {
   if (!L.length) { c.style.display = 'none'; c.innerHTML = ''; return; }
   c.style.display = '';
   const th = 'text-align:left;font-size:11px;color:var(--text-muted);font-weight:700;padding:2px 4px 4px;', td = 'padding:6px 4px;border-top:1px solid #eee;vertical-align:top;font-size:13px;';
-  c.innerHTML = '<div style="font-weight:800;font-size:15px;margin-bottom:8px;">🛎️ Консьерж напоминает:</div>'
+  c.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;"><div style="font-weight:800;font-size:15px;">🛎️ Консьерж напоминает:</div>'
+    + '<button id="duty-speak" type="button" aria-label="Послушать" title="Послушать" onclick="speak(dutySpeech())" style="flex:none;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--teal);background:#fff;font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;">🔊</button></div>'
     + '<table class="duty-table" style="width:100%;border-collapse:collapse;"><thead><tr><th style="' + th + 'width:26px;"></th><th style="' + th + '">Предмет</th><th style="' + th + 'text-align:right;">Сумма</th><th style="' + th + '">Срок</th></tr></thead><tbody>'
     + L.map(x => '<tr class="duty-row' + (x.cls ? ' ' + x.cls : '') + '"><td style="' + td + 'font-size:16px;">' + x.ic + '</td><td style="' + td + 'font-weight:600;">' + escHtml(x.what) + '</td><td style="' + td + 'text-align:right;white-space:nowrap;">' + escHtml(x.sum) + '</td><td style="' + td + (x.cls === 'late' ? 'color:#b3261e;' : '') + '">' + escHtml(x.due) + (x.note ? '<div style="font-size:11px;color:var(--text-muted);">' + escHtml(x.note) + '</div>' : '') + '</td></tr>').join('')
     + '</tbody></table>' + (T.more > 0 ? '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">и ещё ' + T.more + ' в разделе «Счета»</div>' : '')
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">'
     + (L.some(x => x.bills) ? '<button class="tkt-btn chk" style="flex:none;padding:8px 12px;font-size:13px;" onclick="showScreen(\'screen-bills\')">🧾 Счета</button>' : '')
     + (L.some(x => x.meters) ? '<button class="tkt-btn chk" style="flex:none;padding:8px 12px;font-size:13px;" onclick="showScreen(\'screen-meters\');mtOpen(null)">📸 Передать показания</button>' : '')
-    + '<button class="tkt-btn chk" style="flex:none;padding:8px 12px;font-size:13px;" onclick="speak(dutySpeech())">🔊 Послушать</button></div>';
+    + '</div>';
 }
 // Ответы консьержа в чате: mode = debt | due | meters | all
 function dutyReply(mode) {

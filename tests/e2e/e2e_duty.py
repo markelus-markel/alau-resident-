@@ -41,8 +41,15 @@ with sync_playwright() as p:
     ok('meters row: marker, subject, no sum, reminder', rows[2][0] == '📟' and rows[2][1] == 'Показания приборов учёта' and rows[2][2] == '—' and 'пора передать' in rows[2][3], rows[2])
     ok('card greets by name only in the spoken text', 'Тест' not in t and g("dutySpeech()").startswith('Здравствуйте, Тест'), t)
     pg.screenshot(path=S + '/duty_home.png')
+    # круглая кнопка «Послушать» в правом верхнем углу карточки
+    bx = g("(()=>{const b=document.getElementById('duty-speak').getBoundingClientRect(), c=document.getElementById('home-duty').getBoundingClientRect(); return {w:b.width,h:b.height,r:getComputedStyle(document.getElementById('duty-speak')).borderRadius,dr:c.right-b.right,dt:b.top-c.top,dl:b.left-c.left,cw:c.width}})()")
+    ok('listen button is round', abs(bx['w'] - bx['h']) < 1 and 30 <= bx['w'] <= 48 and bx['r'] in ('50%', '19px'), bx)
+    ok('listen button sits in the top right corner of the card', bx['dr'] <= 20 and bx['dt'] <= 20 and bx['dl'] > bx['cw'] / 2, bx)
+    ok('listen button has an accessible name and no text button for it remains below', g("document.getElementById('duty-speak').getAttribute('aria-label')") == 'Послушать' and not g("[...document.querySelectorAll('#home-duty button')].some(b=>b.id!=='duty-speak' && b.textContent.includes('Послушать'))"))
+    g("(()=>{window.__spoke=null; window.speak=function(t){window.__spoke=t; return Promise.resolve();}})()")
+    g("document.getElementById('duty-speak').click()"); ok('listen button reads the summary', (g("window.__spoke") or '').startswith('Здравствуйте, Тест'), g("window.__spoke"))
     # 3. кнопки карточки ведут в разделы
-    g("document.querySelector('#home-duty button').click()"); ok('card button Счета opens the bills screen', g("document.querySelector('.screen.active').id") == 'screen-bills')
+    g("[...document.querySelectorAll('#home-duty button')].find(b=>b.textContent.includes('Счета')).click()"); ok('card button Счета opens the bills screen', g("document.querySelector('.screen.active').id") == 'screen-bills')
     g("showScreen('screen-home')"); g("[...document.querySelectorAll('#home-duty button')].find(b=>b.textContent.includes('показания')).click()")
     ok('card button opens meters with the photo window', g("document.querySelector('.screen.active').id") == 'screen-meters' and g("document.getElementById('mt-modal').classList.contains('open')")); g("mtClose()")
     # 4. голос: короткая фраза без значков
