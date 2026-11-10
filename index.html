@@ -359,6 +359,15 @@
   .bl-auto { border-color:#f0b400 !important; background:#fffbe6; }
   .bl-miss { border-color:#e0a0a0 !important; background:#fff5f5; }
   .bl-banner { font-size:13px; line-height:1.4; border-radius:10px; padding:10px 12px; margin-bottom:12px; background:#eef0fb; color:#27308a; display:none; }
+  .mt-card { background:#fff; border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow); }
+  .mt-card h3 { font-size:15px; margin:0 0 8px; }
+  .mt-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .mt-table th { text-align:left; font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase; padding:2px 6px 6px 0; }
+  .mt-table td { padding:7px 6px 7px 0; border-top:1px solid #eee; }
+  .mt-table tr[data-id] { cursor:pointer; }
+  .mt-cands { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 0; }
+  .mt-cands button { border:2px solid #f0b400; background:#fffbe6; border-radius:10px; padding:7px 12px; font-size:14px; font-weight:700; cursor:pointer; }
+  .mt-cands button.sel { background:#f0b400; color:#fff; }
   .bl-total { background:var(--gray-card); border-radius:var(--radius); padding:12px 16px; font-size:14px; font-weight:700; }
   .sit-note { font-size:11px; color:var(--text-muted); margin-top:12px; line-height:1.4; }
   .chip { padding:6px 11px; border:2px solid #e0e0e0; border-radius:16px; background:#fff; font-size:12px; font-weight:600; color:#555; cursor:pointer; }
@@ -701,9 +710,32 @@
   </div>
   <div class="contacts-content">
     <button class="modal-submit" id="bl-add" onclick="blOpen(null)">＋ Добавить счёт</button>
+    <button class="tkt-btn" id="mt-open" onclick="showScreen('screen-meters')" style="display:block;width:100%;margin-top:8px;text-align:center;">📟 Показания приборов учёта</button>
     <div class="bl-total" id="bl-total" style="margin-top:12px;"></div>
     <div id="bl-list" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
     <div class="sit-note">Счета, фото и суммы хранятся только на этом устройстве. Поля счёта распознаются с фото на вашем устройстве (фото никуда не отправляется), вы проверяете и подтверждаете. Приложение не проводит платёж и не видит его: оплата выполняется в Kaspi.kz, отметку «оплачен» ставите вы.</div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-announcements')"><span class="nav-icon">📣</span><span class="nav-label">Объявления</span></button>
+    <button class="nav-btn" onclick="showScreen('screen-chat')"><span class="nav-icon">💬</span><span class="nav-label">Чат</span></button>
+    <button class="nav-btn" onclick="openAssistant()"><span class="nav-icon">🤖</span><span class="nav-label">Помощник</span></button>
+  </nav>
+</div>
+
+<!-- =================== ПРИБОРЫ УЧЁТА =================== -->
+<div class="screen" id="screen-meters">
+  <div class="topbar">
+    <button class="back-topbar-btn" onclick="showScreen('screen-bills')">← Назад</button>
+    <h1 style="color:#fff;font-size:18px;font-weight:700;">Приборы учёта</h1>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="contacts-content">
+    <button class="modal-submit" id="mt-add" onclick="mtOpen(null)">📷 Сфотографировать показания</button>
+    <div class="modal-field" style="margin-top:12px;"><label for="mt-day">Напоминать о передаче показаний</label>
+      <select class="modal-input" id="mt-day" onchange="mtSetDay(this.value)"></select></div>
+    <div id="mt-list" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
+    <div class="sit-note">Показания и фото хранятся только на этом устройстве. Число с фото читается на вашем телефоне и всегда требует вашего подтверждения. Напоминание и сроки оплаты счетов показываются в календаре дома.</div>
   </div>
   <nav class="bottom-nav">
     <button class="nav-btn" onclick="showScreen('screen-home')"><span class="nav-icon">🏠</span><span class="nav-label">Главная</span></button>
@@ -1093,6 +1125,26 @@
     <button class="modal-submit" onclick="blSave()">Всё верно, сохранить</button>
     <button class="modal-cancel" id="bl-del" onclick="blDelete()">Удалить счёт</button>
     <button class="modal-cancel" onclick="blClose()">Отмена</button>
+  </div>
+</div>
+<div class="modal-overlay" id="mt-modal">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="mt-title">Показание прибора</div>
+    <div class="modal-sub">Сфотографируйте счётчик: число подставится само, останется проверить и подтвердить.</div>
+    <div class="bl-banner" id="mt-banner"></div>
+    <div class="modal-field"><label>Фото счётчика</label>
+      <div class="sit-photos" id="mt-photo-box"></div>
+      <label class="tkt-btn" style="display:block;text-align:center;cursor:pointer;">📷 Сфотографировать или выбрать<input id="mt-file" type="file" accept="image/*" capture="environment" hidden onchange="mtAddPhoto(this.files)"></label>
+      <div class="mt-cands" id="mt-cands"></div>
+    </div>
+    <div class="modal-field"><label>Что за прибор</label><select class="modal-input" id="mt-kind"></select></div>
+    <div class="modal-field"><label>Название прибора (необязательно)</label><input class="modal-input" id="mt-label" type="text" maxlength="30" placeholder="Например: кухня, ванная"></div>
+    <div class="modal-field"><label>Показание</label><input class="modal-input" id="mt-value" type="text" inputmode="decimal" placeholder="Как на счётчике, например 123,456"></div>
+    <div class="modal-field"><label>Дата снятия</label><input class="modal-input" id="mt-date" type="date"></div>
+    <button class="modal-submit" onclick="mtSave()">Всё верно, сохранить</button>
+    <button class="modal-cancel" id="mt-del" onclick="mtDelete()">Удалить показание</button>
+    <button class="modal-cancel" onclick="mtClose()">Отмена</button>
   </div>
 </div>
 <div class="modal-overlay" id="bl-pay">
@@ -1667,13 +1719,13 @@ function openChannel(k) {
   if (!url) { toast('Ссылка на ' + CHANNEL_NAMES[k] + ' дома ещё не задана'); return; }
   window.open(url, '_blank', 'noopener');
 }
-const CAL_TYPES = { meeting: 'Собрание', works: 'Работы', event: 'Событие', post: 'Пост', podcast: 'Подкаст' };
-const CAL_SRCS = { osi: 'ОСИ', telegram: 'Telegram', instagram: 'Instagram', whatsapp: 'WhatsApp' };
-const CAL_ICON = { meeting: '👥', works: '🔧', event: '🧹', post: '📝', podcast: '🎙️' };
+const CAL_TYPES = { meeting: 'Собрание', works: 'Работы', event: 'Событие', post: 'Пост', podcast: 'Подкаст', pay: 'Платёж', meter: 'Показания' };
+const CAL_SRCS = { osi: 'ОСИ', telegram: 'Telegram', instagram: 'Instagram', whatsapp: 'WhatsApp', me: 'Мои данные' };
+const CAL_ICON = { meeting: '👥', works: '🔧', event: '🧹', post: '📝', podcast: '🎙️', pay: '💳', meter: '📟' };
 // События дома пока не заведены: их будет вести председатель ОСИ, а посты и подкасты подтягиваться из каналов.
 // Формат: { id, off (дней от сегодня), from, to ('чч:мм', необязательно), type, src, title, place, text }
 function houseEvents() {
-  return [];
+  return ownEvents();
 }
 function evDay(e) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + e.off); return d; }
 function evDayLabel(e) {
@@ -2169,6 +2221,114 @@ function blMarkPaid() {
 }
 ['bl-modal', 'bl-pay'].forEach(k => document.getElementById(k).addEventListener('click', function (e) { if (e.target === this) (k === 'bl-modal' ? blClose : blPayClose)(); }));
 
+// ===== ПРИБОРЫ УЧЁТА: фото счётчика, подтверждённые показания, расход, напоминание в календаре =====
+const LS_METERS = 'alauDemoMeters';
+const METER_KINDS = [['cold', '💧 Холодная вода', 'м³'], ['hot', '🔥 Горячая вода', 'м³'], ['elec', '⚡ Электричество', 'кВт·ч'], ['gas', '🔵 Газ', 'м³']];
+let mtCurrent = null, mtPhoto = null, mtAuto = false, mtOcrSeq = 0;
+function mtBox() { const p = currentPhone(); const a = p ? (lsGet(LS_METERS, {})[p] || {}) : {}; return { readings: a.readings || [], day: a.day || 0 }; }
+function mtStore(fn) { const p = currentPhone(); if (!p) return; const all = lsGet(LS_METERS, {}); const b = Object.assign({ readings: [], day: 0 }, all[p] || {}); fn(b); all[p] = b; lsSet(LS_METERS, all); renderMeters(); }
+function mtKind(k) { return METER_KINDS.find(x => x[0] === k) || METER_KINDS[0]; }
+function mtNum(v) { return Number(v).toLocaleString('ru-RU', { maximumFractionDigits: 3 }); }
+function mtKey(r) { return r.kind + '|' + (r.label || ''); }
+// Числа на фото: берём цепочки из 4–9 цифр, наибольшая по числу цифр идёт первой. Ничего не додумываем: красные цифры после запятой жилец дописывает сам.
+function mtCandidates(text) {
+  const t = String(text || '').replace(/ /g, ' '); const seen = {}; const out = [];
+  (t.match(/\d(?:[\d ]*\d)?(?:[.,]\d+)?/g) || []).forEach(raw => {
+    const clean = raw.replace(/ /g, '').replace(',', '.'); const digits = clean.replace('.', '').length;
+    if (digits < 4 || digits > 9) return;
+    const v = Number(clean); if (!isFinite(v) || v <= 0 || seen[v]) return; seen[v] = 1; out.push({ v, digits });
+  });
+  return out.sort((a, b) => b.digits - a.digits).slice(0, 3).map(x => x.v);
+}
+function mtSorted(kind, label) { return mtBox().readings.filter(r => mtKey(r) === kind + '|' + (label || '')).sort((a, b) => a.date.localeCompare(b.date) || a.created.localeCompare(b.created)); }
+function mtProblem(rec, selfId) {
+  const rows = mtSorted(rec.kind, rec.label).filter(r => r.id !== selfId);
+  const prev = rows.filter(r => r.date <= rec.date).pop(), next = rows.filter(r => r.date > rec.date)[0];
+  if (prev && rec.value < prev.value) return 'Показание меньше предыдущего (' + mtNum(prev.value) + ' от ' + prev.date + '). Проверьте цифры. Если счётчик заменён, укажите другое название прибора.';
+  if (next && rec.value > next.value) return 'Показание больше более позднего (' + mtNum(next.value) + ' от ' + next.date + '). Проверьте цифры и дату.';
+  return '';
+}
+function renderMeters() {
+  const sel = $('mt-day'); if (!sel) return;
+  const day = mtBox().day;
+  sel.innerHTML = '<option value="0">Не напоминать</option>' + Array.from({ length: 28 }, (_, i) => '<option value="' + (i + 1) + '">Каждое ' + (i + 1) + '-е число</option>').join('');
+  sel.value = String(day);
+  const rs = mtBox().readings; const keys = [];
+  rs.forEach(r => { if (!keys.includes(mtKey(r))) keys.push(mtKey(r)); });
+  if (!keys.length) { $('mt-list').innerHTML = '<div class="sit-note" style="margin:0;">Показаний пока нет. Сфотографируйте счётчик воды, газа или электричества, проверьте число и сохраните.</div>'; return; }
+  $('mt-list').innerHTML = keys.map(k => {
+    const [kind, label] = k.split('|'); const kd = mtKind(kind); const rows = mtSorted(kind, label);
+    const body = rows.map((r, i) => ({ r, d: i ? r.value - rows[i - 1].value : null })).reverse().map(x =>
+      '<tr data-id="' + escHtml(x.r.id) + '" onclick="mtOpen(this.dataset.id)"><td>' + escHtml(x.r.date) + '</td><td><b>' + mtNum(x.r.value) + '</b>' + (x.r.photo ? ' 📷' : '') + '</td><td>' + (x.d === null ? '—' : '+' + mtNum(x.d) + ' ' + kd[2]) + '</td></tr>').join('');
+    return '<div class="mt-card"><h3>' + kd[1] + (label ? ' · ' + escHtml(label) : '') + '</h3><table class="mt-table"><tr><th>Дата</th><th>Показание, ' + kd[2] + '</th><th>Расход</th></tr>' + body + '</table></div>';
+  }).join('');
+}
+function mtSetDay(v) { const d = Math.max(0, Math.min(28, parseInt(v, 10) || 0)); mtStore(b => { b.day = d; }); toast(d ? 'Напоминание добавлено в календарь дома' : 'Напоминание отключено'); }
+function mtBanner(msg) { const b = $('mt-banner'); b.textContent = msg || ''; b.style.display = msg ? 'block' : 'none'; }
+function mtOpen(id) {
+  const r = id ? mtBox().readings.find(x => x.id === id) : null;
+  mtCurrent = r ? r.id : null; mtPhoto = r ? (r.photo || null) : null; mtAuto = false; mtOcrSeq++;
+  $('mt-title').textContent = r ? 'Показание прибора' : 'Новое показание';
+  $('mt-kind').innerHTML = METER_KINDS.map(k => '<option value="' + k[0] + '">' + k[1] + '</option>').join('');
+  $('mt-kind').value = r ? r.kind : 'cold'; $('mt-label').value = r ? (r.label || '') : '';
+  $('mt-value').value = r ? r.value : ''; $('mt-date').value = r ? r.date : blTodayIso();
+  $('mt-del').style.display = r ? 'block' : 'none'; $('mt-cands').innerHTML = ''; mtBanner(''); mtMark(null); mtRenderPhoto();
+  $('mt-modal').classList.add('open');
+}
+function mtClose() { $('mt-modal').classList.remove('open'); mtCurrent = null; mtPhoto = null; mtOcrSeq++; }
+function mtMark(found) { const el = $('mt-value'); el.classList.remove('bl-auto', 'bl-miss'); if (found !== null) el.classList.add(found ? 'bl-auto' : 'bl-miss'); }
+document.getElementById('mt-value').addEventListener('input', () => { document.getElementById('mt-value').classList.remove('bl-auto', 'bl-miss'); mtAuto = false; });
+function mtRenderPhoto() { $('mt-photo-box').innerHTML = mtPhoto ? '<div class="sit-photo" style="width:96px;height:96px;"><img src="' + mtPhoto + '" alt="Фото счётчика"><button onclick="mtDelPhoto()" aria-label="Убрать фото">×</button></div>' : ''; }
+function mtDelPhoto() { mtPhoto = null; mtRenderPhoto(); }
+function mtPick(v) { $('mt-value').value = String(v).replace('.', ','); mtAuto = true; mtMark(true); [...$('mt-cands').children].forEach(b => b.classList.toggle('sel', b.dataset.v === String(v))); }
+async function mtAutofill(file) {
+  const my = ++mtOcrSeq; mtMark(null); $('mt-cands').innerHTML = ''; mtBanner('Читаю число на счётчике на вашем телефоне, подождите…');
+  let text = '';
+  try { const big = await blShrinkBig(file); if (!big) throw new Error('read'); text = await (window.MT_OCR || window.BL_OCR || blOcrDefault)(big); }
+  catch (e) { if (my === mtOcrSeq) { mtBanner('Прочитать не удалось (нет сети или программа не загрузилась). Введите показание вручную по счётчику.'); mtMark(false); } return; }
+  if (my !== mtOcrSeq || !$('mt-modal').classList.contains('open')) return;
+  const c = mtCandidates(text);
+  if (!c.length) { mtBanner('Число на фото не найдено. Введите показание вручную. Снимайте счётчик ближе и без бликов.'); mtMark(false); return; }
+  $('mt-cands').innerHTML = c.map(v => '<button type="button" data-v="' + v + '" onclick="mtPick(this.dataset.v)">' + mtNum(v) + '</button>').join('');
+  mtPick(c[0]);
+  mtBanner('Нашла число' + (c.length > 1 ? ' (другие варианты ниже)' : '') + '. Сверьте со счётчиком. Цифры после запятой (обычно красные) допишите через запятую.');
+}
+async function mtAddPhoto(files) {
+  const f = (files || [])[0]; const inp = $('mt-file');
+  if (f && /^image\//.test(f.type)) { const d = await sitShrink(f); if (d) { mtPhoto = d; mtRenderPhoto(); mtAutofill(f); } else toast('Не удалось прочитать фото'); }
+  if (inp) inp.value = ''; mtRenderPhoto();
+}
+function mtSave() {
+  const raw = $('mt-value').value.trim().replace(/\s/g, '').replace(',', '.');
+  const value = raw === '' ? NaN : Number(raw);
+  if (!isFinite(value) || value < 0 || value > 99999999) { toast('Проверьте показание: число без букв'); return; }
+  const date = $('mt-date').value; if (!date) { toast('Укажите дату снятия показания'); return; }
+  const rec = { kind: $('mt-kind').value, label: $('mt-label').value.trim(), value, date, photo: mtPhoto || null, auto: !!mtAuto };
+  const bad = mtProblem(rec, mtCurrent); if (bad) { mtBanner(bad); mtMark(false); return; }
+  const id = mtCurrent;
+  mtStore(b => {
+    const i = id ? b.readings.findIndex(x => x.id === id) : -1;
+    if (i >= 0) b.readings[i] = Object.assign(b.readings[i], rec); else b.readings.push(Object.assign({ id: 'P-' + Date.now().toString(36), created: new Date().toISOString() }, rec));
+  });
+  mtClose(); toast('Показание сохранено на этом устройстве');
+}
+function mtDelete() { const id = mtCurrent; mtStore(b => { b.readings = b.readings.filter(x => x.id !== id); }); mtClose(); }
+// События календаря из моих данных: срок оплаты неоплаченных счетов и напоминание о передаче показаний.
+function ownEvents() {
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0); const out = [];
+  const offOf = d => Math.round((d - t0) / 86400000);
+  blAll().filter(b => !b.paid && b.due).forEach(b => {
+    const d = new Date(b.due + 'T00:00:00'); if (isNaN(d)) return;
+    out.push({ id: 'bill-' + b.id, off: offOf(d), type: 'pay', src: 'me', title: 'Оплатить: ' + blKindName(b.kind).replace(/^\S+\s/, '') + (b.amount ? ', ' + blMoney(b.amount) : ''), place: 'Счета', text: 'Срок оплаты счёта' + (b.period ? ' за ' + b.period : '') + '. Оплата проводится вами в Kaspi.kz.' });
+  });
+  const day = mtBox().day;
+  if (day) {
+    const d = new Date(t0.getFullYear(), t0.getMonth(), day); if (d < t0) d.setMonth(d.getMonth() + 1);
+    out.push({ id: 'meters-' + d.getFullYear() + pad2(d.getMonth() + 1), off: offOf(d), type: 'meter', src: 'me', title: 'Передать показания приборов учёта', place: 'Приборы учёта', text: 'Сфотографируйте счётчики и сохраните показания в приложении.' });
+  }
+  return out;
+}
+
 // ===== МАРКЕТПЛЕЙС: реестр категорий и поиск поставщиков =====
 // Реестр расширяется: добавляйте категории в MARKET_CATS, проверенных поставщиков в MARKET_PROVIDERS.
 const MK_GROUPS = [['mat', '🧱 Материалы'], ['srv', '🛠️ Услуги']];
@@ -2616,6 +2776,7 @@ const APP_CAPS = [
   { icon: '🔧', title: 'Заявка мастеру', what: 'Сообщить о поломке или проблеме в доме. В демо заявка создаётся только на этом устройстве.', self: 'Плитка «Заявка мастеру».', ask: 'создай заявку: не горит свет в подъезде', try: false, go: 'screen-requests' },
   { icon: '📋', title: 'Мои заявки', what: 'Статусы ваших заявок.', self: 'Плитка «Мои заявки».', ask: 'что с моими заявками', try: true, go: 'screen-tickets' },
   { icon: '🧾', title: 'Счета', what: 'Сфотографируйте квитанцию: приложение заполнит поля, вы проверите и сохраните. Оплата в Kaspi: приложение подсказывает, платёж не проводит.', self: 'Плитка «Счета».', ask: 'где мои счета', try: true, go: 'screen-bills' },
+  { icon: '📟', title: 'Показания приборов', what: 'Сфотографируйте счётчик воды, газа или электричества: приложение прочитает число на телефоне, вы подтвердите, и оно попадёт в таблицу с расходом. Напоминание о передаче показаний появится в календаре.', self: 'Экран «Счета», кнопка «Показания приборов учёта».', ask: '', try: false, go: 'screen-meters' },
   { icon: '💬', title: 'Чат жильцов', what: 'Общий чат дома и вопросы на повестку. В демо сообщения видите только вы.', self: 'Плитка «Чат жильцов».', ask: 'внеси вопрос на повестку: установить лавочки у подъезда', try: false, go: 'screen-chat' },
   { icon: '📣', title: 'Объявления', what: 'Объявления и обсуждения дома.', self: 'Плитка «Объявления».', ask: '', try: false, go: 'screen-announcements' },
   { icon: '🛒', title: 'Маркетплейс', what: 'Поиск мастеров и услуг. Показываются только исполнители, зарегистрированные в приложении; пока их может не быть.', self: 'Плитка «Маркетплейс».', ask: 'найди сантехника', try: true, go: 'screen-market' },
@@ -3227,6 +3388,7 @@ function alauOnShow(id) {
   if (id === 'screen-market') renderMarket();
   if (id === 'screen-contacts') renderContacts();
   if (id === 'screen-bills') renderBills();
+  if (id === 'screen-meters') renderMeters();
   if (id === 'screen-calendar') renderCalendar();
   if (id === 'screen-journal') renderJournal();
   if (id === 'screen-chat') renderChatScreen();
