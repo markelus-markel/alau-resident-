@@ -50,7 +50,7 @@ with sync_playwright() as p:
     g("mkClose()")
     # announcements cleaned
     g("showScreen('screen-announcements')"); ok('promo removed from announcements', 'Скидка' not in g("document.getElementById('screen-announcements').textContent"))
-    g("showScreen('screen-home')"); ok('home ann carousel: 3 modules and 3 dots', g("document.querySelectorAll('#ann-carousel .ann-card-module').length")==3 and g("document.querySelectorAll('.ann-dot-ind').length")==3, (g("document.querySelectorAll('#ann-carousel .ann-card-module').length"),g("document.querySelectorAll('.ann-dot-ind').length")))
+    g("showScreen('screen-home')"); ok('home ann carousel: 4 modules and 4 dots (incl. house management)', g("document.querySelectorAll('#ann-carousel .ann-card-module').length")==4 and g("document.querySelectorAll('.ann-dot-ind').length")==4, (g("document.querySelectorAll('#ann-carousel .ann-card-module').length"),g("document.querySelectorAll('.ann-dot-ind').length")))
     ok('no alert dialogs', not dialogs, dialogs)
     ok('no page errors', not errs, errs)
     b.close()

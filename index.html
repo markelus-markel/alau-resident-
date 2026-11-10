@@ -40,6 +40,12 @@
     #screen-home .apt-badge { padding: 4px 8px; font-size: 12px; }
     #screen-home .cal-chip { min-width: 48px; padding: 3px 6px; }
   }
+  .mgmt-opt { display: block; width: 100%; text-align: left; background: #fff; border: 2px solid #e1e8e6; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; font-family: inherit; color: var(--text); }
+  .mgmt-opt.sel { border-color: var(--teal); background: #eef8f6; }
+  .mgmt-opt b { display: block; font-size: 15px; }
+  .mgmt-opt span { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  #mgmt-info li { font-size: 13px; line-height: 1.5; margin: 0 0 6px 16px; }
+  #mgmt-info .mgmt-warn { background: #fff4e5; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; line-height: 1.5; color: #8a4b00; margin: 8px 0; }
   .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
   .menu-btn { flex: 0 0 auto; width: 38px; height: 38px; border: none; border-radius: 12px; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; font-family: inherit; }
   .home-menu { display: none; position: absolute; left: 12px; top: calc(100% - 4px); min-width: 250px; background: #fff; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,.25); padding: 6px; z-index: 120; }
@@ -466,6 +472,16 @@
           <div class="amc-mic">📖 Открыть</div>
         </div>
 
+        <!-- Module: Управление домом -->
+        <div class="ann-card-module" id="mgmt-card" onclick="mgmtOpen()">
+          <div class="amc-icon" style="background:#e6f4f1;">🏠</div>
+          <div class="amc-title">Управление домом</div>
+          <div class="amc-sub">ОСИ · НСУ · товарищество</div>
+          <div class="amc-text">Выберите форму управления вашим домом и прочитайте справку</div>
+          <span class="amc-pill" style="background:#e6f4f1;color:#1b7f72;" id="mgmt-pill">Выбрать форму</span>
+          <div class="amc-mic">📖 Открыть</div>
+        </div>
+
         <!-- Module 3: Чат -->
         <div class="ann-card-module" onclick="openModuleVoice('chat','💬 Чат жильцов','Уважаемый житель квартиры номер {apt}. Добро пожаловать в общедомовой чат. Вы можете высказать любое предложение, задать вопрос или сообщить о проблеме. В демо-версии сообщение остаётся на вашем устройстве и другим жильцам не отправляется.','Обсуждения дома','Сообщение остаётся на вашем устройстве.','','')">
           <div class="amc-icon" style="background:#e8eaf6;">💬</div>
@@ -490,6 +506,7 @@
       <!-- scroll dots -->
       <div style="display:flex;gap:5px;justify-content:center;padding-top:4px;" id="ann-dots">
         <div class="ann-dot-ind active"></div>
+        <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
         <div class="ann-dot-ind"></div>
       </div>
@@ -1180,6 +1197,20 @@
     <div id="guide-body" style="overflow-y:auto;flex:1;"></div>
     <div class="sit-calls" style="margin-top:8px;"><button class="tkt-btn" id="guide-tts" onclick="guideSpeak()">🔊 Прочитать вслух</button><button class="tkt-btn" onclick="guideAsk(-1)">🤖 Спросить помощника</button></div>
     <button class="btn-primary" onclick="guideClose()" style="margin-top:8px;">Закрыть</button>
+  </div>
+</div>
+
+<!-- =================== MGMT MODAL: управление домом =================== -->
+<div class="modal-overlay" id="mgmt-modal">
+  <div class="modal-sheet" style="max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏠 Управление домом</div>
+    <div class="modal-sub">Выберите форму управления вашим домом. Выбор сохраняется только на этом устройстве.</div>
+    <div style="overflow-y:auto;flex:1;">
+      <div id="mgmt-opts"></div>
+      <div id="mgmt-info"></div>
+    </div>
+    <button class="btn-primary" onclick="mgmtClose()" style="margin-top:8px;">Закрыть</button>
   </div>
 </div>
 
@@ -3094,6 +3125,46 @@ function renderHomeDate() {
   if (b) b.setAttribute('aria-label', 'Календарь дома. Сегодня ' + d.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
 }
 renderHomeDate(); setInterval(renderHomeDate, 60000); document.addEventListener('visibilitychange', renderHomeDate);
+// ----- Управление домом: выбор формы и справка (черновик по открытым источникам, не проверен владельцем и юристом) -----
+const LS_MGMT = 'alauDemoMgmt';
+const MGMT_FORMS = [
+  { id: 'osi', short: 'ОСИ', full: 'Объединение собственников имущества',
+    facts: ['Юридическое лицо, некоммерческая организация. Создаётся собственниками квартир и нежилых помещений дома для управления общим имуществом и финансирования его содержания.',
+            'Высший орган управления домом — собрание собственников. Исполнение решений организует председатель, которого избирает собрание.',
+            'Проходит государственную регистрацию в органах юстиции.',
+            'Остаётся законной формой управления по закону, который Президент подписал 15.07.2025 (наряду с НСУ).'] },
+  { id: 'pt', short: 'Простое товарищество', full: 'Договор о совместной деятельности собственников',
+    facts: ['Основано на договоре о совместной деятельности по гражданскому законодательству. Не является юридическим лицом.',
+            'Для руководства собственники могли назначить доверенное лицо простой письменной доверенностью от всех собственников.'],
+    warn: 'По сообщениям СМИ, закон, подписанный Президентом 15.07.2025, упразднил эту форму управления многоквартирными домами: остаются ОСИ и НСУ. Дата вступления в силу и порядок перехода для уже созданных товариществ не проверены. Уточните у председателя или юриста.' },
+  { id: 'nsu', short: 'НСУ', full: 'Непосредственное совместное управление',
+    facts: ['Собственники управляют общим имуществом дома непосредственно и совместно (так называется форма).',
+            'Остаётся законной формой управления по закону, который Президент подписал 15.07.2025 (наряду с ОСИ).',
+            'Порядок принятия решений и руководство в этой справке пока не описаны: их нужно уточнить по тексту закона.'] }
+];
+const MGMT_SOURCES = [
+  { t: 'Закон РК «О жилищных отношениях»', u: 'https://zakon.uchet.kz/rus/docs/Z970000094_' },
+  { t: 'zakon.kz: «Останется только две формы управления домами» (15.07.2025)', u: 'https://www.zakon.kz/pravo/6484267-ostanetsya-tolko-dve-formy-upravleniya-domami-tokaev-podpisal-popravki-po-zhkkh.html' },
+  { t: 'Бюллетень ЖКХ ИНФО: ОСИ, совет дома, простое товарищество', u: 'https://gkhsp.kz/zakon-rk-o-zhilishhnyh-otnosheniyah-sovet-doma-obedinenie-sobstvennikov-imushhestva-prostoe-tovarishhestvo/' }
+];
+function mgmtChoice() { const p = currentPhone(); const v = p ? (lsGet(LS_MGMT, {})[p] || '') : ''; return MGMT_FORMS.some(f => f.id === v) ? v : ''; }
+function mgmtPick(id) {
+  const p = currentPhone(); if (p) { const a = lsGet(LS_MGMT, {}); a[p] = id; lsSet(LS_MGMT, a); }
+  mgmtRender();
+}
+function mgmtRender() {
+  const cur = mgmtChoice();
+  $('mgmt-opts').innerHTML = MGMT_FORMS.map(f => '<button class="mgmt-opt' + (f.id === cur ? ' sel' : '') + '" data-form="' + f.id + '" onclick="mgmtPick(\'' + f.id + '\')" aria-pressed="' + (f.id === cur) + '"><b>' + escHtml(f.short) + '</b><span>' + escHtml(f.full) + '</span></button>').join('');
+  const f = MGMT_FORMS.find(x => x.id === cur);
+  $('mgmt-info').innerHTML = (f
+    ? '<div style="font-weight:700;margin:4px 0 6px;">Справка: ' + escHtml(f.short) + '</div><ul style="padding:0;margin:0;">' + f.facts.map(t => '<li>' + escHtml(t) + '</li>').join('') + '</ul>' + (f.warn ? '<div class="mgmt-warn">⚠ ' + escHtml(f.warn) + '</div>' : '')
+    : '<div style="font-size:13px;color:var(--text-muted);margin:4px 0;">Нажмите на форму, чтобы прочитать справку.</div>')
+    + '<div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-top:10px;">Справка составлена по открытым источникам. Это черновик: она не проверена владельцем проекта и юристом и не заменяет закон. Источники: '
+    + MGMT_SOURCES.map(x => '<a href="' + x.u + '" target="_blank" rel="noopener noreferrer">' + escHtml(x.t) + '</a>').join('; ') + '.</div>';
+  const pill = $('mgmt-pill'); if (pill) pill.textContent = f ? f.short : 'Выбрать форму';
+}
+function mgmtOpen() { mgmtRender(); $('mgmt-modal').classList.add('open'); }
+function mgmtClose() { $('mgmt-modal').classList.remove('open'); }
 // Меню в шапке главной: «Что умеет приложение», «Голосовой помощник», «Контакты», «Мой профиль».
 function homeMenuSet(open) {
   const m = $('home-menu'), b = $('home-menu-btn'); if (!m || !b) return;
@@ -3104,7 +3175,7 @@ function homeMenuGo(target) { homeMenuSet(false); if (target === 'guide') guideO
 document.addEventListener('click', e => { const m = $('home-menu'); if (m && m.classList.contains('open') && !m.contains(e.target)) homeMenuSet(false); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') homeMenuSet(false); });
 function alauOnShow(id) {
-  fillRelDates(); fillApt(); renderHomeDate(); homeMenuSet(false);
+  fillRelDates(); fillApt(); renderHomeDate(); homeMenuSet(false); if ($('mgmt-pill')) { const f = MGMT_FORMS.find(x => x.id === mgmtChoice()); $('mgmt-pill').textContent = f ? f.short : 'Выбрать форму'; }
   if (id === 'screen-tickets') renderTickets();
   if (id === 'screen-market') renderMarket();
   if (id === 'screen-contacts') renderContacts();
