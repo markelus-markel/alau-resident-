@@ -1366,6 +1366,7 @@
       <div class="map-actions" id="hm-actions">
         <button class="btn-ghost" onclick="mapShow()">🗺 Показать на карте</button>
         <button class="btn-ghost" onclick="mapRoute()">🧭 Построить маршрут</button>
+        <div class="auth-sub" id="hm-route-hint" style="margin:0;font-size:12px;">Маршрут откроется в приложении карт. Чтобы вернуться сюда, нажмите «Назад» на телефоне.</div>
         <button class="btn-ghost" onclick="mapOpenOsm()">↗ Открыть в OpenStreetMap</button>
         <button class="btn-link" onclick="homeClear()">Удалить сохранённую точку</button>
       </div>
@@ -3527,6 +3528,7 @@ function mapShow() {
 }
 function mapRoute() {
   const u = currentProfile(); if (!u || u.lat == null) return;
+  toast('Карты откроются в другом приложении. Чтобы вернуться, нажмите «Назад» на телефоне.');
   window.open('https://www.google.com/maps/dir/?api=1&destination=' + u.lat + ',' + u.lon + '&travelmode=walking', '_blank', 'noopener');
 }
 function mapOpenOsm() {

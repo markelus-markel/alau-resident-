@@ -103,6 +103,7 @@ with sync_playwright() as p:
     ok('no coords stored when checkbox off', prof.get('lat') is None, prof)
     pg.evaluate("showScreen('screen-profile')")
     ok('profile: map actions hidden without point', not pg.is_visible('#hm-actions'))
+    ok('profile: route hint hidden without point', not pg.is_visible('#hm-route-hint'))
     ok('profile: hint says point not set', 'не задана' in pg.inner_text('#hm-text'))
 
     # 10. set home here (declined, then accepted)
@@ -120,7 +121,9 @@ with sync_playwright() as p:
     pg.click('button:has-text("🗺 Показать на карте")')
     src = pg.get_attribute('#hm-frame','src')
     ok('map iframe is OSM embed with marker', src.startswith('https://www.openstreetmap.org/export/embed.html?bbox=') and 'marker=50.4111%2C80.2275' in src, src)
+    ok('route hint is visible under the route button (how to come back)', pg.is_visible('#hm-route-hint') and 'Назад' in pg.inner_text('#hm-route-hint'), pg.inner_text('#hm-route-hint'))
     pg.click('button:has-text("🧭 Построить маршрут")')
+    ok('route tap shows a toast about returning with the phone Back button', 'другом приложении' in pg.inner_text('#toast') and 'Назад' in pg.inner_text('#toast') and 'show' in (pg.get_attribute('#toast','class') or ''), pg.inner_text('#toast'))
     pg.click('button:has-text("↗ Открыть в OpenStreetMap")')
     opened = pg.evaluate("window.__opened")
     ok('route link (Google Maps, destination only)', opened[0]=='https://www.google.com/maps/dir/?api=1&destination=50.4111,80.2275&travelmode=walking', opened)
