@@ -42,6 +42,8 @@ with sync_playwright() as p:
     ok('card button opens meters with the photo window', g("document.querySelector('.screen.active').id") == 'screen-meters' and g("document.getElementById('mt-modal').classList.contains('open')")); g("mtClose()")
     # 4. голос: короткая фраза без значков
     sp = g("dutySpeech()"); ok('speech text is plain: greeting by name, no emoji, no brackets', sp.startswith('Здравствуйте, Тест') and '⚠' not in sp and '(' not in sp and 'Просрочено' in sp, sp)
+    ok('speech says money in words and dates as «15 ноября», no currency sign or dotted dates', '₸' not in sp and 'тенге' in sp and '12500 тенге' in sp and any(m in sp for m in ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']), sp)
+    ok('speech has no dotted dates or thousands separators', '.20' not in sp and '\xa0' not in sp, sp)
     # 5. вопросы консьержу
     g("showScreen('screen-chat'); switchChatTab('bot')")
     for q, must, first in [('что я должен', 'Задолженность', 'go:screen-bills'), ('сколько мне оплатить', 'Задолженность', 'go:screen-bills'), ('сроки оплаты', 'Ближайшие сроки', 'go:screen-bills'),

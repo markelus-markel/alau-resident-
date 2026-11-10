@@ -2361,9 +2361,14 @@ function dutyLines(d) {
   if (d.meter) L.push({ ic: '📟', t: d.meter.state === 'due' ? 'Пора передать показания приборов учёта (день ' + d.meter.day + '-е)' : 'Показания нужно передать ' + dutyIn(d.meter.n), meters: 1 });
   return L;
 }
+function dutyDateSpeech(iso) { const d = new Date(String(iso) + 'T00:00:00'); return isNaN(d) ? '' : d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }); }
+// Для голоса: сумма цифрами без разделителей и словом «тенге», дата «15 ноября», без значков и скобок.
 function dutySpeech() {
-  const p = currentProfile(), L = dutyLines(dutyData());
-  return 'Здравствуйте' + (p && p.first ? ', ' + p.first : '') + '. ' + L.map(x => x.t.replace(/\s*\(.*?\)/g, '')).join('. ') + '.';
+  const p = currentProfile(), d = dutyData(), parts = [];
+  if (d.late.length) parts.push('Просрочено: ' + d.late.length + ' ' + dutyPlural(d.late.length, 'счёт', 'счёта', 'счетов') + (d.lateSum ? ' на ' + Math.round(d.lateSum) + ' тенге' : ''));
+  if (d.upcoming.length) { const b = d.upcoming[0]; parts.push('Ближайший срок: ' + dutyBillName(b) + (b.amount ? ', ' + Math.round(b.amount) + ' тенге' : '') + ', до ' + dutyDateSpeech(b.due) + ', ' + dutyIn(dutyDays(b.due))); }
+  if (d.meter) parts.push(d.meter.state === 'due' ? 'Пора передать показания приборов учёта' : 'Показания нужно передать ' + dutyIn(d.meter.n));
+  return 'Здравствуйте' + (p && p.first ? ', ' + p.first : '') + '. ' + parts.join('. ') + '.';
 }
 function renderDuty() {
   const c = $('home-duty'); if (!c) return;
@@ -3730,9 +3735,23 @@ function voicePick(v) { lsSet(LS_VOICE, v); if (v) voicePreview(v); else { clipS
 function voicePreview(v) { speakClip('hello', VOICE_HELLO, v).then(ok => { if (!ok) toast('Образец голоса сейчас недоступен'); }); }
 // Системный голос читает «замок» как «зАмок». Для озвучки ставим знак ударения на форму слова «замок» (запирающее устройство); на экране текст не меняется.
 const TTS_STRESS = { 'замок': 'замо\u0301к', 'замка': 'замка\u0301', 'замку': 'замку\u0301', 'замком': 'замко\u0301м', 'замке': 'замке\u0301', 'замки': 'замки\u0301', 'замков': 'замко\u0301в', 'замкам': 'замка\u0301м', 'замками': 'замка\u0301ми', 'замках': 'замка\u0301х' };
+// Встроенный голос Samsung ставит ударение на первый слог неизвестных слов. Слова консьержа получают знак ударения (U+0301); на экране текст остаётся прежним.
+const TTS_WORDS = { 'просрочено': 'просро\u0301чено', 'показания': 'показа\u0301ния', 'показаний': 'показа\u0301ний', 'передать': 'переда\u0301ть', 'ближайший': 'бли\u0301жайший', 'задолженность': 'задо\u0301лженность', 'приборов': 'прибо\u0301ров', 'напоминает': 'напомина\u0301ет', 'консьерж': 'консье\u0301рж', 'водоотведение': 'водоотведе\u0301ние', 'оплатить': 'оплати\u0301ть', 'тенге': 'тенге\u0301' };
+function ttsWords(text) { return String(text).replace(/(?<![а-яё\u0301])[а-яё]+(?![а-яё\u0301])/gi, w => { const r = TTS_WORDS[w.toLowerCase()]; return r ? (w[0] !== w[0].toLowerCase() ? r[0].toUpperCase() + r.slice(1) : r) : w; }); }
 function ttsStress(text) {
-  return String(text).replace(/(?<![а-яё])[Зз]ам(?:ок|к(?:а|у|ом|е|и|ов|ам|ами|ах))(?![а-яё])/g, w => { const r = TTS_STRESS[w.toLowerCase()]; return r ? (w[0] === 'З' ? 'З' + r.slice(1) : r) : w; });
+  return ttsWords(String(text)).replace(/(?<![а-яё])[Зз]ам(?:ок|к(?:а|у|ом|е|и|ов|ам|ами|ах))(?![а-яё])/g, w => { const r = TTS_STRESS[w.toLowerCase()]; return r ? (w[0] === 'З' ? 'З' + r.slice(1) : r) : w; });
 }
+// Выбор самого естественного русского голоса телефона: сетевые и «natural/neural/Google» выше компактных и локальных.
+function pickRuVoice(list) {
+  const ru = (list || []).filter(v => /^ru([-_]|$)/i.test(v.lang || ''));
+  if (!ru.length) return null;
+  const score = v => {
+    const n = (v.name || '') + ' ' + (v.voiceURI || '');
+    return (/google/i.test(n) ? 3 : 0) + (/natural|neural|online|enhanced|premium|wavenet/i.test(n) ? 3 : 0) + (v.localService === false ? 1 : 0) - (/compact|espeak|robot/i.test(n) ? 4 : 0);
+  };
+  return ru.slice().sort((x, y) => score(y) - score(x))[0];
+}
+try { speechSynthesis.getVoices(); } catch (e) {} // на части телефонов список голосов подгружается после первого запроса
 function speak(text) {
   clipStop();
   text = ttsStress(text);
@@ -3741,6 +3760,7 @@ function speak(text) {
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text); u.lang = 'ru-RU'; u.rate = 0.95;
+      try { const v = pickRuVoice(speechSynthesis.getVoices()); if (v) { u.voice = v; u.lang = v.lang; } } catch (e) {}
       const done = () => res(); u.onend = done; u.onerror = done;
       speechSynthesis.speak(u); setTimeout(done, 9000);
     } catch (e) { res(); }
