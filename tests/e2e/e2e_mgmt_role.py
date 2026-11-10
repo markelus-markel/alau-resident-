@@ -15,6 +15,7 @@ with sync_playwright() as p:
     ok('no choice: header line hidden', g("getComputedStyle(document.getElementById('home-form')).display") == 'none')
     g("mgmtPick('osi')")
     ok('OSI: wording unchanged', g("mgmtSub('Председатель ОСИ №14 и председателем ОСИ')") == 'Председатель ОСИ №14 и председателем ОСИ')
+    ok('header form line is a light pill with dark text', g("(()=>{const c=getComputedStyle(document.getElementById('home-form'));const l=x=>x.match(/\\d+/g).slice(0,3).map(Number);const bg=l(c.backgroundColor),fg=l(c.color);return Math.min(...bg)>200&&Math.max(...fg)<80})()"))
     ok('OSI: header shows the form', g("document.getElementById('home-form').textContent") == '🏠 ОСИ')
     # простое товарищество: падежи
     g("mgmtPick('pt')")

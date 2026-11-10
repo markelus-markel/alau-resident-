@@ -245,6 +245,18 @@
   .chat-send-btn:active { transform: scale(0.92); }
   .chat-mic-btn { width:38px; height:38px; border-radius:50%; background:#e8f5f2; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
   .chat-mic-btn.rec { background:#e05a1e; animation:pulse-rec 1s ease-in-out infinite; }
+  /* Главная: строка вопроса к консьержу в пунктирной рамке, микрофон крупнее на 50% с меткой вкл/выкл */
+  .ask-row { display:flex; gap:6px; align-items:center; border:2px dashed var(--teal); border-radius:14px; padding:6px 8px 6px 4px; background:#fbfefd; }
+  #home-ask-in { flex:1; min-width:0; height:46px; border:none; background:transparent; padding:12px 4px 12px 8px; font:inherit; font-size:15px; line-height:1.3; box-sizing:border-box; outline:none; resize:none; overflow:hidden; transition:height .2s ease; }
+  #home-ask-in:hover, #home-ask-in:focus, #home-ask-in:not(:placeholder-shown) { height:84px; overflow:auto; }
+  .home-mic-wrap { display:flex; flex-direction:column; align-items:center; gap:2px; flex:0 0 auto; }
+  #home-mic { width:57px; height:57px; font-size:24px; }
+  .mic-state { font-style:normal; font-size:10px; font-weight:800; line-height:1; text-transform:uppercase; letter-spacing:.3px; }
+  .mic-state i { font-style:normal; padding:2px 6px; border-radius:8px; }
+  .mic-state .ms-off { background:#e3e6e8; color:#4a5560; }
+  .mic-state .ms-on { display:none; background:#c62828; color:#fff; }
+  #home-mic.rec ~ .mic-state .ms-off { display:none; }
+  #home-mic.rec ~ .mic-state .ms-on { display:inline; }
   .chat-topic-btn { padding: 9px 12px; background: rgba(26,138,122,0.1); border: none; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--teal); cursor: pointer; white-space: nowrap; }
 
   /* VOTING */
@@ -416,7 +428,7 @@
       <div class="topbar-logo" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:0;">
         <h1>AlauConcierge</h1>
         <div id="home-who" onclick="showScreen('screen-profile')" style="font-size:12px;color:rgba(255,255,255,.88);cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="ps-name">Профиль</span> · <span id="ps-addr">заполните анкету</span></div>
-        <div id="home-form" style="display:none;font-size:11px;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;"></div>
+        <div id="home-form" style="display:none;font-size:11px;font-weight:700;color:#0b3d35;background:#e8f5f2;border-radius:10px;padding:1px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box;"></div>
       </div>
     </div>
     <div class="topbar-right">
@@ -440,12 +452,15 @@
       <div class="sit-calls"><button class="tkt-btn chk" id="welcome-guide" onclick="guideOpen()">📖 Что умеет приложение</button><button class="tkt-btn" id="welcome-later" onclick="welcomeDone()">Позже</button></div>
     </div>
 
-    <!-- Помощник: единая строка «Чем помочь?» (текст или голос) -->
+    <!-- Помощник: единая строка «Спросите у консьержа» (текст или голос) -->
     <div id="home-ask" style="background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin:0 0 14px;">
-      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">🤖 Чем помочь?</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input id="home-ask-in" type="text" placeholder="Например: пахнет газом, где мои счета" enterkeyhint="send" onkeydown="if(event.key==='Enter')homeAsk()" style="flex:1;min-width:0;border:2px solid #e8e8e8;border-radius:10px;padding:11px;font-size:15px;box-sizing:border-box;">
-        <button class="chat-mic-btn" id="home-mic" onclick="homeMic()" title="Сказать голосом" aria-label="Сказать голосом">🎙️</button>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">🤖 Спросите у консьержа</div>
+      <div class="ask-row">
+        <textarea id="home-ask-in" rows="1" placeholder="Например: пахнет газом, где мои счета" enterkeyhint="send" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();homeAsk()}"></textarea>
+        <div class="home-mic-wrap">
+          <button class="chat-mic-btn" id="home-mic" onclick="homeMic()" title="Сказать голосом" aria-label="Сказать голосом">🎙️</button>
+          <span class="mic-state" aria-hidden="true"><i class="ms-off">выкл</i><i class="ms-on">вкл</i></span>
+        </div>
       </div>
       <button class="btn-primary" id="home-ask-go" onclick="homeAsk()" style="margin-top:8px;">Спросить помощника</button>
       <div class="sit-calls" style="margin-top:8px;">
@@ -3161,7 +3176,7 @@ function mgmtSub(str) {
 function mgmtDom() {
   document.querySelectorAll('.js-role').forEach(el => { if (el.dataset.orig === undefined) el.dataset.orig = el.textContent; el.textContent = mgmtSub(el.dataset.orig); });
   const f = MGMT_FORMS.find(x => x.id === mgmtChoice()), h = $('home-form');
-  if (h) { h.style.display = f ? 'block' : 'none'; h.textContent = f ? '🏠 ' + f.short : ''; }
+  if (h) { h.style.display = f ? 'inline-block' : 'none'; h.textContent = f ? '🏠 ' + (f.id === 'pt' ? 'Товарищество' : f.short) : ''; }
 }
 const MGMT_SOURCES = [
   { t: 'Закон РК «О жилищных отношениях»', u: 'https://zakon.uchet.kz/rus/docs/Z970000094_' },

@@ -38,6 +38,13 @@ with sync_playwright() as p:
     ok('assistant block comes before announcements', g("(()=>{const a=document.getElementById('home-ask'),n=[...document.querySelector('#screen-home .home-content').children],ia=n.indexOf(a),io=n.findIndex(e=>e.textContent.includes('Объявления и обсуждения'));return ia>=0&&io>ia})()"))
     ok('welcome comes before the assistant block for a new resident', g("(()=>{const w=document.getElementById('welcome-card'),a=document.getElementById('home-ask');return !!(w.compareDocumentPosition(a)&Node.DOCUMENT_POSITION_FOLLOWING)})()"))
     ok('navigator has 8 tiles (voice, contacts, profile moved to the header menu)', g("document.querySelectorAll('#screen-home .quick-btn').length")==8)
+    ok('assistant block is titled «Спросите у консьержа»', 'Спросите у консьержа' in g("document.querySelector('#home-ask > div').textContent") and 'Чем помочь' not in g("document.getElementById('home-ask').textContent"))
+    ok('question field and microphone sit in one dashed frame', g("(()=>{const r=document.querySelector('#home-ask .ask-row');return getComputedStyle(r).borderTopStyle==='dashed'&&r.contains(document.getElementById('home-ask-in'))&&r.contains(document.getElementById('home-mic'))})()"))
+    ok('question field shows the full hint when it grows on hover', (pg.hover('#home-ask-in'), pg.wait_for_timeout(350), g("(()=>{const e=document.getElementById('home-ask-in');return e.placeholder==='Например: пахнет газом, где мои счета'&&e.getBoundingClientRect().height>=80})()"))[2])
+    ok('question field is smaller again when the pointer leaves', (pg.mouse.move(5, 5), pg.wait_for_timeout(350), g("document.getElementById('home-ask-in').getBoundingClientRect().height<50"))[2])
+    pg.fill('#home-ask-in', 'a'); ok('typed text keeps the field big', (pg.mouse.move(5, 5), pg.wait_for_timeout(350), g("document.getElementById('home-ask-in').getBoundingClientRect().height>=80"))[2]); pg.fill('#home-ask-in', '')
+    ok('microphone is 50% bigger than the old 38 px button', g("(()=>{const r=document.getElementById('home-mic').getBoundingClientRect();return Math.round(r.width)==57&&Math.round(r.height)==57})()"))
+    ok('mic state label says off when not recording', g("(()=>{const e=document.querySelector('#home-ask .ms-off'),o=document.querySelector('#home-ask .ms-on');return getComputedStyle(e).display!=='none'&&getComputedStyle(o).display==='none'&&e.textContent==='выкл'})()"))
     pg.wait_for_timeout(300); pg.screenshot(path=S + '/home.png')
     # профиль достижим из шапки
     pg.click('#home-who'); ok('tap on name in header opens profile', g("document.querySelector('.screen.active').id")=='screen-profile')
@@ -57,6 +64,7 @@ with sync_playwright() as p:
     # голос
     g("showScreen('screen-home')"); n0 = g("__recs.length")
     pg.click('#home-mic'); ok('mic starts recording', g("document.getElementById('home-mic').classList.contains('rec')") and g("__recs.length")==n0+1)
+    ok('mic state label says on while recording', g("(()=>{const e=document.querySelector('#home-ask .ms-off'),o=document.querySelector('#home-ask .ms-on');return getComputedStyle(e).display==='none'&&getComputedStyle(o).display!=='none'&&o.textContent==='вкл'})()"))
     g("__recs[__recs.length-1].emit([['пахнет газом на лестнице',true]])")
     ok('live text appears in the field', 'пахнет газом' in g("document.getElementById('home-ask-in').value"))
     pg.click('#home-mic'); pg.wait_for_timeout(400)
