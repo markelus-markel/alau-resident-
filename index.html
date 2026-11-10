@@ -2704,6 +2704,7 @@ function listenBanner(txt) {
   if (b) { b.style.display = txt ? 'block' : 'none'; if (txt) $('bot-listen-text').textContent = txt; }
   if (d) { d.style.display = txt ? 'block' : 'none'; if (txt) $('dlg-listen-text').textContent = txt; }
 }
+const VOICE_SILENCE_MS = 2000;
 function dictate(inp, btnId, onText) {
   if (!SpeechRec) { toast(voiceErrText('unsupported')); return; }
   const btn = $(btnId), base = inp.value ? inp.value.trim() + ' ' : '';
@@ -2712,12 +2713,14 @@ function dictate(inp, btnId, onText) {
   stopAllMics();
   btn.classList.add('rec');
   const state = btnId === 'chat-mic' ? 'chat' : 'bot';
+  // Голосовой вопрос помощнику уходит сам, когда вы замолчали на пару секунд; повторное нажатие на микрофон тоже завершает запись.
+  const auto = btnId === 'home-mic' || btnId === 'bot-mic'; let silence = null;
   if (state === 'chat') chatDictating = true; else botListening = true;
   vrStart({
     timer: { textContent: '' },
-    live: { set textContent(v) { listenBanner(state === 'bot' ? (v === 'Слушаю…' ? 'Слушаю… скажите ответ' : v) : null); if (v === 'Слушаю…') { inp.placeholder = 'Слушаю…'; inp.value = base.trim(); } else inp.value = base + v; } },
+    live: { set textContent(v) { listenBanner(state === 'bot' ? (v === 'Слушаю…' ? 'Слушаю… скажите ответ' : v) : null); if (v === 'Слушаю…') { inp.placeholder = 'Слушаю…'; inp.value = base.trim(); } else { inp.value = base + v; if (auto) { clearTimeout(silence); silence = setTimeout(vrStop, VOICE_SILENCE_MS); } } } },
     done: res => {
-      listenBanner(null); chatDictating = false; botListening = false; btn.classList.remove('rec'); inp.placeholder = ph;
+      clearTimeout(silence); listenBanner(null); chatDictating = false; botListening = false; btn.classList.remove('rec'); inp.placeholder = ph;
       if (res.text) onText(base + res.text); else { inp.value = base.trim(); const m = voiceErrText(res.err || 'no-speech'); if (m) toast(m); }
     }
   });

@@ -85,6 +85,14 @@ with sync_playwright() as p:
     # после закрытия знакомства помощник остаётся первым блоком
     g("showScreen('screen-home')"); pg.click('#welcome-later')
     ok('after "later" the assistant block stays on top', g("getComputedStyle(document.getElementById('welcome-card')).display")=='none' and g("document.getElementById('home-ask').getBoundingClientRect().top")<260, g("document.getElementById('home-ask').getBoundingClientRect().top"))
+    # автоотправка голосом: сказали и замолчали, второго нажатия нет
+    g("showScreen('screen-home')")
+    n0 = g("chatBox().box.bot.length"); pg.click('#home-mic'); g("__recs[__recs.length-1].emit([['мои заявки',false]])"); pg.wait_for_timeout(900)
+    ok('still listening 0.9 s after the last words (no cutting off the speaker)', g("document.getElementById('home-mic').classList.contains('rec')") and g("chatBox().box.bot.length") == n0)
+    g("__recs[__recs.length-1].emit([['мои заявки',true]])"); pg.wait_for_timeout(2600)
+    ok('after about two seconds of silence the mic stops by itself', not g("document.getElementById('home-mic').classList.contains('rec')"))
+    ok('and the question goes to the assistant without a second tap', g("document.querySelector('.screen.active').id") == 'screen-chat' and g("chatBox().box.bot.length") > n0 and 'мои заявки' in g("document.getElementById('bot-thread').textContent"), g("document.querySelector('.screen.active').id"))
+    g("dlgClose(false)")
     ok('no page errors', not errs, errs)
     b.close()
 print('TOTAL', len(res), 'FAILED', res.count(False))
