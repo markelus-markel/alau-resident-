@@ -2352,14 +2352,18 @@ function dutyData() {
     if (!mb.readings.some(r => r.date >= startIso)) meter = { state: 'due', day: mb.day };
     else { const next = new Date(start.getFullYear(), start.getMonth() + 1, mb.day), n = dutyDays(next.getFullYear() + '-' + pad2(next.getMonth() + 1) + '-' + pad2(next.getDate())); if (n <= 3) meter = { state: 'soon', n }; }
   }
-  return { open, late, upcoming, lateSum: sum(late), openSum: sum(open), meter, has: open.length > 0 || !!mb.day };
+  const noDue = open.filter(b => !b.due);
+  return { open, late, upcoming, noDue, lateSum: sum(late), openSum: sum(open), meter, has: open.length > 0 || !!mb.day };
 }
-function dutyLines(d) {
-  const L = [];
-  if (d.late.length) L.push({ ic: '⚠️', t: 'Просрочено: ' + d.late.length + ' ' + dutyPlural(d.late.length, 'счёт', 'счёта', 'счетов') + (d.lateSum ? ' на ' + blMoney(d.lateSum) : ''), bills: 1 });
-  if (d.upcoming.length) { const b = d.upcoming[0]; L.push({ ic: '🧾', t: 'Ближайший срок: ' + dutyBillName(b) + (b.amount ? ', ' + blMoney(b.amount) : '') + ' до ' + dutyIsoShort(b.due) + ' (' + dutyIn(dutyDays(b.due)) + ')', bills: 1 }); }
-  if (d.meter) L.push({ ic: '📟', t: d.meter.state === 'due' ? 'Пора передать показания приборов учёта (день ' + d.meter.day + '-е)' : 'Показания нужно передать ' + dutyIn(d.meter.n), meters: 1 });
-  return L;
+// Строки таблицы напоминаний: знак рубрики, предмет, сумма, срок. Только неоплаченные счета и день показаний жильца.
+function dutyRows(d) {
+  const R = [], money = b => b.amount ? blMoney(b.amount) : 'не указана';
+  d.late.forEach(b => { const n = -dutyDays(b.due); R.push({ ic: '⚠️', what: dutyBillName(b), sum: money(b), due: dutyIsoShort(b.due), note: 'просрочен на ' + n + ' ' + dutyPlural(n, 'день', 'дня', 'дней'), cls: 'late', bills: 1 }); });
+  d.upcoming.forEach(b => R.push({ ic: '🧾', what: dutyBillName(b), sum: money(b), due: dutyIsoShort(b.due), note: dutyIn(dutyDays(b.due)), bills: 1 }));
+  d.noDue.forEach(b => R.push({ ic: '🧾', what: dutyBillName(b), sum: money(b), due: 'срок не указан', note: '', bills: 1 }));
+  const bills = R.slice(0, 6), more = R.length - bills.length;
+  if (d.meter) bills.push({ ic: '📟', what: 'Показания приборов учёта', sum: '—', due: d.meter.state === 'due' ? 'пора передать (' + d.meter.day + '-е число)' : 'передать ' + dutyIn(d.meter.n), note: '', cls: d.meter.state === 'due' ? 'late' : '', meters: 1 });
+  return { rows: bills, more };
 }
 function dutyDateSpeech(iso) { const d = new Date(String(iso) + 'T00:00:00'); return isNaN(d) ? '' : d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }); }
 // Для голоса: сумма цифрами без разделителей и словом «тенге», дата «15 ноября», без значков и скобок.
@@ -2372,12 +2376,14 @@ function dutySpeech() {
 }
 function renderDuty() {
   const c = $('home-duty'); if (!c) return;
-  const d = dutyData(), L = dutyLines(d);
+  const T = dutyRows(dutyData()), L = T.rows;
   if (!L.length) { c.style.display = 'none'; c.innerHTML = ''; return; }
-  const p = currentProfile();
   c.style.display = '';
-  c.innerHTML = '<div style="font-weight:800;font-size:15px;margin-bottom:8px;">🛎️ Консьерж напоминает' + (p && p.first ? ', ' + escHtml(p.first) : '') + '</div>'
-    + L.map(x => '<div class="duty-line" style="font-size:14px;margin:4px 0;">' + x.ic + ' ' + escHtml(x.t) + '</div>').join('')
+  const th = 'text-align:left;font-size:11px;color:var(--text-muted);font-weight:700;padding:2px 4px 4px;', td = 'padding:6px 4px;border-top:1px solid #eee;vertical-align:top;font-size:13px;';
+  c.innerHTML = '<div style="font-weight:800;font-size:15px;margin-bottom:8px;">🛎️ Консьерж напоминает:</div>'
+    + '<table class="duty-table" style="width:100%;border-collapse:collapse;"><thead><tr><th style="' + th + 'width:26px;"></th><th style="' + th + '">Предмет</th><th style="' + th + 'text-align:right;">Сумма</th><th style="' + th + '">Срок</th></tr></thead><tbody>'
+    + L.map(x => '<tr class="duty-row' + (x.cls ? ' ' + x.cls : '') + '"><td style="' + td + 'font-size:16px;">' + x.ic + '</td><td style="' + td + 'font-weight:600;">' + escHtml(x.what) + '</td><td style="' + td + 'text-align:right;white-space:nowrap;">' + escHtml(x.sum) + '</td><td style="' + td + (x.cls === 'late' ? 'color:#b3261e;' : '') + '">' + escHtml(x.due) + (x.note ? '<div style="font-size:11px;color:var(--text-muted);">' + escHtml(x.note) + '</div>' : '') + '</td></tr>').join('')
+    + '</tbody></table>' + (T.more > 0 ? '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">и ещё ' + T.more + ' в разделе «Счета»</div>' : '')
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">'
     + (L.some(x => x.bills) ? '<button class="tkt-btn chk" style="flex:none;padding:8px 12px;font-size:13px;" onclick="showScreen(\'screen-bills\')">🧾 Счета</button>' : '')
     + (L.some(x => x.meters) ? '<button class="tkt-btn chk" style="flex:none;padding:8px 12px;font-size:13px;" onclick="showScreen(\'screen-meters\');mtOpen(null)">📸 Передать показания</button>' : '')
