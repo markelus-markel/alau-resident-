@@ -2944,7 +2944,7 @@ const NAV_RULES = [
   { re: /^(на главную|домой|главная|открой главную)/, text: 'Возвращаю на главный экран.', acts: [{ label: '🏠 Главная', do: 'go', arg: 'screen-home' }] }
 ];
 function botNav(t, from) {
-  for (const r of NAV_RULES) { if (r.re.test(t) && (from === undefined || NAV_RULES.indexOf(r) >= from.min && NAV_RULES.indexOf(r) <= from.max)) return { text: r.text, actions: r.acts }; }
+  for (const r of NAV_RULES) { if (r.re.test(t) && (from === undefined || NAV_RULES.indexOf(r) >= from.min && NAV_RULES.indexOf(r) <= from.max)) return { text: r.text, actions: r.acts, auto: true }; }
   return null;
 }
 function botHandle(raw) {
@@ -2992,7 +2992,7 @@ function botHandle(raw) {
     return { text: 'Отправить в чат: «' + desc + '»?', actions: [A_YES, A_NO] };
   }
   { const n = botNav(t, { min: 0, max: 0 }); if (n) return n; }
-  if (/(мои|мой|все|открой|покажи)\s+(счет|квитанц)|счета\s+за|оплат[а-яё]*\s+(счет|свет|коммунал|квитанц)|сфотограф[а-яё]*\s+(счет|квитанц)/.test(t)) return { text: 'Раздел «Счета»: сфотографируйте квитанцию, приложение заполнит поля, вы проверите и сохраните. Оплата в Kaspi: приложение только подсказывает, платёж не проводит.', actions: [{ label: '🧾 Открыть «Счета»', do: 'go', arg: 'screen-bills' }, { label: '＋ Добавить счёт', do: 'bill-new' }] };
+  if (/(мои|мой|все|открой|покажи)\s+(счет|квитанц)|счета\s+за|оплат[а-яё]*\s+(счет|свет|коммунал|квитанц)|сфотограф[а-яё]*\s+(счет|квитанц)/.test(t)) return { auto: true, text: 'Раздел «Счета»: сфотографируйте квитанцию, приложение заполнит поля, вы проверите и сохраните. Оплата в Kaspi: приложение только подсказывает, платёж не проводит.', actions: [{ label: '🧾 Открыть «Счета»', do: 'go', arg: 'screen-bills' }, { label: '＋ Добавить счёт', do: 'bill-new' }] };
   if (/журнал|мои случаи|история случаев/.test(t)) return { text: 'Журнал случаев: ваши обращения по ситуациям, что вы отвечали и чем всё закончилось. К каждому можно добавить напоминание в календарь.', actions: [{ label: '📓 Открыть журнал', do: 'go', arg: 'screen-journal' }] };
   if (/ситуаци|реестр/.test(t)) return { text: 'Открываю реестр типичных ситуаций дома: газ, протечка, лифт, отопление, шум и другие.', actions: [{ label: '🚨 Открыть реестр', do: 'sit' }] };
   { const n = botNav(t, { min: 1, max: 99 }); if (n) return n; }
@@ -3184,6 +3184,12 @@ function botAsk(raw, via) {
   const tts = $('bot-tts');
   if (botQa && via === 'voice') botQa.voice = true;
   let speaking = null;
+  if (via === 'voice' && r.auto && r.actions && r.actions.length) {
+    // голосовая команда-переход выполняется сразу; ответ с кнопкой остаётся в чате как подтверждение
+    dlgClose(false);
+    botAction(chatBox().box.bot.length - 1, 0);
+    return;
+  }
   if (via === 'voice' && tts && tts.checked) speaking = speakReply(r);
   qaListenSoon(speaking);
 }

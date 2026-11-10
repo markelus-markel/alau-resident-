@@ -82,8 +82,8 @@ with sync_playwright() as p:
     pg.click('#dlg-chat'); pg.wait_for_timeout(200)
     ok('"Открыть чат" closes the dialog and keeps the chat on the last answer', not shown() and g("document.querySelector('.screen.active').id")=='screen-chat' and g("(()=>{const t=document.getElementById('bot-thread');return t.scrollHeight-t.scrollTop-t.clientHeight<5})()"))
     # 9. другая голосовая команда тоже показывается на экране диалога
-    g("botQa=null"); g("dlgCps=3000"); g("botAsk('где мои счета','voice')"); pg.wait_for_timeout(500)
-    ok('any voice command gets the dialog screen', shown() and 'Счета' in txt() and any('Открыть «Счета»' in o for o in opts()), (txt()[:60], opts()))
+    g("botQa=null"); g("dlgCps=3000"); g("botAsk('что ты умеешь','voice')"); pg.wait_for_timeout(500)
+    ok('any voice command gets the dialog screen', shown() and 'передать показания' in txt() and len(opts()) >= 1, (txt()[:60], opts()))
     pg.screenshot(path=S + '/dialog.png')
     ok('no page errors', not errs, errs)
     b.close()
